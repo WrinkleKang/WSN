@@ -81,34 +81,45 @@ namespace MiniSDN.Dataplane
                 if (Node.CurrentSensorState == SensorState.Active)
                 {
                     ActiveCounter = ActiveCounter + 1;
-                    if (ActiveCounter == 1)
-                    {
+                    /*
+                     if (ActiveCounter == 1)
+                     {
 
-                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;
-                        Dispatcher.Invoke(x);
-                    }
-                    else if (ActiveCounter > Periods.ActivePeriod)
+                         Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;
+                         Dispatcher.Invoke(x);
+                     }
+                     else if (ActiveCounter > Periods.ActivePeriod)
+                     {
+                     */
+                    if (ActiveCounter >= Periods.ActivePeriod)
                     {
                         ActiveCounter = 0;
                         SleepCounter = 0;
                         Node.CurrentSensorState = SensorState.Sleep;
+                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.SleepColor;
+                        Dispatcher.Invoke(x);
                     }
                 }
                 else if (Node.CurrentSensorState == SensorState.Sleep)
                 {
                     SleepCounter = SleepCounter + 1;
-                    if (SleepCounter == 1)
-                    {
-                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.SleepColor;
-                        Dispatcher.Invoke(x);
+                    /*
+                   if (SleepCounter == 1)
+                   {
+                       Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.SleepColor;
+                       Dispatcher.Invoke(x);
 
-                        // Node.DutyCycleString.Add(PublicParamerters.SimulationTime);
-                    }
-                    else if (SleepCounter > Periods.SleepPeriod)
+                       // Node.DutyCycleString.Add(PublicParamerters.SimulationTime);
+                   }
+                   else if (SleepCounter > Periods.SleepPeriod)
+                   */
+                    if (SleepCounter >= Periods.SleepPeriod)
                     {
                         ActiveCounter = 0;
                         SleepCounter = 0;
                         Node.CurrentSensorState = SensorState.Active;
+                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;
+                        Dispatcher.Invoke(x);
                     }
                 }
             }
