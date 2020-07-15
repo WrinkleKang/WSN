@@ -27,6 +27,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         {
             InitializeComponent();
             _MainWindow = __MainWindow_;
+            //设置窗口的一些参数的预选项或取值范围
 
             try
             {
@@ -47,12 +48,12 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 com_queueTime.Items.Add("4");
                 com_queueTime.Items.Add("5");
 
-
+                //每损失多少能量广播一次消息
                 for (int i = 5; i <= 50; i++)
                 {
                     com_UpdateLossPercentage.Items.Add(i);
                 }
-
+                //Min-Flow算法中参数的可选值
                 for (int j = 0; j <= 9; j++)
                 {
                     string str = "0." + j;
@@ -89,7 +90,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             {
                 MessageBox.Show("Error!!!.");
             }
-
+            //有关实验运行过程中的一些动画或显示功能
             com_UpdateLossPercentage.Text = Settings.Default.UpdateLossPercentage.ToString();
             Settings.Default.ShowRoutingPaths = false;
             Settings.Default.SaveRoutingLog = false;
@@ -159,7 +160,11 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
         private void btn_ok_Click(object sender, RoutedEventArgs e)
         {
+            //初始化拓扑图
 
+
+
+            //预设某些默认参数的初始值，其来源是窗口中各部件的值
             Settings.Default.UpdateLossPercentage = Convert.ToInt16(com_UpdateLossPercentage.Text);
             Settings.Default.DrawPacketsLines = Convert.ToBoolean(chk_drawrouts.IsChecked);
             Settings.Default.KeepLogs= Convert.ToBoolean(chk_save_logs.IsChecked);
@@ -184,12 +189,12 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 _MainWindow.GenerateUplinkPacketsRandomly(Convert.ToInt32(numpackets));
                 _MainWindow.PacketRate = "1 packet per " + packetRate + " s";
             }
-            else if (Settings.Default.StopeWhenFirstNodeDeid == true)
+            else if (Settings.Default.StopeWhenFirstNodeDeid == true)//当第一个节点能量耗尽时停止程序
             {
                 int stime = 100000000;
-                double packper = Convert.ToDouble(comb_packet_rate.Text);
+                double packper = Convert.ToDouble(comb_packet_rate.Text);//发包速率
                 _MainWindow.stopSimlationWhen = stime;
-                _MainWindow.RandomDeplayment(0);
+                _MainWindow.RandomDeplayment(0);//网络初始化,0表示sink节点ID
                 _MainWindow.SendPackectPerSecond(packper);
 
             }

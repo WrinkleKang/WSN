@@ -26,16 +26,19 @@ namespace MiniSDN.DataPlane.NeighborsDiscovery
             {
                 if (Network.Count > 0)
                 {
+                    
                     foreach (Sensor node in Network)
                     {
+                        
                         if (i.ID != node.ID)
                         {
+                            
                             bool isOverlapped = Operations.isInMyComunicationRange(i, node);
                             if (isOverlapped)
                             {
                                 NeighborsTableEntry en = new NeighborsTableEntry();
                                 en.NeiNode = node;
-                                en.R = Operations.DistanceBetweenTwoSensors(i, node);
+                                en.R = Operations.DistanceBetweenTwoSensors(i, node);//R表示源节点到某邻居节点的距离
                                 i.NeighborsTable.Add(en);
                             }
                         }

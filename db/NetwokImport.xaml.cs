@@ -23,6 +23,8 @@ namespace MiniSDN.db
 
         private void brn_import_Click(object sender, RoutedEventArgs e)
         {
+            //导入拓扑图时点击对应的import按钮将会生成对应数据库节点信息的拓扑图，主要包括节点ID,坐标和感知半径
+            //注：通信半径=感知半径*2
             NetworkTopolgy.ImportNetwok(this);
             PublicParamerters.NetworkName = lbl_network_name.Content.ToString();
             PublicParamerters.SensingRangeRadius = ImportedSensorSensors[0].R;

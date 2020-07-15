@@ -141,7 +141,7 @@ namespace MiniSDN.ui
             string Header = item.Header.ToString();
             switch (Header)
             {
-                case "_Multiple Nodes":
+                case "_Multiple Nodes"://手动生成新的拓扑图，原始版本功能未完善
                     {
                         UiAddNodes ui = new UiAddNodes();
                         ui.MainWindow = this;
@@ -149,14 +149,14 @@ namespace MiniSDN.ui
                         break;
                     }
 
-                case "_Export Topology":
+                case "_Export Topology"://导出拓扑图
                     {
                         UiExportTopology top = new UiExportTopology(myNetWork);
                         top.Show();
                         break;
                     }
 
-                case "_Import Topology":
+                case "_Import Topology"://导入一个拓扑图，即将数据库中的节点信息导入构成网络拓扑图
                     {
                         UiImportTopology top = new UiImportTopology(this);
                         top.Show();
@@ -287,16 +287,16 @@ namespace MiniSDN.ui
         {
             PublicParamerters.NumberofNodes = myNetWork.Count;
             int rootNodeId = sinkIndex;
-            PublicParamerters.SinkNode = myNetWork[rootNodeId];
+            PublicParamerters.SinkNode = myNetWork[rootNodeId];//设置sink节点
             NeighborsDiscovery overlappingNodesFinder = new NeighborsDiscovery(myNetWork);
-            overlappingNodesFinder.GetOverlappingForAllNodes();
+            overlappingNodesFinder.GetOverlappingForAllNodes();//邻居发现，通信距离=感知距离*2，通信距离内的节点为邻居节点
 
             string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
             PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
-            lbl_PowersString.Content = PublicParamerters.PowersString;
+            lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息
 
             isCoverageSelected = true;
-            PublicParamerters.Density = Density.GetDensity(myNetWork);
+            PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
             DisplaySimulationParameters(rootNodeId, "Random");
 
             EngageMacAndRadioProcol();
@@ -1088,6 +1088,7 @@ namespace MiniSDN.ui
             {
                 PacketRate = "";
                 stopSimlationWhen = 0;
+                //UISetParEnerConsum con 是窗口，其内容由构造函数确定，即赋值号右侧函数，con中的start按钮将进行网络初始化以及实验的运行
                 UISetParEnerConsum con = new UISetParEnerConsum(this);
                 con.Owner = this;
                 con.Show();
