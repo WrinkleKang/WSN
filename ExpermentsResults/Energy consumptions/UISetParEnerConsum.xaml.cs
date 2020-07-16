@@ -202,8 +202,15 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 int stime = 100000000;
                 double packper = Convert.ToDouble(comb_packet_rate.Text);//发包速率
                 _MainWindow.stopSimlationWhen = stime;
-                _MainWindow.RandomDeplayment(0);//网络初始化,0表示sink节点ID
-                _MainWindow.SendPackectPerSecond(packper);
+
+
+
+                _MainWindow.RandomDeplayment(0);//网络初始化,0表示sink节点ID，重点理解与掌握
+
+
+
+
+                _MainWindow.SendPackectPerSecond(packper);//根据设定的发包速率进行发包
 
             }
 

@@ -504,11 +504,14 @@ namespace MiniSDN.Dataplane
         /// </summary>
         public void GenerateDataPacket()
         {
+            //有剩余能量时既满足生成数据包的条件，该条件是否可以修改？
             if (Settings.Default.IsIntialized && this.ResidualEnergy > 0)
             {
                 
-                PublicParamerters.NumberofGeneratedPackets += 1;
-                Packet packet = new Packet();
+                PublicParamerters.NumberofGeneratedPackets += 1;   //数据包总数+1
+
+   //打包数据包的相关信息，包括起始ID，生存时间，源节点，数据包长度，数据包类型，数据包ID，以及目的节点等
+                Packet packet = new Packet();                      
                 packet.Path = "" + this.ID;
                 packet.TimeToLive = this.ComputeMaxHopsUplink;
                 packet.Source = this;
@@ -518,7 +521,10 @@ namespace MiniSDN.Dataplane
                 packet.Destination = PublicParamerters.SinkNode;
                 IdentifySourceNode(this);
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
-                //:
+                
+                
+                
+                //:准备发送数据包给下一跳节点
                 this.SendPacekt(packet);
               
                 
@@ -766,9 +772,11 @@ namespace MiniSDN.Dataplane
                     {
                         if (pacekt.PacketType == PacketType.Data && selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward)
                         {
-                            if (ret == null) { ret = selectedflow; }
+                            if (ret == null) { ret = selectedflow; }//ret也会消耗接收preamble包的能量但是此处并未计算
                             else
                             {
+                                //计算冗余传输的能量消耗，每一个醒着的标记为forward的节点都会接受源节点的preamble包，这些都是冗余能耗
+                                //原始版本没有引入ACK，是否可以引入ACK包的冗余能耗问题
                                 RedundantTransmisionCost(pacekt, selectedflow.NeighborEntry.NeiNode);
                             }
                         }
@@ -866,13 +874,21 @@ namespace MiniSDN.Dataplane
         /// <param name="packt"></param>
         public void SendPacekt(Packet packt)
         {
+            //发送包的类型是数据包
             if (packt.PacketType == PacketType.Data)
             {
                 lock (MiniFlowTable)
                 {
+                    //按照Priority值大小排序邻居节点，前n个节点标记为forward，剩余m-n个节点标记为Drop，
+                    //n是转发节点集大小，m是邻居节点个数
                     MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
+
+                    //按照优先级顺序第一个醒着的标记是forward节点就是转发节点，
+                    //此函数包含计算冗余能量消耗，即非转发节点的其他标记为forward的醒着的节点
                     MiniFlowTableEntry flowEntry = MatchFlow(packt);
-                    if (flowEntry != null)
+
+
+                    if (flowEntry != null)//有合适的转发节点
                     {
                         Sensor Reciver = flowEntry.NeighborEntry.NeiNode;
                         // sender swich on the redio:
@@ -884,7 +900,7 @@ namespace MiniSDN.Dataplane
                         Reciver.ReceivePacket(packt);
                       //  SwichToSleep();// .
                     }
-                    else
+                    else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态，数据包加入等待列表
                     {
                         // no available node right now.
                         // add the packt to the wait list.
@@ -899,6 +915,10 @@ namespace MiniSDN.Dataplane
                     }
                 }
             }
+
+
+
+            //发送包的类型是控制包
             else if (packt.PacketType == PacketType.Control)
             {
                 lock (MiniFlowTable)

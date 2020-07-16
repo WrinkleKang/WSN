@@ -109,6 +109,7 @@ namespace MiniSDN.ui
                 int index = 1 + Convert.ToInt16(UnformRandomNumberGenerator.GetUniform(PublicParamerters.NumberofNodes - 2));
                 if (index != PublicParamerters.SinkNode.ID)
                 {
+                    //随机选择一个节点，该点将执行生成数据包的函数
                     myNetWork[index].GenerateDataPacket();
                 }
             }
@@ -308,7 +309,12 @@ namespace MiniSDN.ui
             HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);//跳数初始化
 
             // fill flows:
+
+            //转发表相关的初始化
             foreach (Sensor sen in myNetWork) { UplinkRouting.ComputeUplinkFlowEnery(sen); }
+
+
+
 
             MyGraph = Graph.ConvertNodeToVertex(myNetWork);
 
@@ -910,9 +916,9 @@ namespace MiniSDN.ui
             else
             {
                 if (s >= 1) Settings.Default.AnimationSpeed = 0.5; else Settings.Default.AnimationSpeed = s;
-                RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(s);
+                RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(s);//s为定时器周期
                 RandomSelectSourceNodesTimer.Start();
-                RandomSelectSourceNodesTimer.Tick += RandomSelectNodes_Tick;
+                RandomSelectSourceNodesTimer.Tick += RandomSelectNodes_Tick;//RandomSelectNodes_Tick为定时器执行的具体内容
                 PacketRate = "1 packet per " + s + " s";
             }
         }

@@ -35,7 +35,7 @@ namespace MiniSDN.Intilization
         private static void NetworkInitialization(Sensor x)
         {
           //使用队列和递归来实现全网的跳数计算，x表示sink节点，跳数为0，sink节点的邻居节点跳数为1，依次类推
-            x.trun = true;//表示该节点是否已执行过此算法
+            x.trun = true;//表示该节点是否已执行过此算法,该算法模拟发送beacon包
             if (x.NeighborsTable  != null)
             {
                 if (x.NeighborsTable.Count != 0)
