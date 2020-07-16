@@ -112,6 +112,7 @@
     <Compile Include="Models\Energy\FirstOrderRadioModel.cs" />
     <Compile Include="db\ImportedSensor.cs" />
     <Compile Include="Computations\UnformRandomNumberGenerator.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="ui\conts\ListControl.xaml.cs">
       <DependentUpon>ListControl.xaml</DependentUpon>
     </Compile>

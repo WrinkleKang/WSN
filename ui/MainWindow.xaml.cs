@@ -89,6 +89,7 @@ namespace MiniSDN.ui
             if (PublicParamerters.SimulationTime <= stopSimlationWhen + PublicParamerters.MacStartUp)
             {
                 Dispatcher.Invoke(() => PublicParamerters.SimulationTime += 1, DispatcherPriority.Send);
+                //每秒都会对主窗口最左上方的文字进行更新，显示实验进行的时间，单位：秒
                 Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString(), DispatcherPriority.Send);
             }
             else
@@ -177,6 +178,7 @@ namespace MiniSDN.ui
             PublicParamerters.SinkNode.Ellipse_battryIndicator.Fill = Brushes.OrangeRed;
             PublicParamerters.SinkNode.Ellipse_MAC.Fill = Brushes.OrangeRed;
 
+            //显示各参数内容
             PublicParamerters.SinkNode.lbl_Sensing_ID.Foreground = Brushes.Blue;
             PublicParamerters.SinkNode.lbl_Sensing_ID.FontWeight = FontWeights.Bold;
             lbl_sink_id.Content = rootNodeId;
@@ -194,9 +196,9 @@ namespace MiniSDN.ui
 
             TimerCounter.Interval=TimeSpan.FromSeconds(1); // START count the running time.
             TimerCounter.Start(); // START count the running time.
-            TimerCounter.Tick += TimerCounter_Tick;
+            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口最左上方的显示信息
 
-            //:
+            //:主窗口右侧各参数显示
             prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
             prog_total_energy.Value = 0;
 
@@ -276,7 +278,7 @@ namespace MiniSDN.ui
         {
             foreach (Sensor sen in myNetWork)
             {
-                sen.Mac = new BoXMAC(sen);
+                sen.Mac = new BoXMAC(sen);//实现节点醒睡模式
                 sen.BatRangesList = PublicParamerters.getRanges();
                 sen.Myradar = new Intilization.Radar(sen);
             }
@@ -293,17 +295,17 @@ namespace MiniSDN.ui
 
             string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
             PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
-            lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息
+            lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息，参数为其他算法路由参数
 
             isCoverageSelected = true;
             PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
-            DisplaySimulationParameters(rootNodeId, "Random");
+            DisplaySimulationParameters(rootNodeId, "Random");//在主窗口右侧显示仿真参数
 
-            EngageMacAndRadioProcol();
+            EngageMacAndRadioProcol();//为节点增加醒睡模式
 
-            TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);
+            TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);//节点间动画显示相关
 
-            HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);
+            HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);//跳数初始化
 
             // fill flows:
             foreach (Sensor sen in myNetWork) { UplinkRouting.ComputeUplinkFlowEnery(sen); }

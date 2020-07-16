@@ -49,15 +49,16 @@ namespace MiniSDN.Dataplane
             Node = _Node;
             if (Node != null)
             {
-                if (Node.ID != PublicParamerters.SinkNode.ID)
+                if (Node.ID != PublicParamerters.SinkNode.ID)//设置非sink节点的醒睡模式
                 {
+                    //为了实现异步通信，每个节点开启醒睡模式的时刻不同
                     double xpasn = 1 + UnformRandomNumberGenerator.GetUniformSleepSec(MacStartUp);
                     // the swich on timer.
                     SwichOnTimer.Interval = TimeSpan.FromSeconds(xpasn);
                     SwichOnTimer.Start();
                     SwichOnTimer.Tick += ASwichOnTimer_Tick;
-                    ActiveCounter = 0;
-                    // active/sleep timer:
+                    ActiveCounter = 0;//计数器，表示节点处于当前模式的时间
+                    // active/sleep timer:定时改变SensorState的值，分别用Active表示醒，Sleep表示睡
                     ActiveSleepTimer.Interval = TimeSpan.FromSeconds(1);
                     ActiveSleepTimer.Tick += ActiveSleepTimer_Tick; ;
                     SleepCounter = 0;
@@ -68,7 +69,7 @@ namespace MiniSDN.Dataplane
                 }
                 else
                 {
-                    // the
+                    // sink节点的状态永远是Active
                     PublicParamerters.SinkNode.CurrentSensorState = SensorState.Active;
                 }
             }
@@ -78,6 +79,7 @@ namespace MiniSDN.Dataplane
         {
            // lock (Node)
             {
+                //初始版本显示会出错，已修改，具体修改内容查看Tags：修复MAC
                 if (Node.CurrentSensorState == SensorState.Active)
                 {
                     ActiveCounter = ActiveCounter + 1;
@@ -91,6 +93,15 @@ namespace MiniSDN.Dataplane
                      else if (ActiveCounter > Periods.ActivePeriod)
                      {
                      */
+
+
+
+
+
+
+
+                    //Periods.ActivePeriod值是ActivePeriod默认值
+                    //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
                     if (ActiveCounter >= Periods.ActivePeriod)
                     {
                         ActiveCounter = 0;
@@ -113,12 +124,14 @@ namespace MiniSDN.Dataplane
                    }
                    else if (SleepCounter > Periods.SleepPeriod)
                    */
+                    //Periods.SleepPeriod值是SleepPeriod默认值
+                    //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
                     if (SleepCounter >= Periods.SleepPeriod)
                     {
                         ActiveCounter = 0;
                         SleepCounter = 0;
                         Node.CurrentSensorState = SensorState.Active;
-                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;
+                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;//改变节点颜色表示不同模式
                         Dispatcher.Invoke(x);
                     }
                 }

@@ -97,6 +97,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.ShowAnimation = false;
             Settings.Default.ShowRadar = false;
 
+            //仿真时间，当选择第一个节点死亡时停止模拟时，默认值是300，该Items不可选
             for (int i = 60; i <= 1000; i = i + 60)
             {
                 comb_simuTime.Items.Add(i);
@@ -121,11 +122,18 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             }
             comb_startup.Text = "10";
 
+
+
+            //可供选择的醒睡周期值
             for(int i=1;i<=5;i++)
             {
                 comb_active.Items.Add(i);
                 comb_sleep.Items.Add(i);
             }
+
+
+
+            //设置醒睡周期，该值将修改默认值，即重新设定默认值
             comb_active.Text = "1";
             comb_sleep.Text = "2";
 
@@ -210,6 +218,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.MacStartUp = va;
         }
 
+        //修改默认醒周期值
         private void comb_active_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             object objval = comb_active.SelectedItem as object;
@@ -217,6 +226,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.ActivePeriod = va;
         }
 
+        //修改默认睡周期值
         private void comb_sleep_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             object objval = comb_sleep.SelectedItem as object;
