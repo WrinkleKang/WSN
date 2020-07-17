@@ -745,7 +745,7 @@ namespace MiniSDN.Dataplane
 
         public void RedundantTransmisionCost(Packet pacekt, Sensor reciverNode)
         {
-            // logs.
+            // 计算冗余preamble包的能量消耗和相关参数的统计
             PublicParamerters.TotalReduntantTransmission += 1;
             double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.PreamblePacketLength); // preamble packet length.
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
@@ -758,7 +758,7 @@ namespace MiniSDN.Dataplane
         }
 
         /// <summary>
-        /// the node which is active will send preample packet and will be selected.
+        /// the node which is active will accept preample packet and will be selected.
         /// match the packet.
         /// </summary>
         public MiniFlowTableEntry MatchFlow(Packet pacekt)
@@ -772,10 +772,10 @@ namespace MiniSDN.Dataplane
                     {
                         if (pacekt.PacketType == PacketType.Data && selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward)
                         {
-                            if (ret == null) { ret = selectedflow; }//ret也会消耗接收preamble包的能量但是此处并未计算
+                            if (ret == null) { ret = selectedflow; }//ret也会消耗接收preamble包的能量但是此处并未计算，在程序后面有涉及该部分能量消耗的计算
                             else
                             {
-                                //计算冗余传输的能量消耗，每一个醒着的标记为forward的节点都会接受源节点的preamble包，这些都是冗余能耗
+                                //计算冗余传输的能量消耗，除了转发节点外，每一个醒着的标记为forward的节点都会接受源节点的preamble包，这些都是冗余能耗
                                 //原始版本没有引入ACK，是否可以引入ACK包的冗余能耗问题
                                 RedundantTransmisionCost(pacekt, selectedflow.NeighborEntry.NeiNode);
                             }
@@ -884,21 +884,34 @@ namespace MiniSDN.Dataplane
                     MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
 
                     //按照优先级顺序第一个醒着的标记是forward节点就是转发节点，
-                    //此函数包含计算冗余能量消耗，即非转发节点的其他标记为forward的醒着的节点
+                    //此函数包含计算冗余preamble包的能量消耗，即非转发节点的其他标记为forward的醒着的节点接收冗余preamble包所消耗的能量
+                    //若引入ACK机制，则此函数还应包括转发集中醒着的节点接受preamble包之后发送冗余ACK包的能量消耗。
                     MiniFlowTableEntry flowEntry = MatchFlow(packt);
 
 
                     if (flowEntry != null)//有合适的转发节点
                     {
                         Sensor Reciver = flowEntry.NeighborEntry.NeiNode;
+                        //下面两行注释的功能是否有必要实现
                         // sender swich on the redio:
-                      //  SwichToActive();
+                        //  SwichToActive();
+
+
+
+                        //发送数据包相关的计算，包括能量消耗以及延时
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
+
+
                         Console.WriteLine("sucess:" + ID + "->" + Reciver.ID + ". PID: " + packt.PID);
                         flowEntry.UpLinkStatistics += 1;
-                       // Reciver.SwichToActive();
+
+
+
+                        //下面两行注释是否有必要实现？
+
+                        //  SwichToSleep();// .
+                        // Reciver.SwichToActive();
                         Reciver.ReceivePacket(packt);
-                      //  SwichToSleep();// .
                     }
                     else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态，数据包加入等待列表
                     {
@@ -965,25 +978,50 @@ namespace MiniSDN.Dataplane
             {
                 if (ID != PublicParamerters.SinkNode.ID)
                 {
-                    // calculate the energy 
+                    
+                    //首先应该计算发送preamble所需的能量，距离应该是源节点与转发节点集中的最远节点的距离
+                    //该函数原始版本并没实现，即原始版本并未计算该部分能量
+
+
+
+
+                    //计算源节点与接收节点之间的距离，确定转发节点后，数据包的传输距离即是源节点与接收节点间的距离
                     double Distance_M = Operations.DistanceBetweenTwoSensors(this, Reciver);
+
+                    //能量消耗模型下的传输能量计算
                     double UsedEnergy_Nanojoule = EnergyModel.Transmit(packt.PacketLength, Distance_M);
                     double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
+
+                    //计算节点剩余能量 
                     ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;
+
+                    //网络总耗能
                     PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;
+
+                    //数据包消耗的能量
                     packt.UsedEnergy_Joule += UsedEnergy_joule;
+
+             
                     packt.RoutingDistance += Distance_M;
                     packt.Hops += 1;
+
+
+
+
+                    //计算数据包延迟和总延迟
                     double delay = DelayModel.DelayModel.Delay(this, Reciver);
                     packt.Delay += delay;
                     PublicParamerters.TotalDelayMs += delay;
+
+
+
                     if (Settings.Default.SaveRoutingLog)
                     {
                         RoutingLog log = new RoutingLog();
                         log.PacketType = PacketType.Data;
                         log.IsSend = true;
                         log.NodeID = this.ID;
-                        log.Operation = "To:" + Reciver.ID;
+                        log.Operation = "To:" + Reciver.ID; 
                         log.Time = DateTime.Now;
                         log.Distance_M = Distance_M;
                         log.UsedEnergy_Nanojoule = UsedEnergy_Nanojoule;
@@ -1008,6 +1046,7 @@ namespace MiniSDN.Dataplane
             }
             else if (enCon == EnergyConsumption.Recive)
             {
+                //原始版本中该部分没有涉及接收数据包所消耗接收节点的能量
 
                 double UsedEnergy_Nanojoule = EnergyModel.Receive(packt.PacketLength);
                 double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
@@ -1044,6 +1083,8 @@ namespace MiniSDN.Dataplane
                 PublicParamerters.FinishedRoutedPackets.Add(packt);// should we add it to the packet which should be store in the sink?
                 Console.WriteLine("PID:" + packt.PID + " has been delivered.");
 
+
+                //原始版本中非sink节点成功接收数据包时并未使用到此函数，即该if-else语句中else语句内应该使用此函数
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
@@ -1058,6 +1099,10 @@ namespace MiniSDN.Dataplane
             }
             else
             {
+                //应先计算接收此数据包的能量消耗，接收之后再判断需要丢弃或者转发
+
+                //ComputeOverhead(packt, EnergyConsumption.Recive, null);
+
                 if (packt.Hops > packt.TimeToLive)
                 {
                     // drop the paket.
