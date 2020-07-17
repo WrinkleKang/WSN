@@ -715,8 +715,10 @@ namespace MiniSDN.Dataplane
 
             Packet toppacket = WaitingPacketsQueue.Dequeue();
             Console.WriteLine("NID:" + this.ID + " trying(preamble packet) to sent The  PID:" + toppacket.PID);
+            //尝试发送等待队列中的数据包
             toppacket.WaitingTimes += 1;
             PublicParamerters.TotalWaitingTime += 1; // total;
+            //某数据包尝试7次之后若还未发送成功则将其丢弃
             if (toppacket.WaitingTimes < 7)
                 SendPacekt(toppacket);
             else
@@ -728,6 +730,7 @@ namespace MiniSDN.Dataplane
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
 
             }
+            //等待队列无数据包时，停止定时器
             if (WaitingPacketsQueue.Count == 0)
             {
                 if(Settings.Default.ShowRadar) Myradar.StopRadio();
@@ -772,7 +775,7 @@ namespace MiniSDN.Dataplane
                     {
                         if (pacekt.PacketType == PacketType.Data && selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward)
                         {
-                            if (ret == null) { ret = selectedflow; }//ret也会消耗接收preamble包的能量但是此处并未计算，在程序后面有涉及该部分能量消耗的计算
+                            if (ret == null) { ret = selectedflow; }//ret也会消耗接收preamble包的能量，原始版本并未计算
                             else
                             {
                                 //计算冗余传输的能量消耗，除了转发节点外，每一个醒着的标记为forward的节点都会接受源节点的preamble包，这些都是冗余能耗
@@ -879,7 +882,7 @@ namespace MiniSDN.Dataplane
             {
                 lock (MiniFlowTable)
                 {
-                    //按照Priority值大小排序邻居节点，前n个节点标记为forward，剩余m-n个节点标记为Drop，
+                    //按照Priority值大小排序邻居节点，前n个节点标记为Forward，剩余m-n个节点标记为Drop，
                     //n是转发节点集大小，m是邻居节点个数
                     MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
 
@@ -918,10 +921,16 @@ namespace MiniSDN.Dataplane
                         // no available node right now.
                         // add the packt to the wait list.
                         Console.WriteLine("NID:" + ID + " Faild to sent PID:" + packt.PID);
+                        Console.WriteLine("NID:" + ID + ". Queu Timer is started.");
+
+                        //加入等待队列，启动定时器，定时发送等待队列中的数据包
                         WaitingPacketsQueue.Enqueue(packt);
                         QueuTimer.Start();
-                        Console.WriteLine("NID:" + ID + ". Queu Timer is started.");
-                      //  SwichToSleep();// this.
+                        //  SwichToSleep();// this.
+
+
+
+
                         if (Settings.Default.ShowRadar) Myradar.StartRadio();
                         PublicParamerters.MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Fill = Brushes.DeepSkyBlue);
                         PublicParamerters.MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Visibility = Visibility.Visible);
@@ -1099,11 +1108,11 @@ namespace MiniSDN.Dataplane
             }
             else
             {
-                //原始版本中非sink节点成功接收数据包时并未使用到此函数，即该else语句内应调用ComputeOverhead
+                //原始版本中非sink节点成功接收数据包时并未计算能量消耗，即该else语句内应调用ComputeOverhead
                 
                 
                 
-                //先计算接收此数据包的能量消耗，接收之后再判断需要丢弃或者转发
+                //先计算接收此数据包的能量消耗，接收之后再决定是丢弃还是转发
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 if (packt.Hops > packt.TimeToLive)
