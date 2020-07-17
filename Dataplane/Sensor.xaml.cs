@@ -1084,7 +1084,7 @@ namespace MiniSDN.Dataplane
                 Console.WriteLine("PID:" + packt.PID + " has been delivered.");
 
 
-                //原始版本中非sink节点成功接收数据包时并未使用到此函数，即该if-else语句中else语句内应该使用此函数
+              
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
@@ -1099,9 +1099,12 @@ namespace MiniSDN.Dataplane
             }
             else
             {
-                //应先计算接收此数据包的能量消耗，接收之后再判断需要丢弃或者转发
-
-                //ComputeOverhead(packt, EnergyConsumption.Recive, null);
+                //原始版本中非sink节点成功接收数据包时并未使用到此函数，即该else语句内应调用ComputeOverhead
+                
+                
+                
+                //先计算接收此数据包的能量消耗，接收之后再判断需要丢弃或者转发
+                ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 if (packt.Hops > packt.TimeToLive)
                 {
