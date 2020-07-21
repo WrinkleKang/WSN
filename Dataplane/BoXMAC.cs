@@ -94,22 +94,23 @@ namespace MiniSDN.Dataplane
                      {
                      */
 
-
-
-
-
-
-
                     //Periods.ActivePeriod值是ActivePeriod默认值
                     //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
-                    if (ActiveCounter >= Periods.ActivePeriod)
+
+                    //以下注释if语句为原始版本，原始版本没考虑等待队列中有数据包时，即使Active时间到也不进入睡眠模式
+                    
+                    //当醒周期超过预定时间且等待队列中没有数据包的时候才进入睡眠模式
+                    if (ActiveCounter >= Periods.ActivePeriod && Node.WaitingPacketsQueue.Count == 0)
                     {
+
                         ActiveCounter = 0;
                         SleepCounter = 0;
                         Node.CurrentSensorState = SensorState.Sleep;
                         Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.SleepColor;
                         Dispatcher.Invoke(x);
+
                     }
+                    
                 }
                 else if (Node.CurrentSensorState == SensorState.Sleep)
                 {
@@ -153,14 +154,16 @@ namespace MiniSDN.Dataplane
         {
             if (Node.ID != PublicParamerters.SinkNode.ID)
             {
-                if (Node.CurrentSensorState == SensorState.Sleep)
+                if (Node.CurrentSensorState == SensorState.Sleep)//sleep--active
                 {
                     Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Active, DispatcherPriority.Send);
                     Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
                     Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send);
                 }
-                else
+                else //active--active
                 {
+                    // restart the active timer.
+                    
                     ActiveCounter = 0;
                 }
             }
@@ -173,16 +176,22 @@ namespace MiniSDN.Dataplane
         {
             if (Node.ID != PublicParamerters.SinkNode.ID)
             {
-                if (Node.CurrentSensorState == SensorState.Active)
+                //当等待队列中没有数据包要发送时才会进入睡眠模式,否则醒睡模式不变
+                if (Node.WaitingPacketsQueue.Count == 0)
                 {
-                    Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Sleep, DispatcherPriority.Send);
-                    Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
-                    Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send); ;
+                    if (Node.CurrentSensorState == SensorState.Active)//active--sleep
+                    {
+                        Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Sleep, DispatcherPriority.Send);
+                        Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
+                        Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send); ;
+                    }
+                    else//sleep--sleep
+                    {
+                        SleepCounter = 0;
+                    }
+
                 }
-                else
-                {
-                    SleepCounter = 0;
-                }
+              
             }
         }
 
