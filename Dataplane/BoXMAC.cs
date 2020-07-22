@@ -57,11 +57,11 @@ namespace MiniSDN.Dataplane
                     SwichOnTimer.Interval = TimeSpan.FromSeconds(xpasn);
                     SwichOnTimer.Start();
                     SwichOnTimer.Tick += ASwichOnTimer_Tick;
-                    ActiveCounter = 0;//计数器，表示节点处于当前模式的时间
+                    ActiveCounter = 0;//醒计数器，表示节点处于当前模式的时间
                     // active/sleep timer:定时改变SensorState的值，分别用Active表示醒，Sleep表示睡
                     ActiveSleepTimer.Interval = TimeSpan.FromSeconds(1);
                     ActiveSleepTimer.Tick += ActiveSleepTimer_Tick; ;
-                    SleepCounter = 0;
+                    SleepCounter = 0;//睡计时器
 
                     // intialized:
                     Node.CurrentSensorState = SensorState.intalized;
@@ -127,6 +127,9 @@ namespace MiniSDN.Dataplane
                    */
                     //Periods.SleepPeriod值是SleepPeriod默认值
                     //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
+
+
+                    //该if语句没有对等待队列进行判断，因为当等待队列中有数据时节点不会进入睡眠模式
                     if (SleepCounter >= Periods.SleepPeriod)
                     {
                         ActiveCounter = 0;
