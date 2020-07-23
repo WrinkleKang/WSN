@@ -20,6 +20,7 @@ using MiniSDN.ui.conts;
 using MiniSDN.Charts.Intilization;
 using MiniSDN.ControlPlane.NOS.Visualizating;
 using System.Threading;
+using System.Windows.Input;
 
 namespace MiniSDN.ui
 {
@@ -1102,6 +1103,49 @@ namespace MiniSDN.ui
                 con.Show();
                 top_menu.IsEnabled = false;
             }
+        }
+
+        public double StreenTimes = 1;
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double sctim = StreenTimes / 10;
+            double x = _slider.Value;
+            if (x <= sctim)
+            {
+                x = sctim;
+                Settings.Default.SliderValue = x;
+                Settings.Default.Save();
+            }
+            var scaler = Canvas_SensingFeild.LayoutTransform as ScaleTransform;
+            Canvas_SensingFeild.LayoutTransform = new ScaleTransform(x, x, SystemParameters.FullPrimaryScreenWidth / 2, SystemParameters.FullPrimaryScreenHeight / 2);
+            lbl_zome_percentage.Text = (x * 100).ToString() + "%";
+
+
+            Settings.Default.SliderValue = x;
+            Settings.Default.Save();
+
+
+        }
+
+        private void Canvas_SensingFeild_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+
+            if (Keyboard.Modifiers != ModifierKeys.Control)
+                return;
+            if (e.Delta > 0)
+            {
+                _slider.Value += 0.1;
+            }
+            else if (e.Delta < 0)
+            {
+                _slider.Value -= 0.1;
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _slider.Value = Settings.Default.SliderValue;
+            Settings.Default.IsIntialized = false;
         }
     }
 }

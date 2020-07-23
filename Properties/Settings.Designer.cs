@@ -254,6 +254,25 @@ namespace MiniSDN.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+
+
+        public double SliderValue
+        {
+            get
+            {
+                return ((double)(this["SliderValue"]));
+            }
+            set
+            {
+                this["SliderValue"] = value;
+            }
+        }
+
+
+
+
+
+
         public double BatteryIntialEnergy {
             get {
                 return ((double)(this["BatteryIntialEnergy"]));

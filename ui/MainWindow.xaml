@@ -3,6 +3,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Mini-Flow" 
+        Loaded="Window_Loaded"
         WindowState="Maximized"
         Height="800"
         Width="1200">
@@ -159,9 +160,18 @@
             </DockPanel>
             <StackPanel Orientation="Horizontal">
                 <TabControl SelectionChanged="tab_network_SelectionChanged" Name="tab_network">
-                    <TabItem Header="Network">
+                    <TabItem >
+                        <TabItem.Header>
+                            <StackPanel Height="20" Orientation="Horizontal">
+                                <TextBlock Name="txt_net">Network</TextBlock>
+                                <Label Width="10"></Label>
+                                <Slider  Value="{Binding ElementName=Canvas_SensingFeild, Path=LayoutTransform.ScaleX, Mode=OneWay}" Name="_slider" Maximum="10"  Width="120" ValueChanged="Slider_ValueChanged"></Slider>
+                                <TextBlock Name="lbl_zome_percentage">100%</TextBlock>
+                            </StackPanel>
+                        </TabItem.Header>
                         <StackPanel>
                             <Canvas 
+                                 PreviewMouseWheel="Canvas_SensingFeild_PreviewMouseWheel"
                              VerticalAlignment="Top" 
                              HorizontalAlignment="Left" 
                              Background="Transparent" 
