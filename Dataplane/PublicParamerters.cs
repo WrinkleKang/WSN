@@ -32,7 +32,7 @@ namespace MiniSDN.Dataplane
         public static double Density { get; set; } // average number of neighbores (stander deiviation)
         public static string NetworkName { get; set; }
         public static Sensor SinkNode { get; set; }
-        public static double BatteryIntialEnergy = 0.05;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
+        public static double BatteryIntialEnergy = 0.005;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
         public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
@@ -124,8 +124,8 @@ namespace MiniSDN.Dataplane
         /// </summary>
         public static class Periods
         {
-            public static double ActivePeriod { get { return Settings.Default.ActivePeriod; } } //  the node trun on and check for CheckPeriod seconds.// +1
-            public static double SleepPeriod { get { return Settings.Default.SleepPeriod; } }  // the node trun off and sleep for SleepPeriod seconds.
+            public static double ActivePeriod { get { return Settings.Default.ActivePeriod; } } //  the node trun on and check for CheckPeriod mseconds.// +1
+            public static double SleepPeriod { get { return Settings.Default.SleepPeriod; } }  // the node trun off and sleep for SleepPeriod mseconds.
         }
 
 
@@ -139,7 +139,7 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                return TimeSpan.FromSeconds(Settings.Default.QueueTime);
+                return TimeSpan.FromMilliseconds(Settings.Default.QueueTime);
             }
         }
 

@@ -66,16 +66,16 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="ActivePeriod" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="SleepPeriod" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="QueueTime" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">2000</Value>
     </Setting>
     <Setting Name="UpdateLossPercentage" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="QueueTime" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -911,7 +911,7 @@ namespace MiniSDN.Dataplane
         {
 
 
-            // 发送节点先醒来，如果已醒来，则醒计时器重置
+            // 发送节点模式由睡--醒，若原本已醒，则状态不变。
             SwichToActive();
 
             //发送preamble包消耗的能量，原始版本未实现

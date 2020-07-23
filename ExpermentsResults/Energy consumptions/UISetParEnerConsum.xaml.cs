@@ -33,20 +33,8 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             {
 
 
-                com_queueTime.Items.Add("0.1");
-                com_queueTime.Items.Add("0.2");
-                com_queueTime.Items.Add("0.3");
-                com_queueTime.Items.Add("0.4");
-                com_queueTime.Items.Add("0.5");
-                com_queueTime.Items.Add("0.6");
-                com_queueTime.Items.Add("0.7");
-                com_queueTime.Items.Add("0.8");
-                com_queueTime.Items.Add("0.9");
-                com_queueTime.Items.Add("1");
-                com_queueTime.Items.Add("2");
-                com_queueTime.Items.Add("3");
-                com_queueTime.Items.Add("4");
-                com_queueTime.Items.Add("5");
+               
+            
 
                 //每损失多少能量广播一次消息
                 for (int i = 5; i <= 50; i++)
@@ -76,7 +64,8 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                     com_Dir.Items.Add(j);
                 }
 
-                com_queueTime.Text = Settings.Default.QueueTime.ToString();
+                
+
                 com_H.Text = Settings.Default.ExpoHCnt.ToString();
                 com_L.Text = Settings.Default.ExpoLCnt.ToString();
                 com_R.Text = Settings.Default.ExpoRCnt.ToString();
@@ -125,19 +114,41 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
 
             //可供选择的醒睡周期值
-            for(int i=1;i<=5;i++)
+
+            for (int i = 1; i <= 9; i++)
             {
-                comb_active.Items.Add(i);
-                comb_sleep.Items.Add(i);
+                int j = i * 100;
+                comb_active.Items.Add(j);
+                comb_sleep.Items.Add(j);
+            }
+
+            for (int i=1;i<=5;i++)
+            {
+                int j = i * 1000;
+                comb_active.Items.Add(j);
+                comb_sleep.Items.Add(j);
             }
 
 
 
             //设置醒睡周期，该值将修改默认值，即重新设定默认值
-            comb_active.Text = "1";
-            comb_sleep.Text = "2";
+            comb_active.Text = "1000";
+            comb_sleep.Text = "2000";
 
-           
+
+
+            //设置等待队列计时器周期
+            comb_queueTime.Text = "1000";
+            for (int i = 1; i <= 10; i++)
+            {
+                int j = i * 100;
+                comb_queueTime.Items.Add(j);
+                
+            }
+
+
+
+
 
             int conrange = 5;
             for (int i = 0; i <= conrange; i++)
@@ -173,11 +184,18 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
 
             //预设某些默认参数的初始值，其来源是窗口中各部件的值
+            //等待队列计时器值以及醒睡周期的值
+            Settings.Default.QueueTime = Convert.ToInt16(comb_queueTime.Text);
+            Settings.Default.ActivePeriod = Convert.ToInt16(comb_active.Text);
+            Settings.Default.SleepPeriod = Convert.ToInt16(comb_sleep.Text);
+
+
+
             Settings.Default.UpdateLossPercentage = Convert.ToInt16(com_UpdateLossPercentage.Text);
             Settings.Default.DrawPacketsLines = Convert.ToBoolean(chk_drawrouts.IsChecked);
             Settings.Default.KeepLogs= Convert.ToBoolean(chk_save_logs.IsChecked);
             Settings.Default.StopeWhenFirstNodeDeid = Convert.ToBoolean(chk_stope_when_first_node_deis.IsChecked);
-            Settings.Default.QueueTime = Convert.ToInt16(com_queueTime.Text);
+           
 
             Settings.Default.ExpoRCnt = Convert.ToDouble(com_R.Text);
             Settings.Default.ExpoLCnt = Convert.ToDouble(com_L.Text);
@@ -240,6 +258,18 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             int va = Convert.ToInt16(objval);
             Settings.Default.SleepPeriod = va;
         }
+        //修改默认等待队列周期
+        private void comb_queueTime_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            object objval = comb_queueTime.SelectedItem as object;
+            int va = Convert.ToInt16(objval);
+            Settings.Default.QueueTime = va;
+
+        }
+
+
+
+
 
         private void chk_stope_when_first_node_deis_Checked(object sender, RoutedEventArgs e)
         {
@@ -292,5 +322,8 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         {
             Settings.Default.ShowAnimation = false;
         }
+
+        
+       
     }
 }

@@ -175,7 +175,7 @@
                        
                     </TabItem>
 
-                    <TabItem Name="tab_location" Header="Locations">
+                    <TabItem Name="tab_location" Header="Locations" Margin="18,0,-22,-2">
 
                         <StackPanel Orientation="Vertical">
                             <chartingToolkit:Chart Height="400" Width="600" Background="Transparent" Foreground="Black" BorderBrush="{x:Null}" Margin="1"   HorizontalAlignment="Left"  Title="Network Nodes" VerticalAlignment="Bottom">

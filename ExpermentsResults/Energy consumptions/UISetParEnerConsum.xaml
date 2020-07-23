@@ -14,7 +14,7 @@
             <Label Width="150">Simulation Time</Label>
             <ComboBox Text="480" Width="100" Name="comb_simuTime"></ComboBox>
             <Label>s</Label>
-            <CheckBox Unchecked="chk_stope_when_first_node_deis_Unchecked" Checked="chk_stope_when_first_node_deis_Checked" Name="chk_stope_when_first_node_deis" IsChecked="True" VerticalContentAlignment="Center" >Stop when the first node dies</CheckBox>
+            <CheckBox Unchecked="chk_stope_when_first_node_deis_Unchecked" Checked="chk_stope_when_first_node_deis_Checked" x:Name="chk_stope_when_first_node_deis" IsChecked="True" VerticalContentAlignment="Center" Content="Stop when the first node dies" />
         </StackPanel>
 
         <StackPanel Margin="2" Orientation="Horizontal">
@@ -33,23 +33,23 @@
 
         <StackPanel Margin="2" Orientation="Horizontal">
             <Label Width="150" Content="Active Period"/>
-            <ComboBox Width="100" Name="comb_active" SelectionChanged="comb_active_SelectionChanged"></ComboBox>
-            <Label>s</Label>
+            <ComboBox Width="100" Name="comb_active" SelectionChanged="comb_active_SelectionChanged" IsEditable="True"></ComboBox>
+            <Label>ms</Label>
             <CheckBox Unchecked="chek_show_radar_Unchecked" Checked="chek_show_radar_Checked" x:Name="chek_show_radar" IsChecked="False" VerticalContentAlignment="Center" Content="Show Radar" />
         </StackPanel>
 
         <StackPanel Margin="2" Orientation="Horizontal">
             <Label Width="150" Content="Sleep Period"/>
            
-            <ComboBox Width="100" Name="comb_sleep" SelectionChanged="comb_sleep_SelectionChanged"></ComboBox>
-            <Label>s</Label>
+            <ComboBox Width="100" Name="comb_sleep" SelectionChanged="comb_sleep_SelectionChanged" IsEditable="True"/>
+            <Label>ms</Label>
             <CheckBox Unchecked="chek_animation_Unchecked" Checked="chek_animation_Checked" Name="chek_animation" IsChecked="False" VerticalContentAlignment="Center" >Show Animation</CheckBox>
            
         </StackPanel>
         <StackPanel Margin="2" Orientation="Horizontal">
-            <Label Width="150" Content="Queue Time(s)"/>
-            <ComboBox IsEnabled="False" Width="100" Name="com_queueTime" ></ComboBox>
-            <Label>s</Label>
+            <Label Width="150" Content="Queue Time"/>
+            <ComboBox Width="100" Name="comb_queueTime"  SelectionChanged="comb_queueTime_SelectionChanged" IsEditable="True" Text="1000" />
+            <Label>ms</Label>
         </StackPanel>
             
 

@@ -28,6 +28,9 @@ namespace MiniSDN.Dataplane
         // the timer to swich between the sleep and active states.
         public DispatcherTimer ActiveSleepTimer = new DispatcherTimer();
 
+
+        private int CheckTime = 50;//每50毫秒检测一次醒睡状态
+
        
         private int ActiveCounter = 0;
         private int SleepCounter = 0;
@@ -52,15 +55,16 @@ namespace MiniSDN.Dataplane
                 if (Node.ID != PublicParamerters.SinkNode.ID)//设置非sink节点的醒睡模式
                 {
                     //为了实现异步通信，每个节点开启醒睡模式的时刻不同
-                    double xpasn = 1 + UnformRandomNumberGenerator.GetUniformSleepSec(MacStartUp);
+                    double xpasn =  UnformRandomNumberGenerator.GetUniformSleepSec(MacStartUp);
                     // the swich on timer.
                     SwichOnTimer.Interval = TimeSpan.FromSeconds(xpasn);
                     SwichOnTimer.Start();
                     SwichOnTimer.Tick += ASwichOnTimer_Tick;
                     ActiveCounter = 0;//醒计数器，表示节点处于当前模式的时间
                     // active/sleep timer:定时改变SensorState的值，分别用Active表示醒，Sleep表示睡
-                    ActiveSleepTimer.Interval = TimeSpan.FromSeconds(1);
-                    ActiveSleepTimer.Tick += ActiveSleepTimer_Tick; ;
+                    // ActiveSleepTimer.Interval = TimeSpan.FromSeconds(1);
+                    ActiveSleepTimer.Interval = TimeSpan.FromMilliseconds(CheckTime);
+                    ActiveSleepTimer.Tick += ActiveSleepTimer_Tick; 
                     SleepCounter = 0;//睡计时器
 
                     // intialized:
@@ -77,12 +81,21 @@ namespace MiniSDN.Dataplane
 
         private void ActiveSleepTimer_Tick(object sender, EventArgs e)
         {
+
+            if (Node.ID == 1)
+            {
+
+                Console.WriteLine("当前系统时间是：{0}", DateTime.Now);
+                Console.WriteLine("NID: 1 State: " + Node.CurrentSensorState.ToString() + " ActiveCounter=" + ActiveCounter + " SleepCounter=" + SleepCounter);
+
+
+            }
            // lock (Node)
             {
                 //初始版本显示会出错，已修改，具体修改内容查看Tags：修复MAC
                 if (Node.CurrentSensorState == SensorState.Active)
                 {
-                    ActiveCounter = ActiveCounter + 1;
+                    ActiveCounter = ActiveCounter + CheckTime;
                     /*
                      if (ActiveCounter == 1)
                      {
@@ -93,6 +106,8 @@ namespace MiniSDN.Dataplane
                      else if (ActiveCounter > Periods.ActivePeriod)
                      {
                      */
+
+
 
                     //Periods.ActivePeriod值是ActivePeriod默认值
                     //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
@@ -114,7 +129,7 @@ namespace MiniSDN.Dataplane
                 }
                 else if (Node.CurrentSensorState == SensorState.Sleep)
                 {
-                    SleepCounter = SleepCounter + 1;
+                    SleepCounter = SleepCounter + CheckTime;
                     /*
                    if (SleepCounter == 1)
                    {
@@ -129,7 +144,7 @@ namespace MiniSDN.Dataplane
                     //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
 
 
-                    //该if语句没有对等待队列进行判断，因为当等待队列中有数据时节点不会进入睡眠模式
+                    
                     if (SleepCounter >= Periods.SleepPeriod)
                     {
                         ActiveCounter = 0;
@@ -145,7 +160,8 @@ namespace MiniSDN.Dataplane
             //: Test. 
             if(Node.ID==1)
             {
-                Console.WriteLine("NID: 61 State: " + Node.CurrentSensorState.ToString() + " ActiveCounter=" + ActiveCounter + " SleepCounter=" + SleepCounter);
+            Console.WriteLine("当前系统时间是：{0}",DateTime.Now);   
+            Console.WriteLine("NID: 61 State: " + Node.CurrentSensorState.ToString() + " ActiveCounter=" + ActiveCounter + " SleepCounter=" + SleepCounter);
             }*/
 
         }
@@ -163,11 +179,11 @@ namespace MiniSDN.Dataplane
                     Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
                     Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send);
                 }
-                else //active--active
+                else //active--active 状态不变
                 {
-                    // restart the active timer.
                     
-                    ActiveCounter = 0;
+                    
+                   // ActiveCounter = 0;
                 }
             }
         }
@@ -188,9 +204,9 @@ namespace MiniSDN.Dataplane
                         Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
                         Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send); ;
                     }
-                    else//sleep--sleep
+                    else//sleep--sleep 若原本是睡眠状态，则状态不变。
                     {
-                        SleepCounter = 0;
+                        //SleepCounter = 0;
                     }
 
                 }
