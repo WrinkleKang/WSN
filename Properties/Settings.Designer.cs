@@ -255,6 +255,22 @@ namespace MiniSDN.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
 
+        public double BatteryIntialEnergy {
+            get {
+                return ((double)(this["BatteryIntialEnergy"]));
+            }
+            set {
+                this["BatteryIntialEnergy"] = value;
+            }
+        }
+
+
+
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+
 
         public double SliderValue
         {
@@ -270,18 +286,6 @@ namespace MiniSDN.Properties {
 
 
 
-
-
-
-        public double BatteryIntialEnergy {
-            get {
-                return ((double)(this["BatteryIntialEnergy"]));
-            }
-            set {
-                this["BatteryIntialEnergy"] = value;
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
