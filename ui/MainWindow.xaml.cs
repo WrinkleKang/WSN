@@ -112,6 +112,7 @@ namespace MiniSDN.ui
                 {
                     //随机选择一个节点，该点将执行生成数据包的函数
                     myNetWork[index].GenerateDataPacket();
+                   
                 }
             }
         }

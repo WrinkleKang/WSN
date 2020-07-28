@@ -55,6 +55,9 @@ namespace MiniSDN.Dataplane
         public Queue<Packet> WaitingPacketsQueue = new Queue<Packet>(); // packets queue.
         public List<BatRange> BatRangesList = new List<Energy.BatRange>();
 
+
+        public bool TransmitState = false; //标记位，表示是否处于传输模式，1表示正在传输数据包 0表示不在传输数据包
+
         /// <summary>
         /// CONFROM FROM NANO NO JOUL
         /// </summary>
@@ -400,6 +403,14 @@ namespace MiniSDN.Dataplane
             Mac.SwichToSleep();
         }
 
+        public void HavePactketToSend()
+        {
+
+
+
+        }
+
+
        
         public Sensor(int nodeID)
         {
@@ -521,11 +532,17 @@ namespace MiniSDN.Dataplane
                 packet.Destination = PublicParamerters.SinkNode;
                 IdentifySourceNode(this);
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+
+
+
+                //将数据包加入到选中节点的等待队列中然后唤醒该节点。
+
+                WaitingPacketsQueue.Enqueue(packet);
+                this.SwichToActive();
+
                 
-                
-                
-                //:准备发送数据包给下一跳节点
-                this.SendPacekt(packet);
+                 //:准备发送数据包给下一跳节点
+                 this.SendPacekt(packet);
               
                 
 
@@ -911,8 +928,8 @@ namespace MiniSDN.Dataplane
         {
 
 
-            // 发送节点模式由睡--醒，若原本已醒，则状态不变。
-            SwichToActive();
+            
+            
 
             //发送preamble包消耗的能量，原始版本未实现
             Sendpreamble(this);
@@ -958,7 +975,7 @@ namespace MiniSDN.Dataplane
 
 
 
-                        Reciver.SwichToActive();//接收节点进入醒模式，此处应理解为醒计数器重置
+                       
                         Reciver.ReceivePacket(packt);
 
 

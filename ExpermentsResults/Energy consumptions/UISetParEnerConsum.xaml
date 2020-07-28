@@ -48,7 +48,7 @@
         </StackPanel>
         <StackPanel Margin="2" Orientation="Horizontal">
             <Label Width="150" Content="Queue Time"/>
-            <ComboBox Width="100" Name="comb_queueTime"  SelectionChanged="comb_queueTime_SelectionChanged" IsEditable="True" Text="1000" />
+            <ComboBox Width="100" Name="comb_queueTime"  SelectionChanged="comb_queueTime_SelectionChanged" IsEditable="True" />
             <Label>ms</Label>
         </StackPanel>
             
