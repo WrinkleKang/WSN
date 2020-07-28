@@ -32,7 +32,7 @@ namespace MiniSDN.Dataplane
         public static double Density { get; set; } // average number of neighbores (stander deiviation)
         public static string NetworkName { get; set; }
         public static Sensor SinkNode { get; set; }
-        public static double BatteryIntialEnergy = 0.005;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
+        public static double BatteryIntialEnergy = 0.5;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
         public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
@@ -73,12 +73,16 @@ namespace MiniSDN.Dataplane
             get; set;
         }
 
-        public static long InQueuePackets
+        public static long InAllQueuePackets//所有等待队列中的等待发送的数据包总和
         {
+            /* 
             get
             {
                 return NumberofGeneratedPackets - NumberofDeliveredPacket - NumberofDropedPacket;
             }
+            */
+            get; set;
+
         }
 
         public static double DeliveredRatio

@@ -1,4 +1,5 @@
 ﻿using MiniSDN.Intilization;
+
 namespace MiniSDN.Dataplane.NOS
 {
     public enum PacketType { Beacon, Preamble, ACK, Data, Control }
@@ -17,6 +18,11 @@ namespace MiniSDN.Dataplane.NOS
         public double Delay { get; set; }
         public double UsedEnergy_Joule { get; set; }
         public int WaitingTimes { get; set; }
+
+        public int ActiveCount = 0;  //活跃周期数，当数据包在节点活跃周期数中未发送成功时，该值+1，当值达到某阈值时，丢弃
+
+
+
 
         public double EuclideanDistance
         {

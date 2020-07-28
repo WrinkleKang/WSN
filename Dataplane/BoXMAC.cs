@@ -5,6 +5,8 @@ using System.Windows.Threading;
 using static MiniSDN.Dataplane.PublicParamerters;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using MiniSDN.Dataplane.NOS;
+using MiniSDN.Properties;
 
 namespace MiniSDN.Dataplane
 {
@@ -33,12 +35,12 @@ namespace MiniSDN.Dataplane
         public DispatcherTimer QueueTimer = new DispatcherTimer();
 
 
-        private int CheckActiveSleepTime = 50;//检测醒睡状态的时间间隔，单位：ms
-        private int CheckQueueTime = 10;      //检测等待队列的时间间隔，单位：ms
+        private double CheckActiveSleepTime = Settings.Default.ActivePeriod; //检测醒睡状态的时间间隔，单位：ms
+        private double CheckQueueTime =Settings.Default.ActivePeriod/10;      //检测等待队列的时间间隔，单位：ms
 
 
-        private int ActiveCounter = 0;
-        private int SleepCounter = 0;
+        private double ActiveCounter = 0;
+        private double SleepCounter = 0;
 
         protected override Geometry DefiningGeometry
         {
@@ -68,6 +70,9 @@ namespace MiniSDN.Dataplane
 
                     SleepCounter = 0;  //睡计时器
                     ActiveCounter = 0; //醒计数器，表示节点处于当前模式的时间
+
+
+
                     // active/sleep timer:定时改变SensorState的值，分别用Active表示醒，Sleep表示睡
                     // ActiveSleepTimer.Interval = TimeSpan.FromSeconds(1);
                     ActiveSleepTimer.Interval = TimeSpan.FromMilliseconds(CheckActiveSleepTime);
@@ -96,6 +101,7 @@ namespace MiniSDN.Dataplane
         private void ActiveSleepTimer_Tick(object sender, EventArgs e)
         {
 
+            //Console.WriteLine(Node.ID+"当前系统时间是：{0}", DateTime.Now);
             /*
             if (Node.ID == 1)
             {
@@ -134,12 +140,12 @@ namespace MiniSDN.Dataplane
                 if (ActiveCounter >= Periods.ActivePeriod)
                 {
 
-                    while (!Node.TransmitState)
-                    {
+                    while (Node.TransmitState) ;//此时正在传输数据，
+                    
 
                         SwichToSleep();
 
-                    }
+                    
 
                     /*
 
@@ -207,6 +213,8 @@ namespace MiniSDN.Dataplane
                     Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Active, DispatcherPriority.Send);
                     Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
                     Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send);
+                    Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor;//改变节点颜色表示不同模式
+                    Dispatcher.Invoke(x);
                 }
                 else//active--active 若原本是醒状态，则状态不变
                 {
@@ -230,23 +238,49 @@ namespace MiniSDN.Dataplane
         {
             if (Node.ID != PublicParamerters.SinkNode.ID)
             {
-                //当等待队列中没有数据包要发送时才会进入睡眠模式,否则醒睡模式不变
-                if (Node.WaitingPacketsQueue.Count == 0)
-                {
+
                     if (Node.CurrentSensorState == SensorState.Active)//active--sleep
                     {
                         Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Sleep, DispatcherPriority.Send);
                         Dispatcher.Invoke(() => SleepCounter = 0, DispatcherPriority.Send);
-                        Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send); ;
+                        Dispatcher.Invoke(() => ActiveCounter = 0, DispatcherPriority.Send);
+                        Action x = () => Node.Ellipse_MAC.Fill = NodeStateColoring.SleepColor;
+                        Dispatcher.Invoke(x);
                     }
                     else//sleep--sleep 若原本是睡眠状态，则状态不变。
                     {
                         //SleepCounter = 0;
                     }
 
-                }
+                
 
             }
+            //睡之前如果等待队列中有数据，说明该次醒周期时间内该数据包未发送成功，将其发送周期数+1，
+            //若其发送周期数过多，则将其丢弃。
+
+            if (Node.NewWaitingPacketsQueue.Count > 1)
+            {
+                Packet toppacket = Node.NewWaitingPacketsQueue.Peek();
+
+                toppacket.ActiveCount += 1;
+
+                if (toppacket.ActiveCount >= 7)//若某数据包经历了7次醒周期都没有发送成功，则丢弃
+                {
+                    Node.NewWaitingPacketsQueue.Dequeue();
+                    PublicParamerters.NumberofDropedPacket += 1;
+                    PublicParamerters.InAllQueuePackets -= 1;
+                    toppacket.isDelivered = false;
+                    PublicParamerters.FinishedRoutedPackets.Add(toppacket);
+                    Console.WriteLine("PID:" + toppacket.PID + " has been droped.");
+                    //  MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+                    MainWindow.MainWindowUpdataMessage();
+
+                }
+ 
+            }
+                
+
+
 
             //进入睡眠模式，停止检测等待队列，等待下次醒来
             QueueTimer.Stop();
@@ -261,6 +295,11 @@ namespace MiniSDN.Dataplane
         public void ASwichOnTimer_Tick(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() => ActiveSleepTimer.Start(), DispatcherPriority.Send);
+
+            
+          
+
+
             Dispatcher.Invoke(() => Node.CurrentSensorState = SensorState.Active, DispatcherPriority.Send);
             Dispatcher.Invoke(() => Node.Ellipse_MAC.Fill = NodeStateColoring.ActiveColor, DispatcherPriority.Send);
             Dispatcher.Invoke(() => SwichOnTimer.Interval = TimeSpan.FromSeconds(0), DispatcherPriority.Send);
@@ -271,7 +310,7 @@ namespace MiniSDN.Dataplane
         private void QueueTimer_Tick(object sender, EventArgs e)
         {
             //节点有数据要发送
-            if (Node.WaitingPacketsQueue.Count > 0)
+            if (Node.NewWaitingPacketsQueue.Count > 0)
             {
                 //停止检测，等处理完数据包再检测或睡觉
                 QueueTimer.Stop();

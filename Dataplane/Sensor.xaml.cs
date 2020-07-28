@@ -17,6 +17,7 @@ using MiniSDN.Forwarding;
 using MiniSDN.Dataplane.PacketRouter;
 using MiniSDN.Dataplane.NOS;
 
+
 namespace MiniSDN.Dataplane
 {
     public enum SensorState { intalized, Active, Sleep } // defualt is not used. i 
@@ -53,10 +54,16 @@ namespace MiniSDN.Dataplane
         private DispatcherTimer SendPacketTimer = new DispatcherTimer();// 
         private DispatcherTimer QueuTimer = new DispatcherTimer();// to check the packets in the queue right now.
         public Queue<Packet> WaitingPacketsQueue = new Queue<Packet>(); // packets queue.
+
+        public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
+
+
         public List<BatRange> BatRangesList = new List<Energy.BatRange>();
 
 
         public bool TransmitState = false; //标记位，表示是否处于传输模式，1表示正在传输数据包 0表示不在传输数据包
+       
+
 
         /// <summary>
         /// CONFROM FROM NANO NO JOUL
@@ -71,6 +78,35 @@ namespace MiniSDN.Dataplane
             double re = UsedEnergy_Nanojoule * oNE_DIVIDE_e9;
             return re;
         }
+
+
+
+
+      /*  public void MainWindowUpdataMessage()
+        {
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
+
+            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+
+
+
+
+        }
+        */
 
         /// <summary>
         /// in JOULE
@@ -188,8 +224,24 @@ namespace MiniSDN.Dataplane
             StartMove = false;
         }
 
+
+
+
+
+        //每当节点能量发生变化时都会执行此函数
         private void Prog_batteryCapacityNotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+
+            if (ID == 20 || ID == 71 || ID == 21 || ID == 61)
+            {
+                if (ID == 20)
+                {
+
+                }
+
+
+
+            }
             
             double val = ResidualEnergyPercentage;
             if (val <= 0)
@@ -212,7 +264,7 @@ namespace MiniSDN.Dataplane
 
                 if (Settings.Default.StopeWhenFirstNodeDeid)
                 {
-                    MainWindow.TimerCounter.Stop();
+                  //  MainWindow.TimerCounter.Stop();
                     MainWindow.RandomSelectSourceNodesTimer.Stop();
                     MainWindow.stopSimlationWhen = PublicParamerters.SimulationTime;
                     MainWindow.top_menu.IsEnabled = true;
@@ -222,19 +274,22 @@ namespace MiniSDN.Dataplane
                 Mac.ActiveSleepTimer.Stop();
                 if (this.ResidualEnergy <= 0)
                 {
-                    while (this.WaitingPacketsQueue.Count > 0)
+                    while (this.NewWaitingPacketsQueue.Count > 0)
                     {
                         PublicParamerters.NumberofDropedPacket += 1;
-                        Packet pack = WaitingPacketsQueue.Dequeue();
+                        Packet pack = NewWaitingPacketsQueue.Dequeue();
+                        PublicParamerters.InAllQueuePackets -= 1;
                         pack.isDelivered = false;
                         PublicParamerters.FinishedRoutedPackets.Add(pack);
                         Console.WriteLine("PID:" + pack.PID + " has been droped.");
-                        MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+                        //MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+                        MainWindow.MainWindowUpdataMessage();
 
+                        
                     }
-                    this.QueuTimer.Stop();
+                    
                     if (Settings.Default.ShowRadar) Myradar.StopRadio();
-                    QueuTimer.Stop();
+                    
                     Console.WriteLine("NID:" + this.ID + ". Queu Timer is stoped.");
                     MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Fill = Brushes.Transparent);
                     MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Visibility = Visibility.Hidden);
@@ -405,6 +460,9 @@ namespace MiniSDN.Dataplane
 
         public void HavePactketToSend()
         {
+            Packet packet = NewWaitingPacketsQueue.Peek();//复制队头数据包，等发送成功后再将其删除。
+
+            this.SendPacekt(packet);//原始版本的发包函数，便于计算方便
 
 
 
@@ -521,6 +579,7 @@ namespace MiniSDN.Dataplane
                 
                 PublicParamerters.NumberofGeneratedPackets += 1;   //数据包总数+1
 
+
                 //打包数据包的相关信息，包括起始ID，生存时间，源节点，数据包长度，数据包类型，数据包ID，以及目的节点等
                 Packet packet = new Packet();                      
                 packet.Path = "" + this.ID;
@@ -531,23 +590,30 @@ namespace MiniSDN.Dataplane
                 packet.PID = PublicParamerters.NumberofGeneratedPackets;
                 packet.Destination = PublicParamerters.SinkNode;
                 IdentifySourceNode(this);
-                MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
-
-
+                // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+                
+                
+                //更新主窗口右侧信息
+                MainWindow.MainWindowUpdataMessage();
 
                 //将数据包加入到选中节点的等待队列中然后唤醒该节点。
 
-                WaitingPacketsQueue.Enqueue(packet);
+                NewWaitingPacketsQueue.Enqueue(packet);
+
+                PublicParamerters.InAllQueuePackets += 1;//系统生成的数据包在节点的等待队列中
+
                 this.SwichToActive();
 
                 
                  //:准备发送数据包给下一跳节点
-                 this.SendPacekt(packet);
+                 //this.SendPacekt(packet);
               
                 
 
             }
         }
+
+       
 
         public void GenerateMultipleDataPackets(int numOfPackets)
         {
@@ -583,8 +649,10 @@ namespace MiniSDN.Dataplane
                 packet.Destination = endNode;
                 IdentifyEndNode(endNode);
 
-                MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
-                MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+                // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
+                // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+                MainWindow.MainWindowUpdataMessage();
+
                 this.SendPacekt(packet);
 
                // Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -744,8 +812,8 @@ namespace MiniSDN.Dataplane
                 toppacket.isDelivered = false;
                 PublicParamerters.FinishedRoutedPackets.Add(toppacket);
                 Console.WriteLine("PID:" + toppacket.PID + " has been droped.");
-                MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
-
+                //  MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+                MainWindow.MainWindowUpdataMessage();
             }
             //等待队列无数据包时，停止定时器
             if (WaitingPacketsQueue.Count == 0)
@@ -757,7 +825,8 @@ namespace MiniSDN.Dataplane
                 MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Fill = Brushes.Transparent);
                 MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Visibility = Visibility.Hidden);
             }
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
+            // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
+            MainWindow.MainWindowUpdataMessage();
         }
 
 
@@ -770,11 +839,12 @@ namespace MiniSDN.Dataplane
             double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.PreamblePacketLength); // preamble packet length.
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
             reciverNode.ResidualEnergy = reciverNode.ResidualEnergy - UsedEnergy_joule;
-            pacekt.UsedEnergy_Joule += UsedEnergy_joule;
+            // pacekt.UsedEnergy_Joule += UsedEnergy_joule;
             PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;
             PublicParamerters.TotalWastedEnergyJoule += UsedEnergy_joule;
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+            // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
+            // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+            MainWindow.MainWindowUpdataMessage();
         }
 
 
@@ -926,21 +996,12 @@ namespace MiniSDN.Dataplane
         /// <param name="packt"></param>
         public void SendPacekt(Packet packt)
         {
-
-
-            
-            
-
             //发送preamble包消耗的能量，原始版本未实现
             Sendpreamble(this);
-
-
-
 
             //发送包的类型是数据包
             if (packt.PacketType == PacketType.Data)
             {
-
                 lock (MiniFlowTable)
                 {
                     //按照Priority值大小排序邻居节点，前n个节点标记为Forward，剩余m-n个节点标记为Drop，
@@ -955,42 +1016,49 @@ namespace MiniSDN.Dataplane
 
                     if (flowEntry != null)//有合适的转发节点
                     {
+                        //只有候选节点集合中的节点才有可能成为转发节点
+                        //当候选节点醒着且不在传输数据包时才能接收preamble然后回复ACK
                         Sensor Reciver = flowEntry.NeighborEntry.NeiNode;
                         
-
-
-
-                        //发送数据包相关的计算，包括能量消耗以及延时
+                        //源节点发送数据包相关的计算，包括能量消耗以及延时
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
 
 
-                        Console.WriteLine("sucess:" + ID + "->" + Reciver.ID + ". PID: " + packt.PID);
-                        flowEntry.UpLinkStatistics += 1;
-
-
-
+                        //Console.WriteLine("sucess:" + ID + "->" + Reciver.ID + ". PID: " + packt.PID);
+                        //flowEntry.UpLinkStatistics += 1;
 
                         // 发送节点进入睡眠模式
-                      //  SwichToSleep();
+                        //  SwichToSleep();
+                        //先将源节点队头数据包删除，然后将数据包加入接收节点的等待队列中，接收节点必然处于醒状态
+
+
+                        //该if-else语句为防止出现空队列异常
+                        if (NewWaitingPacketsQueue.Count >= 1) { this.NewWaitingPacketsQueue.Dequeue(); }
+                        else {
 
 
 
-                       
+                        }
+                        
+                        Reciver.NewWaitingPacketsQueue.Enqueue(packt);
+
+
+                        //接收数据包的相关计算和处理
                         Reciver.ReceivePacket(packt);
 
 
 
                     }
-                    else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态，数据包加入等待列表
+                    else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态,等待下次发送premble包
                     {
                         // no available node right now.
                         // add the packt to the wait list.
                         Console.WriteLine("NID:" + ID + " Faild to sent PID:" + packt.PID);
-                        Console.WriteLine("NID:" + ID + ". Queu Timer is started.");
+                       // Console.WriteLine("NID:" + ID + ". Queu Timer is started.");
 
-                        //加入等待队列，启动定时器，定时发送等待队列中的数据包
-                        WaitingPacketsQueue.Enqueue(packt);
-                        QueuTimer.Start();
+                        
+                       // WaitingPacketsQueue.Enqueue(packt);
+                        //QueuTimer.Start();
                         //  SwichToSleep();// this.
 
 
@@ -1059,6 +1127,17 @@ namespace MiniSDN.Dataplane
                     //能量消耗模型下的传输能量计算
                     double UsedEnergy_Nanojoule = EnergyModel.Transmit(packt.PacketLength, Distance_M);
                     double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
+
+
+                    /*
+                    //测试50M通信距离时发送一个数据包需要的能量 0.0000768J
+                    double MAX_UsedEnergy_Nanojoule = EnergyModel.Transmit(packt.PacketLength, 50);
+                    double MAX_UsedEnergy_joule = ConvertToJoule(MAX_UsedEnergy_Nanojoule);
+                    //0.005J初始能量能发多少个包  0.005J====65
+                    double packetnumber = PublicParamerters.BatteryIntialEnergy / MAX_UsedEnergy_joule;
+                   // 发送100个包需要的能量 0.0076J
+                    double packet_100 = MAX_UsedEnergy_joule * 100;
+                    */
 
                     //计算节点剩余能量 
                     ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;
@@ -1144,21 +1223,29 @@ namespace MiniSDN.Dataplane
         public void ReceivePacket(Packet packt)
         {
             packt.Path += ">" + ID;
-            if (packt.Destination.ID == ID)
+            if (packt.Destination.ID == ID)//数据包抵达目的节点，即sink节点
             {
                 packt.isDelivered = true;
                 PublicParamerters.NumberofDeliveredPacket += 1;
+                PublicParamerters.InAllQueuePackets -= 1;//所有在队列中的数据包总数减少1
                 PublicParamerters.FinishedRoutedPackets.Add(packt);// should we add it to the packet which should be store in the sink?
                 Console.WriteLine("PID:" + packt.PID + " has been delivered.");
 
 
-              
+                //接收数据包消耗的能量
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
+                /*
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
                 MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
+                */
+
+
+                //更新主窗口右侧相关信息
+                MainWindow.MainWindowUpdataMessage();
+
                 if (packt.PacketType == PacketType.Control)
                     UnIdentifyEndNode(packt.Destination);
                 if (packt.PacketType == PacketType.Data)
@@ -1167,26 +1254,30 @@ namespace MiniSDN.Dataplane
             }
             else
             {
-                //原始版本中非sink节点成功接收数据包时并未计算能量消耗，即该else语句内应调用ComputeOverhead，现已实现。
+                //非sink节点接收数据包，先计算接收此数据包的能量消耗，接收之后再决定是丢弃还是转发
+                //原始版本中非sink节点成功接收数据包时并未计算能量消耗，即该else语句内应调用ComputeOverhead，现已实现。  
                 
-                
-                
-                //先计算接收此数据包的能量消耗，接收之后再决定是丢弃还是转发
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 if (packt.Hops > packt.TimeToLive)
                 {
                     // drop the paket.
-                    PublicParamerters.NumberofDropedPacket += 1;
+                    NewWaitingPacketsQueue.Dequeue();//出队表示丢弃
+
+                    PublicParamerters.NumberofDropedPacket += 1;//丢弃包总数增加1
+                    PublicParamerters.InAllQueuePackets -= 1;   //总队列数据包总数减少1
                     packt.isDelivered = false;
                     PublicParamerters.FinishedRoutedPackets.Add(packt);
                     Console.WriteLine("PID:" + packt.PID + " has been droped.");
-                    MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+
+                    // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+                    MainWindow.MainWindowUpdataMessage();
                 }
-                else
+                else //等待接收节点等待队列计时器检测等待队列中的数据包然后转发
                 {
                     // forward the packet.
-                    this.SendPacekt(packt);
+                   // this.SendPacekt(packt);
+                  
                 }
             }
         }

@@ -264,6 +264,9 @@
                                             <Label>Delivered Ratio(%):</Label>
                                             <Label Name="lbl_sucess_ratio">0</Label>
                                         </StackPanel>
+                                        
+                                        
+                                        
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Redundant Transmissions:</Label>

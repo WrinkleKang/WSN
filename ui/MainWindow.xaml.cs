@@ -92,6 +92,7 @@ namespace MiniSDN.ui
                 Dispatcher.Invoke(() => PublicParamerters.SimulationTime += 1, DispatcherPriority.Send);
                 //每秒都会对主窗口最左上方的文字进行更新，显示实验进行的时间，单位：秒
                 Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString(), DispatcherPriority.Send);
+                MainWindowUpdataMessage();
             }
             else
             {
@@ -111,7 +112,9 @@ namespace MiniSDN.ui
                 if (index != PublicParamerters.SinkNode.ID)
                 {
                     //随机选择一个节点，该点将执行生成数据包的函数
+                    
                     myNetWork[index].GenerateDataPacket();
+
                    
                 }
             }
@@ -199,7 +202,7 @@ namespace MiniSDN.ui
 
             TimerCounter.Interval=TimeSpan.FromSeconds(1); // START count the running time.
             TimerCounter.Start(); // START count the running time.
-            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口最左上方的显示信息
+            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口的显示信息
 
             //:主窗口右侧各参数显示
             prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
@@ -275,6 +278,30 @@ namespace MiniSDN.ui
             PublicParamerters.SimulationTime = 0;
         }
 
+        public void MainWindowUpdataMessage()
+        {
+            Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
+
+            Dispatcher.Invoke(() => lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+
+            Dispatcher.Invoke(() => lbl_nymber_inQueu.Content = PublicParamerters.InAllQueuePackets.ToString());
+
+            Dispatcher.Invoke(() => lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
+
+            Dispatcher.Invoke(() => lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
+
+            Dispatcher.Invoke(() => lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+
+            Dispatcher.Invoke(() => lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
+
+            Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
+
+            Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+
+
+
+
+        }
 
 
         private void EngageMacAndRadioProcol()
@@ -304,7 +331,7 @@ namespace MiniSDN.ui
             PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
             DisplaySimulationParameters(rootNodeId, "Random");//在主窗口右侧显示仿真参数
 
-            EngageMacAndRadioProcol();//为节点增加醒睡模式
+            EngageMacAndRadioProcol();//为节点增加醒睡模式和MAC层相关设置
 
             TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);//节点间动画显示相关
 
