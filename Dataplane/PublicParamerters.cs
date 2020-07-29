@@ -21,6 +21,14 @@ namespace MiniSDN.Dataplane
          
 
         public static long NumberofDropedPacket { get; set; } 
+
+        public static long DropedbecauseofCannotSend { get; set; }
+
+        public static long DropedbecauseofTTL { get; set; }
+
+        public static long DropedbecauseofNoEnergy { get; set; }
+
+
         public static long NumberofDeliveredPacket { get; set; } // the number of the pakctes recived in the sink node.
         public static long Rounds { get; set; } // how many rounds.
         public static List<DeadNodesRecord> DeadNodeList = new List<DeadNodesRecord>();
@@ -32,7 +40,7 @@ namespace MiniSDN.Dataplane
         public static double Density { get; set; } // average number of neighbores (stander deiviation)
         public static string NetworkName { get; set; }
         public static Sensor SinkNode { get; set; }
-        public static double BatteryIntialEnergy = 0.5;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
+        public static double BatteryIntialEnergy = 0.05;//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
         public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
@@ -60,7 +68,7 @@ namespace MiniSDN.Dataplane
 
 
 
-        public static double WastedEnergyPercentage { get { return 100 * (TotalWastedEnergyJoule / TotalEnergyConsumptionJoule); } } // idel listening energy percentage  
+        public static double WastedEnergyPercentage { get { return Math.Round(100 * (TotalWastedEnergyJoule / TotalEnergyConsumptionJoule),2); } } // idel listening energy percentage  
 
         public static List<Color> RandomColors { get; set; }
 
@@ -89,14 +97,24 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                return 100 * (Convert.ToDouble(NumberofDeliveredPacket) / Convert.ToDouble(NumberofGeneratedPackets));
+                return Math.Round(100 * (Convert.ToDouble(NumberofDeliveredPacket) / Convert.ToDouble(NumberofGeneratedPackets)), 2);
+
+                /*
+                double ratio = 100 * (Convert.ToDouble(NumberofDeliveredPacket) / Convert.ToDouble(NumberofGeneratedPackets));
+                int i = (int)(ratio * 100);
+                ratio = (double) i / 100;
+                return ratio;
+                */
             }
         }
+
+        
+
         public static double DropedRatio
         {
             get
             {
-                return 100 * (Convert.ToDouble(NumberofDropedPacket) / Convert.ToDouble(NumberofGeneratedPackets));
+                return Math.Round(100 * (Convert.ToDouble(NumberofDropedPacket) / Convert.ToDouble(NumberofGeneratedPackets)), 2);
             }
         }
 

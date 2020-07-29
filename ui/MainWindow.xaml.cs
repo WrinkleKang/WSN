@@ -266,10 +266,14 @@ namespace MiniSDN.ui
 
             lbl_Number_of_Delivered_Packet.Content = "0";
             lbl_Number_of_Droped_Packet.Content = "0";
+            lbl_Droped_because_of_Cannot_Send.Content = "0";
+            lbl_Droped_because_of_TTL.Content = "0";
+            lbl_Droped_because_of_No_Energy.Content = "0";
             lbl_num_of_gen_packets.Content = "0";
             lbl_nymber_inQueu.Content = "0";
             lbl_Redundant_packets.Content = "0";
             lbl_sucess_ratio.Content = "0";
+            lbl_droped_ratio.Content = "0";
             lbl_Wasted_Energy_percentage.Content = "0";
             lbl_update_percentage.Content = "0";
             lbl_number_of_control_packets.Content = "0";
@@ -291,8 +295,22 @@ namespace MiniSDN.ui
             Dispatcher.Invoke(() => lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
 
             Dispatcher.Invoke(() => lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+           
+            //发不出去的而丢弃的数据包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_Cannot_Send.Content = PublicParamerters.DropedbecauseofCannotSend, DispatcherPriority.Send);
+
+            //TTL丢弃的数据包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_TTL.Content = PublicParamerters.DropedbecauseofTTL,DispatcherPriority.Send);
+
+            //节点能量耗尽丢弃的队列中的包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_No_Energy.Content = PublicParamerters.DropedbecauseofNoEnergy,DispatcherPriority.Send);
+
 
             Dispatcher.Invoke(() => lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
+
+            //丢包率
+            Dispatcher.Invoke(() =>lbl_droped_ratio.Content = PublicParamerters.DropedRatio, DispatcherPriority.Send);
+
 
             Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
 
@@ -726,6 +744,9 @@ namespace MiniSDN.ui
             try
             {
                 PublicParamerters.NumberofDropedPacket = 0;
+                PublicParamerters.DropedbecauseofCannotSend = 0;
+                PublicParamerters.DropedbecauseofNoEnergy = 0;
+                PublicParamerters.DropedbecauseofTTL = 0;
                 PublicParamerters.NumberofDeliveredPacket = 0;
                 PublicParamerters.Rounds = 0;
                 PublicParamerters.DeadNodeList.Clear();

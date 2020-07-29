@@ -268,6 +268,7 @@ namespace MiniSDN.Dataplane
                 {
                     Node.NewWaitingPacketsQueue.Dequeue();
                     PublicParamerters.NumberofDropedPacket += 1;
+                    PublicParamerters.DropedbecauseofCannotSend += 1;//发送不出去而丢弃的数据包
                     PublicParamerters.InAllQueuePackets -= 1;
                     toppacket.isDelivered = false;
                     PublicParamerters.FinishedRoutedPackets.Add(toppacket);

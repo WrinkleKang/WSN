@@ -277,6 +277,7 @@ namespace MiniSDN.Dataplane
                     while (this.NewWaitingPacketsQueue.Count > 0)
                     {
                         PublicParamerters.NumberofDropedPacket += 1;
+                        PublicParamerters.DropedbecauseofNoEnergy += 1;//能量耗尽丢弃的数据包
                         Packet pack = NewWaitingPacketsQueue.Dequeue();
                         PublicParamerters.InAllQueuePackets -= 1;
                         pack.isDelivered = false;
@@ -793,7 +794,7 @@ namespace MiniSDN.Dataplane
             }
         }
 
-        // try.
+        // try. 该等待队列在新的发包模式下不使用
         private void DeliveerPacketsInQueuTimer_Tick(object sender, EventArgs e)
         {
            
@@ -1265,6 +1266,7 @@ namespace MiniSDN.Dataplane
                     NewWaitingPacketsQueue.Dequeue();//出队表示丢弃
 
                     PublicParamerters.NumberofDropedPacket += 1;//丢弃包总数增加1
+                    PublicParamerters.DropedbecauseofTTL += 1; //因生存周期而丢弃的数据包
                     PublicParamerters.InAllQueuePackets -= 1;   //总队列数据包总数减少1
                     packt.isDelivered = false;
                     PublicParamerters.FinishedRoutedPackets.Add(packt);

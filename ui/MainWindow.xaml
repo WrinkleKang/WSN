@@ -244,7 +244,6 @@
                                             <Label Name="lbl_nymber_inQueu">0</Label>
                                         </StackPanel>
 
-                                        
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Delivered Packets:</Label>
                                             <Label Name="lbl_Number_of_Delivered_Packet">0</Label>
@@ -259,10 +258,33 @@
                                             <Label>Number of Droped Packets: </Label>
                                             <Label  Name="lbl_Number_of_Droped_Packet">0</Label>
                                         </StackPanel>
+                                        
+                                       
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped because of Cannot Send:</Label>
+                                            <Label Name="lbl_Droped_because_of_Cannot_Send">0</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped because of TTL:</Label>
+                                            <Label Name="lbl_Droped_because_of_TTL">0</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped because of No Energy</Label>
+                                            <Label Name="lbl_Droped_because_of_No_Energy">0</Label>
+                                        </StackPanel>
+
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Delivered Ratio(%):</Label>
                                             <Label Name="lbl_sucess_ratio">0</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped Ratio(%):</Label>
+                                            <Label Name="lbl_droped_ratio">0</Label>
                                         </StackPanel>
                                         
                                         
@@ -274,7 +296,7 @@
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label> Wasted Energy Percentage:</Label>
+                                            <Label> Wasted Energy Percentage(%):</Label>
                                             <Label Name="lbl_Wasted_Energy_percentage">0</Label>
                                         </StackPanel>
                                         
