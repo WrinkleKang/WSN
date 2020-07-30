@@ -205,8 +205,8 @@ namespace MiniSDN.ui
             TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口的显示信息
 
             //:主窗口右侧各参数显示
-            prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
-            prog_total_energy.Value = 0;
+           // prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
+           // prog_total_energy.Value = 0;
 
 
 
@@ -356,18 +356,8 @@ namespace MiniSDN.ui
 
         public void RandomDeplayment(int sinkIndex)
         {
-            //为每个节点重新分配初始能量
-            /*
-            
-            */
-
-            
+            //为每个节点重新分配初始能量 
             SetAllNodesIntialEnergy();
-
-
-
-
-
 
 
             PublicParamerters.NumberofNodes = myNetWork.Count;
@@ -375,7 +365,6 @@ namespace MiniSDN.ui
             PublicParamerters.SinkNode = myNetWork[rootNodeId];//设置sink节点
             NeighborsDiscovery overlappingNodesFinder = new NeighborsDiscovery(myNetWork);
             overlappingNodesFinder.GetOverlappingForAllNodes();//邻居发现，通信距离=感知距离*2，通信距离内的节点为邻居节点
-
             string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
             PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
             lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息，参数为其他算法路由参数
@@ -395,15 +384,8 @@ namespace MiniSDN.ui
             //转发表相关的初始化
             foreach (Sensor sen in myNetWork) { UplinkRouting.ComputeUplinkFlowEnery(sen); }
 
-
-
-
             MyGraph = Graph.ConvertNodeToVertex(myNetWork);
 
-
-            //
-
-           
 
         }
 

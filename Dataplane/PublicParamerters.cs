@@ -45,6 +45,7 @@ namespace MiniSDN.Dataplane
         public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
         public static double PreamblePacketLength = 128; // bit 
+        public static double ACKPacketLength = 128; //bit
         public static double E_elec = 50; // unit: (nJ/bit) //Energy dissipation to run the radio
         public static double Efs = 0.01;// unit( nJ/bit/m^2 ) //Free space model of transmitter amplifier
         public static double Emp = 0.0000013; // unit( nJ/bit/m^4) //Multi-path model of transmitter amplifier
@@ -53,6 +54,14 @@ namespace MiniSDN.Dataplane
         public static double SpeedOfLight = 299792458;//https://en.wikipedia.org/wiki/Speed_of_light // s
         public static string PowersString { get; set; }
         public static double TotalEnergyConsumptionJoule { get; set; } // keep all energy consumption. 
+
+        public static double TotalEnergyConsumptionJoule_Datapacket { get; set; } //数据包消耗的总能量
+        public static double TotalEnergyConsumptionJoule_Preamblepacket { get; set; } //Preamble包消耗的总能量
+        public static double TotalEnergyConsumptionJoule_ACKpacket { get; set; } //ACK包消耗的总能量
+
+
+
+
         public static double TotalWastedEnergyJoule { get; set; } // idel listening energy
         public static double TotalDelayMs { get; set; } // in ms 
         public static List<Packet> FinishedRoutedPackets = new List<Packet>(); // all the packets whatever dliverd or not.

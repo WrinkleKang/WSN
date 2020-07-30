@@ -224,10 +224,11 @@
                         <TabItem Name="tab_Simulation_Parameters" Header="Simulation Parameters">
                             <StackPanel Orientation="Vertical">
                                 
-                                <GroupBox Height="65" Header="Energy">
-                                    <StackPanel Orientation="Vertical">
-                                        <ProgressBar Background="Green" Height="20" Name="prog_total_energy"/>
-                                        <Label Foreground="Green" Name="lbl_total_consumed_energy"></Label>
+                                <GroupBox Height="auto" Header="Energy">
+                                    
+                                    <StackPanel Orientation="Horizontal">
+                                        
+                                        <Label Foreground="Green" Name="lbl_total_consumed_energy">0</Label>
                                     </StackPanel>
                                 </GroupBox>
 
