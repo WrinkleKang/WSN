@@ -284,8 +284,15 @@ namespace MiniSDN.ui
 
         public void MainWindowUpdataMessage()
         {
-            Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
-
+            //Energy 相关显示
+            Dispatcher.Invoke(() => lbl_total_energy.Content = PublicParamerters.TotalEnergy, DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule,4), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_percentage.Content = PublicParamerters.Total_Energy_Consumption_Percentage,DispatcherPriority.Send );
+            Dispatcher.Invoke(() => lbl_total_data_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Data_Packet_Consumption_Percentage,DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_preamble_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Preamble_Packet_Consumption_Percentage,DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_ack_packet_consumed_energy_percentage.Content = PublicParamerters.Total_ACK_Packet_Consumption_Percentage,DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+            //Packet相关显示
             Dispatcher.Invoke(() => lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
 
             Dispatcher.Invoke(() => lbl_nymber_inQueu.Content = PublicParamerters.InAllQueuePackets.ToString());
@@ -314,7 +321,7 @@ namespace MiniSDN.ui
 
             Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
 
-            Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+            
 
 
 

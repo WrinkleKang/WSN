@@ -42,7 +42,7 @@ namespace MiniSDN.Dataplane
         public static Sensor SinkNode { get; set; }
         public static double BatteryIntialEnergy  { get { return Settings.Default.BatteryIntialEnergy; } }//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
-        public static double RoutingDataLength = 1024; // bit
+        public static double RoutingDataLength = 1024*8; // bit
         public static double ControlDataLength = 512; // bit
         public static double PreamblePacketLength = 128; // bit 
         public static double ACKPacketLength = 128; //bit
@@ -54,6 +54,7 @@ namespace MiniSDN.Dataplane
         public static double SpeedOfLight = 299792458;//https://en.wikipedia.org/wiki/Speed_of_light // s
         public static string PowersString { get; set; }
         public static double TotalEnergyConsumptionJoule { get; set; } // keep all energy consumption. 
+        public static double TotalEnergy { get { return (NumberofNodes-1) * BatteryIntialEnergy; } }//不包括sink节点的能量
 
         public static double TotalEnergyConsumptionJoule_Datapacket { get; set; } //数据包消耗的总能量
         public static double TotalEnergyConsumptionJoule_Preamblepacket { get; set; } //Preamble包消耗的总能量
@@ -77,7 +78,7 @@ namespace MiniSDN.Dataplane
 
 
 
-        public static double WastedEnergyPercentage { get { return Math.Round(100 * (TotalWastedEnergyJoule / TotalEnergyConsumptionJoule),2); } } // idel listening energy percentage  
+        public static double WastedEnergyPercentage { get { return Math.Round(100 * (TotalWastedEnergyJoule / TotalEnergyConsumptionJoule),4); } }  
 
         public static List<Color> RandomColors { get; set; }
 
@@ -117,7 +118,45 @@ namespace MiniSDN.Dataplane
             }
         }
 
-        
+        public static double Total_Energy_Consumption_Percentage
+        {
+            get
+            {
+                //Math.Round(x,2)将X保留两位小数
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule) / Convert.ToDouble(TotalEnergy)), 4);
+
+            }
+        }
+
+        public static double Total_Data_Packet_Consumption_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+            }
+
+
+        }
+
+        public static double Total_Preamble_Packet_Consumption_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+            }
+
+        }
+
+        public static double Total_ACK_Packet_Consumption_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+            }
+
+        }
+
+
 
         public static double DropedRatio
         {

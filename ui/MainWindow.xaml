@@ -5,7 +5,7 @@
         Title="Mini-Flow" 
         Loaded="Window_Loaded"
         WindowState="Maximized"
-        Height="800"
+        Height="1200"
         Width="1200">
     <Border>
         <StackPanel>
@@ -158,7 +158,7 @@
 
                 </Menu>
             </DockPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel  Orientation="Horizontal" Width="auto">
                 <TabControl SelectionChanged="tab_network_SelectionChanged" Name="tab_network">
                     <TabItem >
                         <TabItem.Header>
@@ -225,10 +225,43 @@
                             <StackPanel Orientation="Vertical">
                                 
                                 <GroupBox Height="auto" Header="Energy">
-                                    
-                                    <StackPanel Orientation="Horizontal">
-                                        
-                                        <Label Foreground="Green" Name="lbl_total_consumed_energy">0</Label>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy(J):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_energy">0.00</Label>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy Consumption (J):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy">0.00</Label>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy Consumption Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Data Packet Consumption Percentage(%)</Label>
+                                            <Label Foreground="Green" Name="lbl_total_data_packet_consumed_energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Preamble Packet Consumption Percentage(%)</Label>
+                                            <Label Foreground="Green" Name="lbl_total_preamble_packet_consumed_energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total ACK Packet Consumption Percentage(%)</Label>
+                                            <Label Foreground="Green" Name="lbl_total_ack_packet_consumed_energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Wasted Energy Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_Wasted_Energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+
+
                                     </StackPanel>
                                 </GroupBox>
 
@@ -296,10 +329,7 @@
                                             <Label Name="lbl_Redundant_packets">0</Label>
                                         </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label> Wasted Energy Percentage(%):</Label>
-                                            <Label Name="lbl_Wasted_Energy_percentage">0</Label>
-                                        </StackPanel>
+                                       
                                         
                                     </StackPanel>
                                 </GroupBox>
@@ -696,10 +726,8 @@
 
             </StackPanel>
             
-            <StackPanel>
-                
-            </StackPanel>
-            
+          
+          
 
         </StackPanel>
     </Border>
