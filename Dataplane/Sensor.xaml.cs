@@ -889,6 +889,7 @@ namespace MiniSDN.Dataplane
                            
                             if (ret == null)
                             {
+                                //第一个满足要求的即为转发节点
                                 ret = selectedflow;
 
 

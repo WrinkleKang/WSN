@@ -211,7 +211,7 @@ namespace MiniSDN.ui
 
 
             lbl_x_active_time.Content = Settings.Default.ActivePeriod + ",";
-            lbl_x_queue_time.Content = Settings.Default.QueueTime + ".";
+            lbl_x_queue_time.Content = Settings.Default.CheckQueueTime + ".";
             lbl_x_sleep_time.Content = Settings.Default.SleepPeriod + ",";
             lbl_x_start_up_time.Content = Settings.Default.MacStartUp + ",";
             lbl_intial_energy.Content = Settings.Default.BatteryIntialEnergy;
@@ -333,8 +333,43 @@ namespace MiniSDN.ui
         }
 
 
+
+        private void SetAllNodesIntialEnergy()
+        {
+
+            foreach (Sensor sen in myNetWork)
+            {
+
+                if (sen.ID == 0) sen.BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergyForSink; // the value will not be change
+                else
+                    sen.BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergy;
+
+
+                sen.ResidualEnergy = sen.BatteryIntialEnergy;
+                
+                sen.Prog_batteryCapacityNotation.Value = PublicParamerters.BatteryIntialEnergy;
+                sen.Prog_batteryCapacityNotation.Maximum = PublicParamerters.BatteryIntialEnergy;
+
+            }
+
+        }
+
         public void RandomDeplayment(int sinkIndex)
         {
+            //为每个节点重新分配初始能量
+            /*
+            
+            */
+
+            
+            SetAllNodesIntialEnergy();
+
+
+
+
+
+
+
             PublicParamerters.NumberofNodes = myNetWork.Count;
             int rootNodeId = sinkIndex;
             PublicParamerters.SinkNode = myNetWork[rootNodeId];//设置sink节点
@@ -372,6 +407,7 @@ namespace MiniSDN.ui
 
         }
 
+        
 
         private void Coverage_Click(object sender, RoutedEventArgs e)
         {

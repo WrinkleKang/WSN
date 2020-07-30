@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="SingleBorderWindow"
         
-        Title="UISetParEnerConsum" Height="400" Width="520">
+        Title="UISetParEnerConsum" Height="500" Width="520">
     
     <StackPanel Margin="10" Orientation="Vertical">
         <StackPanel Margin="2" Orientation="Horizontal">
@@ -47,10 +47,19 @@
            
         </StackPanel>
         <StackPanel Margin="2" Orientation="Horizontal">
-            <Label Width="150" Content="Queue Time"/>
+            <Label Width="150" Content="Check Queue Time"/>
             <ComboBox Width="100" Name="comb_queueTime"  SelectionChanged="comb_queueTime_SelectionChanged" IsEditable="True" />
             <Label>ms</Label>
         </StackPanel>
+
+        <StackPanel Margin="2" Orientation="Horizontal">
+            <Label Width="150" Content="Battery Intial Energy"/>
+            <ComboBox Width="100" Name="comb_batteryIntialEnergy" SelectionChanged="comb_batteryIntialEnergy_SelectionChanged" IsEditable="True" />
+            <Label>J</Label>
+        </StackPanel>
+        
+        
+        
             
 
         <StackPanel Margin="2" Orientation="Horizontal">

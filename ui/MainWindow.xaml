@@ -220,7 +220,7 @@
                 HorizontalAlignment="Left"
                 Background="White"
                 Name="StackTreeNodes">
-                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts">
+                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts" Width="505">
                         <TabItem Name="tab_Simulation_Parameters" Header="Simulation Parameters">
                             <StackPanel Orientation="Vertical">
                                 
@@ -272,7 +272,7 @@
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Droped because of No Energy</Label>
+                                            <Label>Droped because of No Energy:</Label>
                                             <Label Name="lbl_Droped_because_of_No_Energy">0</Label>
                                         </StackPanel>
 
@@ -326,7 +326,7 @@
                                         <Label Name="lbl_x_active_time">0</Label>
                                         <Label>Sleep Time</Label>
                                         <Label Name="lbl_x_sleep_time">0</Label>
-                                        <Label>Queue Time</Label>
+                                        <Label> Check Queue Time</Label>
                                         <Label Name="lbl_x_queue_time">0</Label>
                                     </WrapPanel>
                                 </GroupBox>

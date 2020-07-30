@@ -262,26 +262,7 @@ namespace MiniSDN.Properties {
                 this["BatteryIntialEnergy"] = value;
             }
         }
-
-    
-
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double SliderValue
-        {
-            get
-            {
-                return ((double)(this["SliderValue"]));
-            }
-            set
-            {
-                this["SliderValue"] = value;
-            }
-        }
-
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
@@ -339,6 +320,30 @@ namespace MiniSDN.Properties {
             }
             set {
                 this["QueueTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double CheckQueueTime {
+            get {
+                return ((double)(this["CheckQueueTime"]));
+            }
+            set {
+                this["CheckQueueTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double SliderValue {
+            get {
+                return ((double)(this["SliderValue"]));
+            }
+            set {
+                this["SliderValue"] = value;
             }
         }
     }

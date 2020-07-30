@@ -77,5 +77,11 @@
     <Setting Name="QueueTime" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
+    <Setting Name="CheckQueueTime" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="SliderValue" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

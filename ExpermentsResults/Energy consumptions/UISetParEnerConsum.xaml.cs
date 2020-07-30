@@ -137,14 +137,32 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
 
 
-            //设置等待队列计时器周期
-            comb_queueTime.Text = "1000";
+            //设置检测等待队列计时器周期
+            comb_queueTime.Text = "50";
             for (int i = 1; i <= 10; i++)
             {
+
+                int j = i * 10;
+                comb_queueTime.Items.Add(j);
+
+            }
+
+
+            for (int i = 1; i <= 10; i++)
+            {
+              
                 int j = i * 100;
                 comb_queueTime.Items.Add(j);
-                
+            
             }
+
+            comb_batteryIntialEnergy.Text = "0.005";
+            comb_batteryIntialEnergy.Items.Add("0.01");
+            comb_batteryIntialEnergy.Items.Add("0.025");
+            comb_batteryIntialEnergy.Items.Add("0.05");
+            comb_batteryIntialEnergy.Items.Add("0.1");
+            comb_batteryIntialEnergy.Items.Add("0.25");
+            comb_batteryIntialEnergy.Items.Add("0.5");
 
 
 
@@ -185,7 +203,8 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
             //预设某些默认参数的初始值，其来源是窗口中各部件的值
             //等待队列计时器值以及醒睡周期的值
-            Settings.Default.QueueTime = Convert.ToInt16(comb_queueTime.Text);
+            Settings.Default.CheckQueueTime = Convert.ToInt16(comb_queueTime.Text);
+            Settings.Default.BatteryIntialEnergy = Convert.ToDouble(comb_batteryIntialEnergy.Text);
             Settings.Default.ActivePeriod = Convert.ToInt16(comb_active.Text);
             Settings.Default.SleepPeriod = Convert.ToInt16(comb_sleep.Text);
 
@@ -263,7 +282,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         {
             object objval = comb_queueTime.SelectedItem as object;
             int va = Convert.ToInt16(objval);
-            Settings.Default.QueueTime = va;
+            Settings.Default.CheckQueueTime = va;
 
         }
 
@@ -323,7 +342,12 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.ShowAnimation = false;
         }
 
-        
-       
+        private void comb_batteryIntialEnergy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            object objval = comb_batteryIntialEnergy.SelectedItem as object;
+           double va = Convert.ToDouble(objval);
+            Settings.Default.BatteryIntialEnergy = va;
+
+        }
     }
 }

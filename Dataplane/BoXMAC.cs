@@ -36,7 +36,7 @@ namespace MiniSDN.Dataplane
 
 
         private double CheckActiveSleepTime = Settings.Default.ActivePeriod; //检测醒睡状态的时间间隔，单位：ms
-        private double CheckQueueTime =Settings.Default.ActivePeriod/10;      //检测等待队列的时间间隔，单位：ms
+        private double CheckQueueTime =Settings.Default.CheckQueueTime;      //检测等待队列的时间间隔，单位：ms
 
 
         private double ActiveCounter = 0;
@@ -314,14 +314,14 @@ namespace MiniSDN.Dataplane
             if (Node.NewWaitingPacketsQueue.Count > 0)
             {
                 //停止检测，等处理完数据包再检测或睡觉
-                QueueTimer.Stop();
+               // QueueTimer.Stop();
 
 
                 Node.HavePactketToSend();
 
 
                 //发送完成后继续检测
-                QueueTimer.Start();
+               // QueueTimer.Start();
 
 
 
