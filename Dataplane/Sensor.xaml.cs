@@ -232,16 +232,7 @@ namespace MiniSDN.Dataplane
         private void Prog_batteryCapacityNotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
-            if (ID == 20 || ID == 71 || ID == 21 || ID == 61)
-            {
-                if (ID == 20)
-                {
-
-                }
-
-
-
-            }
+          
             
             double val = ResidualEnergyPercentage;
             if (val <= 0)
@@ -279,7 +270,7 @@ namespace MiniSDN.Dataplane
                         PublicParamerters.NumberofDropedPacket += 1;
                         PublicParamerters.DropedbecauseofNoEnergy += 1;//能量耗尽丢弃的数据包
                         Packet pack = NewWaitingPacketsQueue.Dequeue();
-                        PublicParamerters.InAllQueuePackets -= 1;
+                        PublicParamerters.NumberofInAllQueuePackets -= 1;
                         pack.isDelivered = false;
                         PublicParamerters.FinishedRoutedPackets.Add(pack);
                         Console.WriteLine("PID:" + pack.PID + " has been droped.");
@@ -601,7 +592,7 @@ namespace MiniSDN.Dataplane
 
                 NewWaitingPacketsQueue.Enqueue(packet);
 
-                PublicParamerters.InAllQueuePackets += 1;//系统生成的数据包在节点的等待队列中
+                PublicParamerters.NumberofInAllQueuePackets += 1;//系统生成的数据包在节点的等待队列中
 
                 this.SwichToActive();
 
@@ -1109,7 +1100,7 @@ namespace MiniSDN.Dataplane
                         if (NewWaitingPacketsQueue.Count >= 1) this.NewWaitingPacketsQueue.Dequeue();
                    
 
-                        Reciver.NewWaitingPacketsQueue.Enqueue(packt);
+                        
 
 
 
@@ -1303,7 +1294,7 @@ namespace MiniSDN.Dataplane
             {
                 packt.isDelivered = true;
                 PublicParamerters.NumberofDeliveredPacket += 1;
-                PublicParamerters.InAllQueuePackets -= 1;//所有在队列中的数据包总数减少1
+                PublicParamerters.NumberofInAllQueuePackets -= 1;//所有在队列中的数据包总数减少1
                 PublicParamerters.FinishedRoutedPackets.Add(packt);// should we add it to the packet which should be store in the sink?
                 Console.WriteLine("PID:" + packt.PID + " has been delivered.");
 
@@ -1335,14 +1326,14 @@ namespace MiniSDN.Dataplane
                 
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
-                if (packt.Hops > packt.TimeToLive)
+                //生存周期已到丢弃该数据包，即该数据包不加入接收节点的等待队列中
+                if (packt.Hops >= packt.TimeToLive)
                 {
-                    // drop the paket.
-                    if(NewWaitingPacketsQueue.Count>0)NewWaitingPacketsQueue.Dequeue();//出队表示丢弃
+                   
 
                     PublicParamerters.NumberofDropedPacket += 1;//丢弃包总数增加1
                     PublicParamerters.DropedbecauseofTTL += 1; //因生存周期而丢弃的数据包
-                    PublicParamerters.InAllQueuePackets -= 1;   //总队列数据包总数减少1
+                    PublicParamerters.NumberofInAllQueuePackets -= 1;   //总队列数据包总数减少1
                     packt.isDelivered = false;
                     PublicParamerters.FinishedRoutedPackets.Add(packt);
                     Console.WriteLine("PID:" + packt.PID + " has been droped.");
@@ -1350,11 +1341,13 @@ namespace MiniSDN.Dataplane
                     // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
                     MainWindow.MainWindowUpdataMessage();
                 }
-                else //等待接收节点等待队列计时器检测等待队列中的数据包然后转发
+                else //加入接收节点的等待队列中，等待队列计时器检测等待队列中的数据包然后转发
                 {
+
+                    this.NewWaitingPacketsQueue.Enqueue(packt);
                     // forward the packet.
-                   // this.SendPacekt(packt);
-                  
+                    // this.SendPacekt(packt);
+
                 }
             }
         }

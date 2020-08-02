@@ -42,7 +42,7 @@ namespace MiniSDN.Dataplane
         public static Sensor SinkNode { get; set; }
         public static double BatteryIntialEnergy  { get { return Settings.Default.BatteryIntialEnergy; } }//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
-        public static double RoutingDataLength = 1024*8; // bit
+        public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
         public static double PreamblePacketLength = 128; // bit 
         public static double ACKPacketLength = 128; //bit
@@ -77,7 +77,7 @@ namespace MiniSDN.Dataplane
 
 
 
-
+        //冗余传输消耗的能量占消耗能量的占比
         public static double WastedEnergyPercentage { get { return Math.Round(100 * (TotalWastedEnergyJoule / TotalEnergyConsumptionJoule),4); } }  
 
         public static List<Color> RandomColors { get; set; }
@@ -91,7 +91,7 @@ namespace MiniSDN.Dataplane
             get; set;
         }
 
-        public static long InAllQueuePackets//所有等待队列中的等待发送的数据包总和
+        public static long NumberofInAllQueuePackets//所有等待队列中的等待发送的数据包总和
         {
             /* 
             get
@@ -116,6 +116,29 @@ namespace MiniSDN.Dataplane
                 return ratio;
                 */
             }
+        }
+
+        public static double NewDeliveredRatio
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(NumberofDeliveredPacket) / (Convert.ToDouble(NumberofDeliveredPacket)+Convert.ToDouble(NumberofDropedPacket))), 2);
+
+
+            }
+
+
+        }
+
+        public static double NewDropedRatio
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(NumberofDropedPacket) / (Convert.ToDouble(NumberofDeliveredPacket) + Convert.ToDouble(NumberofDropedPacket))), 2);
+
+
+            }
+
         }
 
         public static double Total_Energy_Consumption_Percentage

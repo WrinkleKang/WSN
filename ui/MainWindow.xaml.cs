@@ -285,22 +285,44 @@ namespace MiniSDN.ui
         public void MainWindowUpdataMessage()
         {
             //Energy 相关显示
+
+            //网络总能量
             Dispatcher.Invoke(() => lbl_total_energy.Content = PublicParamerters.TotalEnergy, DispatcherPriority.Send);
+
+            //生命周期内消耗的能量
             Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule,4), DispatcherPriority.Send);
+
+            //总能量的使用率
             Dispatcher.Invoke(() => lbl_total_consumed_energy_percentage.Content = PublicParamerters.Total_Energy_Consumption_Percentage,DispatcherPriority.Send );
+
+            //数据包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_data_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Data_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //preamble包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_preamble_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Preamble_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //ACK包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_ack_packet_consumed_energy_percentage.Content = PublicParamerters.Total_ACK_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //冗余传输消耗的能量占总消耗能量的比率
             Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+           
+            
             //Packet相关显示
+
+            //总生成包
             Dispatcher.Invoke(() => lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
 
-            Dispatcher.Invoke(() => lbl_nymber_inQueu.Content = PublicParamerters.InAllQueuePackets.ToString());
+            //总队列包
+            Dispatcher.Invoke(() => lbl_nymber_inQueu.Content = PublicParamerters.NumberofInAllQueuePackets.ToString());
 
+            //总成功传输包
             Dispatcher.Invoke(() => lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
 
+            //总控制包
             Dispatcher.Invoke(() => lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
 
+            //总丢弃包
             Dispatcher.Invoke(() => lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
            
             //发不出去的而丢弃的数据包
@@ -312,13 +334,17 @@ namespace MiniSDN.ui
             //节点能量耗尽丢弃的队列中的包
             Dispatcher.Invoke(() => lbl_Droped_because_of_No_Energy.Content = PublicParamerters.DropedbecauseofNoEnergy,DispatcherPriority.Send);
 
-
+            //成功率（成功传输包/总生成包）
             Dispatcher.Invoke(() => lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
 
-            //丢包率
+            //丢包率 （丢弃包/总生成包）
             Dispatcher.Invoke(() =>lbl_droped_ratio.Content = PublicParamerters.DropedRatio, DispatcherPriority.Send);
 
-
+            // 新成功率     成功传输包/（总生成包-总队列包）==========成功传输包/（成功传输包+丢弃包）
+            Dispatcher.Invoke(() => lbl_new_delivered_ratio.Content = PublicParamerters.NewDeliveredRatio,DispatcherPriority.Send);
+            //新丢包率      丢弃包/（总生成包-总队列包）==========丢弃包/（成功传输包+丢弃包）
+            Dispatcher.Invoke(() => lbl_new_droped_ratio.Content = PublicParamerters.NewDropedRatio,DispatcherPriority.Send);
+            //冗余传输
             Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
 
             

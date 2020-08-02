@@ -241,22 +241,22 @@
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total Data Packet Consumption Percentage(%)</Label>
+                                            <Label>Total Data Packet Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_data_packet_consumed_energy_percentage">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total Preamble Packet Consumption Percentage(%)</Label>
+                                            <Label>Total Preamble Packet Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_preamble_packet_consumed_energy_percentage">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total ACK Packet Consumption Percentage(%)</Label>
+                                            <Label>Total ACK Packet Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_ack_packet_consumed_energy_percentage">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total Wasted Energy Percentage(%):</Label>
+                                            <Label>Total Redundant Transmissions Wasted Energy Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_Wasted_Energy_percentage">0.00</Label>
                                         </StackPanel>
 
@@ -312,14 +312,26 @@
 
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Delivered Ratio(%):</Label>
+                                            <Label>Delivered Ratio(%)(Delivered/Generated):</Label>
                                             <Label Name="lbl_sucess_ratio">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Droped Ratio(%):</Label>
+                                            <Label>Droped Ratio(%)(Droped/Generated):</Label>
                                             <Label Name="lbl_droped_ratio">0</Label>
                                         </StackPanel>
+
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>New Delivered Ratio(%)(Delivered/(Generated-inQueu)):</Label>
+                                            <Label Name="lbl_new_delivered_ratio">0</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>New Droped Ratio(%)(Droped/(Generated-inQueu)):</Label>
+                                            <Label Name="lbl_new_droped_ratio">0</Label>
+                                        </StackPanel>
+
                                         
                                         
                                         
