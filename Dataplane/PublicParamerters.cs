@@ -47,7 +47,7 @@ namespace MiniSDN.Dataplane
         public static double PreamblePacketLength = 128; // bit 
         public static double ACKPacketLength = 128; //bit
         public static double E_elec = 50; // unit: (nJ/bit) //Energy dissipation to run the radio
-        public static double Efs = 0.01;// unit( nJ/bit/m^2 ) //Free space model of transmitter amplifier
+        public static double Efs = 0.1;// unit( nJ/bit/m^2 ) //Free space model of transmitter amplifier
         public static double Emp = 0.0000013; // unit( nJ/bit/m^4) //Multi-path model of transmitter amplifier
         public static double CommunicationRangeRadius { get { return SensingRangeRadius * 2; } } // sensing range is R in the DB.
         public static double TransmissionRate = 2 * 1000000;////2Mbps 100 × 10^6 bit/s , //https://en.wikipedia.org/wiki/Transmission_time
@@ -59,6 +59,15 @@ namespace MiniSDN.Dataplane
         public static double TotalEnergyConsumptionJoule_Datapacket { get; set; } //数据包消耗的总能量
         public static double TotalEnergyConsumptionJoule_Preamblepacket { get; set; } //Preamble包消耗的总能量
         public static double TotalEnergyConsumptionJoule_ACKpacket { get; set; } //ACK包消耗的总能量
+
+        public static double TotalEnergyConsumptionJoule_Datapacket_by_Send { get; set; }//发送数据包消耗的总能量
+        public static double TotalEnergyConsumptionJoule_Datapacket_by_Rcceive { get; set; }//接收数据包消耗的总能量
+
+        public static double TotalEnergyConsumptionJoule_Preamblepacket_by_Send { get; set; }//发送preamble消耗的总能量
+        public static double TotalEnergyConsumptionJoule_Preamblepacket_by_Rcceive { get; set; }//接收preamble消耗的总能量
+
+        public static double TotalEnergyConsumptionJoule_ACKpacket_by_Send { get; set; }//发送ACK包消耗的总能量
+        public static double TotalEnergyConsumptionJoule_ACKpacket_by_Rcceive { get; set; }//接收ACK包消耗的总能量
 
 
 
@@ -155,9 +164,28 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 3);
             }
 
+
+        }
+
+        public static double Data_Packet_Consumption_Send_Percentage
+        {
+            get {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket_by_Send) / Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket)), 2);
+            }
+
+        }
+
+        public static double Data_Packet_Consumption_Receive_Percentage
+        {
+            get
+            {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket_by_Rcceive) / Convert.ToDouble(TotalEnergyConsumptionJoule_Datapacket)), 2);
+            }
 
         }
 
@@ -165,7 +193,26 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 3);
+            }
+
+        }
+
+        public static double Preamble_Packet_Consumption_Send_Percentage
+        {
+            get {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket_by_Send) / Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket)), 2);
+            }
+
+        }
+
+        public static double Preamble_Packet_Consumption_Receive_Percentage
+        {
+            get
+            {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket_by_Rcceive) / Convert.ToDouble(TotalEnergyConsumptionJoule_Preamblepacket)), 2);
             }
 
         }
@@ -174,10 +221,32 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 4);
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket) / Convert.ToDouble(TotalEnergyConsumptionJoule)), 3);
             }
 
         }
+
+        public static double ACK_Packet_Consumption_Send_Percentage
+        {
+            get
+            {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket_by_Send) / Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket)), 2);
+            }
+
+        }
+
+        public static double ACK_Packet_Consumption_Receive_Percentage
+        {
+            get
+            {
+
+                return Math.Round(100 * (Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket_by_Rcceive) / Convert.ToDouble(TotalEnergyConsumptionJoule_ACKpacket)), 2);
+            }
+
+        }
+
+
 
 
 

@@ -31,7 +31,7 @@ namespace MiniSDN.Dataplane
     {
         #region Commone parameters.
 
-        public Radar Myradar; 
+        public Radar Myradar;
         public List<Arrow> MyArrows = new List<Arrow>();
         public MainWindow MainWindow { get; set; } // the mian window where the sensor deployed.
         public static double SR { get; set; } // the radios of SENSING range.
@@ -62,7 +62,51 @@ namespace MiniSDN.Dataplane
 
 
         public bool TransmitState = false; //标记位，表示是否处于传输模式，1表示正在传输数据包 0表示不在传输数据包
-       
+
+
+        public double UsedEnergy = 0;//节点使用的能量
+
+
+        public double Energy_Used_IN_Data_Packet{ get;set;} //节点数据包耗能
+        //节点数据包能耗占比 = 节点数据包耗能/节点使用的能量
+        public double Energy_Used_IN_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Data_Packet / UsedEnergy), 2); } }
+        public double Energy_Used_IN_Send_Data_Packet { get; set; }//节点发送数据包耗能
+        //节点发送数据包能耗占比 = 节点发送数据包耗能/节点数据包耗能
+        public double Energy_Used_IN_Send_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
+
+        public double Energy_Used_IN_Receive_Data_Packet { get; set; }//节点接收数据包耗能
+        //节点接收数据包能耗占比 = 节点接收数据包耗能/节点数据包耗能
+        public double Energy_Used_IN_Receive_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
+
+
+        public double Energy_Used_IN_Preamble_Packet { get; set; }//节点preamble包耗能
+        //节点preamble能耗占比 = 节点preamble包耗能/节点使用的能耗
+        public double Energy_Used_IN_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Preamble_Packet / UsedEnergy), 2); } }
+
+        public double Energy_Used_IN_Send_Preamble_Packet { get; set; }//节点发送preamble包耗能
+        //节点发送preamble能耗占比 = 节点发送preamble包耗能/节点preamble包耗能
+        public double Energy_Used_IN_Send_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
+
+        public double Energy_Used_IN_Receive_Preamble_Packet { get; set; }//节点接收preamble包耗能
+        //节点接收preamble能耗占比 = 节点接收preamble包能耗/节点preamble包耗能
+        public double Energy_Used_IN_Receive_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
+
+
+        public double Energy_Used_IN_ACK_Packet { get; set; }//节点ACK包耗能
+        //节点ACK包能耗占比 = 节点ACK包耗能/节点使用的能耗
+        public double Energy_Used_IN_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_ACK_Packet / UsedEnergy), 2); } }
+
+        public double Energy_Used_IN_Send_ACK_Packet { get; set; }//节点发送ACK包耗能
+        //节点发送ACK包能耗占比 = 节点发送ACK包耗能/节点ACK包耗能
+        public double Energy_Used_IN_Send_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
+
+        public double Energy_Used_IN_Receive_ACK_Packet { get; set; }//节点接收ACK包耗能
+        //节点接收ACK包能耗占比 = 节点接收ACK包能耗/节点ACK包能耗
+        public double Energy_Used_IN_Receive_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
+
+
+
+
 
 
         /// <summary>
@@ -127,7 +171,17 @@ namespace MiniSDN.Dataplane
         /// </summary>
         public double ResidualEnergyPercentage
         {
-            get { return (ResidualEnergy / BatteryIntialEnergy) * 100; }
+            get { return  Math.Round((ResidualEnergy / BatteryIntialEnergy) * 100,2); }
+        }
+
+        public double UsedEnergyPercentage
+        {
+            get {
+
+
+                return Math.Round((UsedEnergy/ BatteryIntialEnergy) * 100,2);                   
+                    }
+
         }
         /// <summary>
         /// visualized sensing range and comuinication range
@@ -846,10 +900,16 @@ namespace MiniSDN.Dataplane
             double UsedEnergy_Nanojoule = EnergyModel.Transmit(PublicParamerters.PreamblePacketLength, PublicParamerters.CommunicationRangeRadius);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
             
-            sender.ResidualEnergy = sender.ResidualEnergy - UsedEnergy_joule;
+            //节点相关能耗计算
+            sender.ResidualEnergy = sender.ResidualEnergy - UsedEnergy_joule;//剩余能耗
+            sender.UsedEnergy += UsedEnergy_joule;//使用能耗
+            sender.Energy_Used_IN_Preamble_Packet += UsedEnergy_joule;//preamble包能耗
+            sender.Energy_Used_IN_Send_Preamble_Packet += UsedEnergy_joule;//发送preamble能耗
 
+            //总能耗相关计算
             PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;//总能耗
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket += UsedEnergy_joule;//总preamble能耗
+            PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket_by_Send += UsedEnergy_joule;//总发送preamble能耗
 
             //是否要引入delay？
         }
@@ -858,10 +918,19 @@ namespace MiniSDN.Dataplane
         {
             double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.PreamblePacketLength);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
-            this.ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;
 
+
+            //节点相关能耗计算
+            this.ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;//节点剩余能耗
+            this.UsedEnergy += UsedEnergy_joule;//节点使用能耗
+            this.Energy_Used_IN_Preamble_Packet += UsedEnergy_joule;//节点preamble能耗
+            this.Energy_Used_IN_Receive_Preamble_Packet += UsedEnergy_joule;//节点接收preamble能耗
+
+
+            //总能耗相关计算
             PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule; //总能耗
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket += UsedEnergy_joule;//总preamble能耗
+            PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket_by_Rcceive += UsedEnergy_joule;//总接收preamb能耗
 
             //是否要引入delay？
         }
@@ -873,14 +942,16 @@ namespace MiniSDN.Dataplane
             double UsedEnergy_Nanojoule = EnergyModel.Transmit(PublicParamerters.ACKPacketLength, Distance_M);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
 
-            //计算节点剩余能量 
-            sender.ResidualEnergy = sender.ResidualEnergy - UsedEnergy_joule;
+            //节点相关能耗计算
+            sender.ResidualEnergy = sender.ResidualEnergy - UsedEnergy_joule;//计算节点剩余能量 
+            sender.UsedEnergy += UsedEnergy_joule;//节点使用能耗
+            sender.Energy_Used_IN_ACK_Packet += UsedEnergy_joule;//节点消耗ACK能耗
+            sender.Energy_Used_IN_Send_ACK_Packet += UsedEnergy_joule;//节点消耗发送ACK能耗
 
-            //总耗能
-            PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;
-
-            //ACK包总能耗
-            PublicParamerters.TotalEnergyConsumptionJoule_ACKpacket += UsedEnergy_joule;
+            //总耗能相关计算
+            PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;//总能耗
+            PublicParamerters.TotalEnergyConsumptionJoule_ACKpacket += UsedEnergy_joule; //总ACK包能耗
+            PublicParamerters.TotalEnergyConsumptionJoule_ACKpacket_by_Send += UsedEnergy_joule; //总发送ACK包能耗
 
         }
 
@@ -889,10 +960,17 @@ namespace MiniSDN.Dataplane
         {
             double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.ACKPacketLength);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
-            this.ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;
 
+            //节点相关能耗计算
+            this.ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;//剩余能耗
+            this.UsedEnergy += UsedEnergy_joule;//消耗能耗
+            this.Energy_Used_IN_ACK_Packet += UsedEnergy_joule;//节点消耗的ACK能耗
+            this.Energy_Used_IN_Receive_ACK_Packet += UsedEnergy_joule;//节点消耗的接收ACK包的能耗
+
+            //总能耗相关计算
             PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule; //总能耗
             PublicParamerters.TotalEnergyConsumptionJoule_ACKpacket += UsedEnergy_joule;//总ACK能耗
+            PublicParamerters.TotalEnergyConsumptionJoule_ACKpacket_by_Rcceive += UsedEnergy_joule;//总接收ACK包能耗
 
 
         }
@@ -943,7 +1021,10 @@ namespace MiniSDN.Dataplane
 
                                 //接收preamble相关计算
                                 selectedflow.NeighborEntry.NeiNode.Receivepreamble();
+
+                                //冗余传输（每接收一个冗余的preamble包）
                                 PublicParamerters.TotalReduntantTransmission += 1;
+
                                 //接收的preamble能耗属于TotalWastedEnergyJoule
                                 double UsedEnergy_Nanojoule_ReceivePreamble = EnergyModel.Receive(PublicParamerters.PreamblePacketLength);
                                 double UsedEnergy_joule_ReceivePreamble = ConvertToJoule(UsedEnergy_Nanojoule_ReceivePreamble);
@@ -953,6 +1034,7 @@ namespace MiniSDN.Dataplane
                                 //冗余节点发送ACK相关计算
                                 double Distance_M = Operations.DistanceBetweenTwoSensors(this, selectedflow.NeighborEntry.NeiNode);
                                 SendACK(selectedflow.NeighborEntry.NeiNode,Distance_M);
+                                //冗余传输（每发送一个冗余的ACK包）
                                 PublicParamerters.TotalReduntantTransmission += 1;
                                 //发送preamble的能耗属于TotalWastedEnergyJoule
                                 double UsedEnergy_Nanojoule_SendACK = EnergyModel.Transmit(PublicParamerters.ACKPacketLength, Distance_M);
@@ -1198,14 +1280,19 @@ namespace MiniSDN.Dataplane
                     double packet_100 = MAX_UsedEnergy_joule * 100;
                     */
 
-                    //计算节点剩余能量 
-                    ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule;
 
-                    //网络总耗能
-                    PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;
+                    //节点相关能耗计算
+                    ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule; //节点剩余能量
+                    UsedEnergy += UsedEnergy_joule;//节点使用的能耗
+                    Energy_Used_IN_Data_Packet += UsedEnergy_joule;//节点数据包能耗
+                    Energy_Used_IN_Send_Data_Packet += UsedEnergy_joule;//节点发送数据包能耗
 
-                    //data包总能耗
-                    PublicParamerters.TotalEnergyConsumptionJoule_Datapacket += UsedEnergy_joule;
+
+
+                    //总能耗相关计算                   
+                    PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;//网络总耗能
+                    PublicParamerters.TotalEnergyConsumptionJoule_Datapacket += UsedEnergy_joule;//data包总能耗
+                    PublicParamerters.TotalEnergyConsumptionJoule_Datapacket_by_Send += UsedEnergy_joule;//发送data包总能耗
 
 
 
@@ -1259,15 +1346,21 @@ namespace MiniSDN.Dataplane
 
                 double UsedEnergy_Nanojoule = EnergyModel.Receive(packt.PacketLength);
                 double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
-                ResidualEnergy = ResidualEnergy - UsedEnergy_joule;
+
+                //节点能耗相关计算
+                ResidualEnergy = ResidualEnergy - UsedEnergy_joule;//节点剩余能量
+                UsedEnergy += UsedEnergy_joule;//节点使用能量
+                Energy_Used_IN_Data_Packet += UsedEnergy_joule;//节点数据包能耗
+                Energy_Used_IN_Receive_Data_Packet += UsedEnergy_joule;//节点接收数据包能耗
+
+
+                //总能耗相关计算
+                PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;//总能耗
+                PublicParamerters.TotalEnergyConsumptionJoule_Datapacket += UsedEnergy_joule;//总data包能耗
+                PublicParamerters.TotalEnergyConsumptionJoule_Datapacket_by_Rcceive += UsedEnergy_joule;//总接收data包能耗
+
+
                 packt.UsedEnergy_Joule += UsedEnergy_joule;
-
-                //总能耗
-                PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;
-                //总data包能耗
-                PublicParamerters.TotalEnergyConsumptionJoule_Datapacket += UsedEnergy_joule;
-
-
 
                 if (packt.PacketType == PacketType.Control)
                 {
@@ -1360,10 +1453,75 @@ namespace MiniSDN.Dataplane
 
 
 
-
+        //鼠标移动到节点上的显示信息
         private void lbl_MouseEnter(object sender, MouseEventArgs e)
         {
-            ToolTip = new Label() { Content = "("+ID + ") [ " + ResidualEnergyPercentage + "% ] [ " + ResidualEnergy + " J ]" };
+            /*
+            ToolTip = new Label() { Content = 
+                "("+ID + ") [ " + ResidualEnergyPercentage + "% ] [ " + ResidualEnergy + " J ]" 
+                +"\n"+"[PacketInQueue="+NewWaitingPacketsQueue.Count+"]"};
+            */
+             
+            Label label = new Label();
+            string nodemessage = GetNodeMessage();
+            label.Content = nodemessage;
+            ToolTip = label;
+            
+            /*
+             * 
+            ToolTip toolTip = new ToolTip();
+            toolTip.AutoPopDelay = 10000;
+            toolTip.InitialDelay = 500;
+            toolTip.ReshowDelay = 500;
+            toolTip.ShowAlways = true;
+            */
+            
+
+
+
+
+
+
+
+
+
+        }
+
+        public string GetNodeMessage() {
+
+            //节点消息汇总
+            string nodemessage ;
+
+            //ID
+            string message_ID = "ID:" + ID + "\n";
+
+            //nodestate
+            string message_State = "NodeState:" + CurrentSensorState + "\n";
+
+            //初始能量
+            string message_BatteryIntialEnergy = "BatteryIntialEnergy:" + BatteryIntialEnergy + "J" + "\n";
+
+            //能量消耗及其占比
+            string message_UsedEnergy = "UsedEnergy:" + UsedEnergy + "J   " +"UsedEnergyPercentage:" + UsedEnergyPercentage +"%" + "\n";
+
+            //剩余能量及其占比
+            string message_ResidualEnergy = "ResidualEnergy:" + ResidualEnergy + "J   " + "ResidualEnergyPercentage:" + ResidualEnergyPercentage + "%" + "\n";
+
+            //消耗data包占比及其能耗分布
+            string message_Energy_Used_In_Datapacket_Percentage = "EnergyUsedInDatapacketPercentage:" + Energy_Used_IN_Data_Packet_Percentage + "%   "
+                + "Send:" + Energy_Used_IN_Send_Data_Packet_Percentage + "%   " + "Receive:" + Energy_Used_IN_Receive_Data_Packet_Percentage + "%" + "\n";
+
+            //消耗preamble包占比及其能耗分布
+            string message_Energy_Used_In_Preamblepacket_Percentage = "EnergyUsedInPreamblepacketPercentage:" + Energy_Used_IN_Preamble_Packet_Percentage + "%   "
+                + "Send:" + Energy_Used_IN_Send_Preamble_Packet_Percentage + "%   " + "Receive:" + Energy_Used_IN_Receive_Preamble_Packet_Percentage + "%" + "\n";
+
+            //消耗ACK包占比及其能耗分布
+            string message_Energy_Used_In_ACKpacket_Percentage = "EnergyUsedInACKpacketPercentage:" + Energy_Used_IN_ACK_Packet_Percentage + "%   "
+                + "Send:" + Energy_Used_IN_Send_ACK_Packet_Percentage + "%   " + "Receive:" + Energy_Used_IN_Receive_ACK_Packet_Percentage + "%" + "\n";
+
+            nodemessage = message_ID + message_State + message_BatteryIntialEnergy + message_UsedEnergy + message_ResidualEnergy + message_Energy_Used_In_Datapacket_Percentage + message_Energy_Used_In_Preamblepacket_Percentage + message_Energy_Used_In_ACKpacket_Percentage;
+            return nodemessage;
+
         }
 
         private void btn_show_routing_log_MouseDown(object sender, MouseButtonEventArgs e)

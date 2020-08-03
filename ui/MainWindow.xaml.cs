@@ -298,12 +298,30 @@ namespace MiniSDN.ui
             //数据包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_data_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Data_Packet_Consumption_Percentage,DispatcherPriority.Send);
 
+            //数据包发送能耗占比
+            Dispatcher.Invoke(() => lbl_data_consumed_send.Content = PublicParamerters.Data_Packet_Consumption_Send_Percentage, DispatcherPriority.Send);
+
+            //数据包接收能耗占比
+            Dispatcher.Invoke(() => lbl_data_consumed_receive.Content = PublicParamerters.Data_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send );
+
             //preamble包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_preamble_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Preamble_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //preamble包发送能耗占比
+            Dispatcher.Invoke(() => lbl_preamble_consumed_send.Content = PublicParamerters.Preamble_Packet_Consumption_Send_Percentage,DispatcherPriority.Send);
+
+            //preamble包接收能耗占比
+            Dispatcher.Invoke(() => lbl_preamle_consumed_receive.Content = PublicParamerters.Preamble_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send );
 
             //ACK包消耗的总能量占比
             Dispatcher.Invoke(() => lbl_total_ack_packet_consumed_energy_percentage.Content = PublicParamerters.Total_ACK_Packet_Consumption_Percentage,DispatcherPriority.Send);
 
+            //ACK包发送能耗占比
+            Dispatcher.Invoke(() => lbl_ack_consumed_send.Content = PublicParamerters.ACK_Packet_Consumption_Send_Percentage,DispatcherPriority.Send);
+
+            //ACK包接收能耗占比
+            Dispatcher.Invoke(() => lbl_ack_consumed_receive.Content = PublicParamerters.ACK_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send);
+            
             //冗余传输消耗的能量占总消耗能量的比率
             Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
            
@@ -1016,7 +1034,7 @@ namespace MiniSDN.ui
             }
             else
             {
-                if (s >= 1) Settings.Default.AnimationSpeed = 0.5; else Settings.Default.AnimationSpeed = s;
+                if (s > 1) Settings.Default.AnimationSpeed = 0.5; else Settings.Default.AnimationSpeed = s;
                 RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(s);//s为定时器周期
                 RandomSelectSourceNodesTimer.Start();
                 RandomSelectSourceNodesTimer.Tick += RandomSelectNodes_Tick;//RandomSelectNodes_Tick为定时器执行的具体内容

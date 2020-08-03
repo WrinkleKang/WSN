@@ -224,7 +224,7 @@
                         <TabItem Name="tab_Simulation_Parameters" Header="Simulation Parameters">
                             <StackPanel Orientation="Vertical">
                                 
-                                <GroupBox Height="auto" Header="Energy">
+                                <GroupBox Height="auto" Header="Energy" Width="auto">
 
                                     <StackPanel Orientation="Vertical">
                                         <StackPanel Orientation="Horizontal">
@@ -241,18 +241,30 @@
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total Data Packet Consumption Percentage(%):</Label>
+                                            <Label>Data Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_data_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_data_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_data_consumed_receive">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total Preamble Packet Consumption Percentage(%):</Label>
+                                            <Label>Preamble Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_preamble_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_preamble_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_preamle_consumed_receive">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Total ACK Packet Consumption Percentage(%):</Label>
+                                            <Label>ACK Consumption Percentage(%):</Label>
                                             <Label Foreground="Green" Name="lbl_total_ack_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_ack_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_ack_consumed_receive">0.00</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
