@@ -308,7 +308,7 @@ namespace MiniSDN.Dataplane
         /// <summary>
         /// the timer interval between 1 and 5 sec.
         /// </summary>
-        public static int MacStartUp
+        public static double MacStartUp
         {
             get
             {

@@ -1,5 +1,4 @@
 ﻿using MiniSDN.Dataplane;
-using MiniSDN.Dataplane;
 using MiniSDN.Forwarding;
 using System;
 using System.Collections.Generic;

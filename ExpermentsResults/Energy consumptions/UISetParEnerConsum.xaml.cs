@@ -207,6 +207,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.BatteryIntialEnergy = Convert.ToDouble(comb_batteryIntialEnergy.Text);
             Settings.Default.ActivePeriod = Convert.ToInt16(comb_active.Text);
             Settings.Default.SleepPeriod = Convert.ToInt16(comb_sleep.Text);
+            Settings.Default.MacStartUp = (Settings.Default.ActivePeriod + Settings.Default.SleepPeriod)/1000;//节点启动醒睡模式将在一个醒睡周期内完成
 
 
 

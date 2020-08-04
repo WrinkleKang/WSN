@@ -266,9 +266,9 @@ namespace MiniSDN.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int MacStartUp {
+        public double MacStartUp {
             get {
-                return ((int)(this["MacStartUp"]));
+                return ((double)(this["MacStartUp"]));
             }
             set {
                 this["MacStartUp"] = value;

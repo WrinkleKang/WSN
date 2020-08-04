@@ -62,7 +62,7 @@
     <Setting Name="BatteryIntialEnergy" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.5</Value>
     </Setting>
-    <Setting Name="MacStartUp" Type="System.Int32" Scope="User">
+    <Setting Name="MacStartUp" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="ActivePeriod" Type="System.Double" Scope="User">
