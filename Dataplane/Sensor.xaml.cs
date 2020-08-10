@@ -1459,15 +1459,19 @@ namespace MiniSDN.Dataplane
                 "("+ID + ") [ " + ResidualEnergyPercentage + "% ] [ " + ResidualEnergy + " J ]" 
                 +"\n"+"[PacketInQueue="+NewWaitingPacketsQueue.Count+"]"};
             */
-             
+
+            //通信范围内为邻居节点
+            this.Ellipse_Communication_range.Visibility = Visibility.Visible;
+            //箭头连接表示候选节点集中的节点
+            NetworkVisualization.UpLinksDrawPaths(this);
+
             Label label = new Label();
             string nodemessage = GetNodeMessage();
             label.Content = nodemessage;
             ToolTip = label;
+           
 
 
-
-            
             /*            
             ToolTip toolTip = new ToolTip();
             toolTip.AutoPopDelay = 10000;
@@ -1475,7 +1479,7 @@ namespace MiniSDN.Dataplane
             toolTip.ReshowDelay = 500;
             toolTip.ShowAlways = true;
             */
-            
+
 
 
 
@@ -1692,6 +1696,26 @@ namespace MiniSDN.Dataplane
         private void btn_update_mini_flow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             UplinkRouting.UpdateUplinkFlowEnery(this);
+        }
+
+        private void lbl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            
+           
+             this.Ellipse_Communication_range.Visibility = Visibility.Hidden;
+            foreach (Arrow arr in this.MyArrows)
+            {
+                arr.StrokeThickness = 0.2;
+                arr.HeadHeight = 0.2;
+                arr.HeadWidth = 0.2;
+
+               
+
+            }
+
+            
+
+            
         }
     }
 }

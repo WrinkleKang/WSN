@@ -517,7 +517,7 @@ namespace MiniSDN.ui
                     {
                         if (sensro.Ellipse_Communication_range.Visibility == Visibility.Hidden)
                         {
-                            sensro.Ellipse_Communication_range.Visibility = Visibility.Visible;
+                           // sensro.Ellipse_Communication_range.Visibility = Visibility.Visible;
                             Settings.Default.ShowComunicationRange = true;
                         }
                         else
