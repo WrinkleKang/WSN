@@ -148,7 +148,7 @@ namespace MiniSDN.ui
             string Header = item.Header.ToString();
             switch (Header)
             {
-                case "_Multiple Nodes"://手动生成新的拓扑图，原始版本功能未完善
+                case "_Multiple Nodes"://手动生成新的拓扑图，原始版本功能未完善，现已完成
                     {
                         UiAddNodes ui = new UiAddNodes();
                         ui.MainWindow = this;
@@ -743,6 +743,7 @@ namespace MiniSDN.ui
                 RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(5);
                 RandomSelectSourceNodesTimer.Start();
                 RandomSelectSourceNodesTimer.Tick += RoundsPacketsGeneator; 
+                
 
             }
             else

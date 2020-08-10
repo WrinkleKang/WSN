@@ -1022,7 +1022,7 @@ namespace MiniSDN.Dataplane
                                 //接收preamble相关计算
                                 selectedflow.NeighborEntry.NeiNode.Receivepreamble();
 
-                                //冗余传输（每接收一个冗余的preamble包）
+                                //冗余传输（每多接收一个冗余的preamble包）
                                 PublicParamerters.TotalReduntantTransmission += 1;
 
                                 //接收的preamble能耗属于TotalWastedEnergyJoule
@@ -1044,6 +1044,10 @@ namespace MiniSDN.Dataplane
 
                                 //源节点接收发来的所有ACK
                                 this.ReceiveACK();
+
+                                //冗余传输（每多接收一个冗余的ACK包） 不考虑ACK冲突
+                                PublicParamerters.TotalReduntantTransmission += 1;
+
                                 //源节点接收ACK的能耗属于TotalWastedEnergyJoule
                                 double UsedEnergy_Nanojoule_ReceiveACK = EnergyModel.Receive(PublicParamerters.ACKPacketLength);
                                 double UsedEnergy_joule_ReceiveACK = ConvertToJoule(UsedEnergy_Nanojoule_ReceiveACK);
@@ -1176,16 +1180,10 @@ namespace MiniSDN.Dataplane
                         //当候选节点醒着且不在传输数据包时才能接收preamble然后回复ACK
                         Sensor Reciver = flowEntry.NeighborEntry.NeiNode;
 
-
                         //先将源节点队头数据包删除，然后将数据包加入接收节点的等待队列中，接收节点必然处于醒状态
                         //该if语句为防止出现空队列异常
                         if (NewWaitingPacketsQueue.Count >= 1) this.NewWaitingPacketsQueue.Dequeue();
                    
-
-                        
-
-
-
                         //源节点发送data包相关的计算，包括能量消耗以及延时
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
 
@@ -1466,9 +1464,11 @@ namespace MiniSDN.Dataplane
             string nodemessage = GetNodeMessage();
             label.Content = nodemessage;
             ToolTip = label;
+
+
+
             
-            /*
-             * 
+            /*            
             ToolTip toolTip = new ToolTip();
             toolTip.AutoPopDelay = 10000;
             toolTip.InitialDelay = 500;
