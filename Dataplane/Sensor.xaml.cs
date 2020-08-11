@@ -1268,15 +1268,7 @@ namespace MiniSDN.Dataplane
                     double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
 
 
-                    /*
-                    //测试50M通信距离时发送一个数据包需要的能量 0.0000768J
-                    double MAX_UsedEnergy_Nanojoule = EnergyModel.Transmit(packt.PacketLength, 50);
-                    double MAX_UsedEnergy_joule = ConvertToJoule(MAX_UsedEnergy_Nanojoule);
-                    //0.005J初始能量能发多少个包  0.005J====65
-                    double packetnumber = PublicParamerters.BatteryIntialEnergy / MAX_UsedEnergy_joule;
-                   // 发送100个包需要的能量 0.0076J
-                    double packet_100 = MAX_UsedEnergy_joule * 100;
-                    */
+                  
 
 
                     //节点相关能耗计算

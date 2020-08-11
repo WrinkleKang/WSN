@@ -258,7 +258,7 @@ namespace MiniSDN.Dataplane
             //睡之前如果等待队列中有数据，说明该次醒周期时间内该数据包未发送成功，将其发送周期数+1，
             //若其发送周期数过多，则将其丢弃。
 
-            if (Node.NewWaitingPacketsQueue.Count > 1)
+            if (Node.NewWaitingPacketsQueue.Count >= 1)
             {
                 Packet toppacket = Node.NewWaitingPacketsQueue.Peek();
 
