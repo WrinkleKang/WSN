@@ -34,6 +34,7 @@ namespace MiniSDN.Dataplane
         public static List<DeadNodesRecord> DeadNodeList = new List<DeadNodesRecord>();
         public static long NumberofGeneratedPackets { get; set; }
         public static long TotalWaitingTime { get; set; } // how many times the node waitted for its coordinate to wake up.
+        public static long TotalWaitingTimes_IN_Queue { get; set; }//由于在醒周期未发送完而进入等待队列的次数
         public static long TotalReduntantTransmission { get; set; } // how many transmission are redundant, that is to say, recived and canceled.
         public static bool IsNetworkDied { get; set; } // yes if the first node deide.
         public static double SensingRangeRadius { get; set; }
@@ -42,7 +43,7 @@ namespace MiniSDN.Dataplane
         public static Sensor SinkNode { get; set; }
         public static double BatteryIntialEnergy  { get { return Settings.Default.BatteryIntialEnergy; } }//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
-        public static double RoutingDataLength = 1024*8; // bit
+        public static double RoutingDataLength = 1024; // bit
         public static double ControlDataLength = 512; // bit
         public static double PreamblePacketLength = 128; // bit 
         public static double ACKPacketLength = 128; //bit
@@ -53,6 +54,9 @@ namespace MiniSDN.Dataplane
         public static double TransmissionRate = 2 * 1000000;////2Mbps 100 × 10^6 bit/s , //https://en.wikipedia.org/wiki/Transmission_time
         public static double SpeedOfLight = 299792458;//https://en.wikipedia.org/wiki/Speed_of_light // s
         public static string PowersString { get; set; }
+
+        public static double TotalRoutingDistance { get; set; }
+        public static double TotalHops { get; set; }
         public static double TotalEnergyConsumptionJoule { get; set; } // keep all energy consumption. 
         public static double TotalEnergy { get { return (NumberofNodes-1) * BatteryIntialEnergy; } }//不包括sink节点的能量
 
@@ -70,10 +74,17 @@ namespace MiniSDN.Dataplane
         public static double TotalEnergyConsumptionJoule_ACKpacket_by_Rcceive { get; set; }//接收ACK包消耗的总能量
 
 
+        //公有变量 delay相关     
+        public static double TotalDelayMs { get; set; } // in ms 总时延
+        public static double TotalDelay_PreamblePackets { get; set; }//发送preamble包产生的总时延
+        public static double TotalDelay_DataPackets { get; set; }//发送data包产生的总时延
+        public static double TotalDelay_NO_ACK { get; set; }//因为收不到ACK而等待下一次检查等待队列产生的总时延
+        public static double TotalDelay_IN_Queue { get; set; }//因为收不到ACK而进入睡眠模式产生的总时延
+
 
 
         public static double TotalWastedEnergyJoule { get; set; } // idel listening energy
-        public static double TotalDelayMs { get; set; } // in ms 
+        
         public static List<Packet> FinishedRoutedPackets = new List<Packet>(); // all the packets whatever dliverd or not.
         public static double ThresholdDistance  //Distance threshold ( unit m) 
         {
@@ -246,7 +257,55 @@ namespace MiniSDN.Dataplane
 
         }
 
+        public static double Total_Delay_by_Waiting_In_Queue_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalDelay_IN_Queue) / Convert.ToDouble(TotalDelayMs)), 2);
 
+            }
+
+        }
+
+        public static double Total_Delay_by_No_ACK_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalDelay_NO_ACK) / Convert.ToDouble(TotalDelayMs)), 2);
+
+            }
+
+        }
+
+        public static double Total_Delay_by_Data_Packet_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalDelay_DataPackets) / Convert.ToDouble(TotalDelayMs)), 2);
+
+            }
+
+        }
+
+
+        public static double Total_Delay_by_Preamble_Packet_Percentage
+        {
+            get
+            {
+                return Math.Round(100 * (Convert.ToDouble(TotalDelay_PreamblePackets) / Convert.ToDouble(TotalDelayMs)), 2);
+
+            }
+
+        }
+
+        public static double Total_Average_Delay
+        {
+            get {
+                return Math.Round((Convert.ToDouble(TotalDelayMs/1000) / Convert.ToDouble(TotalHops)), 3);
+
+            }
+
+        }
 
 
 

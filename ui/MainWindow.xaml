@@ -220,7 +220,7 @@
                 HorizontalAlignment="Left"
                 Background="White"
                 Name="StackTreeNodes">
-                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts" Width="505">
+                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts" Width="590">
                         <TabItem Name="tab_Simulation_Parameters" Header="Simulation Parameters">
                             <StackPanel Orientation="Vertical">
                                 
@@ -283,26 +283,46 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Generated Packets:</Label>
                                             <Label Name="lbl_num_of_gen_packets">0</Label>
+                                            <Label>Total Delay(s):</Label>
+                                            <Label Name="lbl_total_delay">0</Label>
+                                            <Label>Average OneHop Delay(s):</Label>
+                                            <Label Name="lbl_average_delay">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of inQueu Packets:</Label>
                                             <Label Name="lbl_nymber_inQueu">0</Label>
+                                            <Label>Total Delay by Queue(s):</Label>
+                                            <Label Name="lbl_total_delay_by_waiting_in_queue">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_waiting_in_queue_percentage">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Delivered Packets:</Label>
                                             <Label Name="lbl_Number_of_Delivered_Packet">0</Label>
+                                            <Label>Total Delay by NO ACK(s):</Label>
+                                            <Label Name="lbl_total_delay_by_no_ack">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_no_ack_percentage">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Control Packets:</Label>
                                             <Label Name="lbl_number_of_control_packets">0</Label>
+                                            <Label>Total Delay by Data(s):</Label>
+                                            <Label Name="lbl_total_delay_by_data_packet">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_data_packet_percentage">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Droped Packets: </Label>
                                             <Label  Name="lbl_Number_of_Droped_Packet">0</Label>
+                                            <Label>Total Delay by Preamble(s):</Label>
+                                            <Label Name="lbl_total_delay_by_preamble_packet">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_preamble_packet_percentage">0</Label>
                                         </StackPanel>
                                         
                                        
@@ -358,7 +378,7 @@
                                     </StackPanel>
                                 </GroupBox>
 
-                                <GroupBox Width="500"  Header="System Parameters">
+                                <GroupBox Width="auto"  Header="System Parameters">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label>L</Label>
                                         <Label Name="lbl_par_L">0</Label>
@@ -373,7 +393,7 @@
                                     </WrapPanel>
                                 </GroupBox>
                                 
-                                <GroupBox Width="500"  Header="Timers">
+                                <GroupBox Width="auto"  Header="Timers">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label>Start up time</Label>
                                         <Label Name="lbl_x_start_up_time">0</Label>
@@ -387,7 +407,7 @@
                                 </GroupBox>
                                    
                                         
-                                        <GroupBox Width="500"  Header="Indicators">
+                                        <GroupBox Width="auto"  Header="Indicators">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label Width="134" FontWeight="Bold">
                                             Node State Indicator:
@@ -572,7 +592,7 @@
                                     </WrapPanel>
                                 </GroupBox>
 
-                                <GroupBox Width="500" Header="Settings">
+                                <GroupBox Width="auto" Header="Settings">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <StackPanel Orientation="Horizontal">
                                             <Label FontWeight="Bold">Network Size:</Label>

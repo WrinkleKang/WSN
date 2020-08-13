@@ -67,42 +67,42 @@ namespace MiniSDN.Dataplane
         public double UsedEnergy = 0;//节点使用的能量
 
 
-        public double Energy_Used_IN_Data_Packet{ get;set;} //节点数据包耗能
+        public double Energy_Used_IN_Data_Packet { get; set; } //节点数据包耗能
         //节点数据包能耗占比 = 节点数据包耗能/节点使用的能量
-        public double Energy_Used_IN_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Data_Packet / UsedEnergy), 2); } }
+        public double Energy_Used_IN_Data_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Data_Packet / UsedEnergy), 2); } }
         public double Energy_Used_IN_Send_Data_Packet { get; set; }//节点发送数据包耗能
         //节点发送数据包能耗占比 = 节点发送数据包耗能/节点数据包耗能
-        public double Energy_Used_IN_Send_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
+        public double Energy_Used_IN_Send_Data_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Send_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
 
         public double Energy_Used_IN_Receive_Data_Packet { get; set; }//节点接收数据包耗能
         //节点接收数据包能耗占比 = 节点接收数据包耗能/节点数据包耗能
-        public double Energy_Used_IN_Receive_Data_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
+        public double Energy_Used_IN_Receive_Data_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Receive_Data_Packet / Energy_Used_IN_Data_Packet), 2); } }
 
 
         public double Energy_Used_IN_Preamble_Packet { get; set; }//节点preamble包耗能
         //节点preamble能耗占比 = 节点preamble包耗能/节点使用的能耗
-        public double Energy_Used_IN_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Preamble_Packet / UsedEnergy), 2); } }
+        public double Energy_Used_IN_Preamble_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Preamble_Packet / UsedEnergy), 2); } }
 
         public double Energy_Used_IN_Send_Preamble_Packet { get; set; }//节点发送preamble包耗能
         //节点发送preamble能耗占比 = 节点发送preamble包耗能/节点preamble包耗能
-        public double Energy_Used_IN_Send_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
+        public double Energy_Used_IN_Send_Preamble_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Send_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
 
         public double Energy_Used_IN_Receive_Preamble_Packet { get; set; }//节点接收preamble包耗能
         //节点接收preamble能耗占比 = 节点接收preamble包能耗/节点preamble包耗能
-        public double Energy_Used_IN_Receive_Preamble_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
+        public double Energy_Used_IN_Receive_Preamble_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Receive_Preamble_Packet / Energy_Used_IN_Preamble_Packet), 2); } }
 
 
         public double Energy_Used_IN_ACK_Packet { get; set; }//节点ACK包耗能
         //节点ACK包能耗占比 = 节点ACK包耗能/节点使用的能耗
-        public double Energy_Used_IN_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_ACK_Packet / UsedEnergy), 2); } }
+        public double Energy_Used_IN_ACK_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_ACK_Packet / UsedEnergy), 2); } }
 
         public double Energy_Used_IN_Send_ACK_Packet { get; set; }//节点发送ACK包耗能
         //节点发送ACK包能耗占比 = 节点发送ACK包耗能/节点ACK包耗能
-        public double Energy_Used_IN_Send_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Send_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
+        public double Energy_Used_IN_Send_ACK_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Send_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
 
         public double Energy_Used_IN_Receive_ACK_Packet { get; set; }//节点接收ACK包耗能
         //节点接收ACK包能耗占比 = 节点接收ACK包能耗/节点ACK包能耗
-        public double Energy_Used_IN_Receive_ACK_Packet_Percentage { get { return Math.Round(100*(Energy_Used_IN_Receive_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
+        public double Energy_Used_IN_Receive_ACK_Packet_Percentage { get { return Math.Round(100 * (Energy_Used_IN_Receive_ACK_Packet / Energy_Used_IN_ACK_Packet), 2); } }
 
 
 
@@ -126,31 +126,31 @@ namespace MiniSDN.Dataplane
 
 
 
-      /*  public void MainWindowUpdataMessage()
-        {
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
+        /*  public void MainWindowUpdataMessage()
+          {
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_total_consumed_energy.Content = PublicParamerters.TotalEnergyConsumptionJoule + " (JOULS)", DispatcherPriority.Send);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_nymber_inQueu.Content = PublicParamerters.InQueuePackets.ToString());
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
 
-            MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
-
-
+              MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
 
 
-        }
-        */
+
+
+          }
+          */
 
         /// <summary>
         /// in JOULE
@@ -171,16 +171,17 @@ namespace MiniSDN.Dataplane
         /// </summary>
         public double ResidualEnergyPercentage
         {
-            get { return  Math.Round((ResidualEnergy / BatteryIntialEnergy) * 100,2); }
+            get { return Math.Round((ResidualEnergy / BatteryIntialEnergy) * 100, 2); }
         }
 
         public double UsedEnergyPercentage
         {
-            get {
+            get
+            {
 
 
-                return Math.Round((UsedEnergy/ BatteryIntialEnergy) * 100,2);                   
-                    }
+                return Math.Round((UsedEnergy / BatteryIntialEnergy) * 100, 2);
+            }
 
         }
         /// <summary>
@@ -286,13 +287,13 @@ namespace MiniSDN.Dataplane
         private void Prog_batteryCapacityNotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
-          
-            
+
+
             double val = ResidualEnergyPercentage;
             if (val <= 0)
             {
                 MainWindow.RandomSelectSourceNodesTimer.Stop();
-                
+
                 // dead certificate:
                 ExpermentsResults.Lifetime.DeadNodesRecord recod = new ExpermentsResults.Lifetime.DeadNodesRecord();
                 recod.DeadAfterPackets = PublicParamerters.NumberofGeneratedPackets;
@@ -309,7 +310,7 @@ namespace MiniSDN.Dataplane
 
                 if (Settings.Default.StopeWhenFirstNodeDeid)
                 {
-                  //  MainWindow.TimerCounter.Stop();
+                    //  MainWindow.TimerCounter.Stop();
                     MainWindow.RandomSelectSourceNodesTimer.Stop();
                     MainWindow.stopSimlationWhen = PublicParamerters.SimulationTime;
                     MainWindow.top_menu.IsEnabled = true;
@@ -331,11 +332,11 @@ namespace MiniSDN.Dataplane
                         //MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
                         MainWindow.MainWindowUpdataMessage();
 
-                        
+
                     }
-                    
+
                     if (Settings.Default.ShowRadar) Myradar.StopRadio();
-                    
+
                     Console.WriteLine("NID:" + this.ID + ". Queu Timer is stoped.");
                     MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Fill = Brushes.Transparent);
                     MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Visibility = Visibility.Hidden);
@@ -349,7 +350,7 @@ namespace MiniSDN.Dataplane
             if (val >= 1 && val <= 9)
             {
                 Dispatcher.Invoke(() => Prog_batteryCapacityNotation.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(BatteryLevelColoring.col1_9)));
-               Dispatcher.Invoke(()=> Ellipse_battryIndicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(BatteryLevelColoring.col1_9)));
+                Dispatcher.Invoke(() => Ellipse_battryIndicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(BatteryLevelColoring.col1_9)));
             }
 
             if (val >= 10 && val <= 19)
@@ -439,7 +440,7 @@ namespace MiniSDN.Dataplane
         /// show or hide the arrow in seperated thread.
         /// </summary>
         /// <param name="id"></param>
-        public void ShowOrHideArrow(int id) 
+        public void ShowOrHideArrow(int id)
         {
             Thread thread = new Thread(() =>
             {
@@ -478,14 +479,14 @@ namespace MiniSDN.Dataplane
 
 
 
-       
+
 
         #endregion
 
 
 
-       
-       
+
+
 
         /// <summary>
         /// 
@@ -504,18 +505,21 @@ namespace MiniSDN.Dataplane
             Mac.SwichToSleep();
         }
 
-        public void HavePactketToSend()
+        public void HavePactketsToSend()
         {
-            Packet packet = NewWaitingPacketsQueue.Peek();//复制队头数据包，等发送成功后再将其删除。
+          //  Packet packet = NewWaitingPacketsQueue.Peek();//复制队头数据包，等发送成功后再将其删除
 
-            this.SendPacekt(packet);//原始版本的发包函数，便于计算方便
+            //this.SendPacekt(packet);//原始版本的发包函数，便于计算方便
+
+
+            NewSendPackets();
 
 
 
         }
 
 
-       
+
         public Sensor(int nodeID)
         {
             InitializeComponent();
@@ -523,8 +527,8 @@ namespace MiniSDN.Dataplane
             if (nodeID == 0) BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergyForSink; // the value will not be change
             else
                 BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergy;
-           
-            
+
+
             ResidualEnergy = BatteryIntialEnergy;// joules. intializing.
             Prog_batteryCapacityNotation.Value = BatteryIntialEnergy;
             Prog_batteryCapacityNotation.Maximum = BatteryIntialEnergy;
@@ -535,15 +539,15 @@ namespace MiniSDN.Dataplane
             //:
 
             SendPacketTimer.Interval = TimeSpan.FromSeconds(1);
-           
+
 
         }
 
-       
+
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            
+
 
         }
 
@@ -560,23 +564,23 @@ namespace MiniSDN.Dataplane
             {
                 MainWindow.myNetWork[v.ID].lbl_Sensing_ID.Background = Brushes.Black;
             }*/
-         
+
         }
 
-        
+
 
         private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-           
+
         }
 
-       
+
 
         public int ComputeMaxHopsUplink
         {
             get
             {
-                double  DIS= Operations.DistanceBetweenTwoSensors(PublicParamerters.SinkNode, this);
+                double DIS = Operations.DistanceBetweenTwoSensors(PublicParamerters.SinkNode, this);
                 return Convert.ToInt16(Math.Ceiling((Math.Sqrt(PublicParamerters.Density) * (DIS / ComunicationRangeRadius))));
             }
         }
@@ -622,12 +626,12 @@ namespace MiniSDN.Dataplane
             //有剩余能量时既满足生成数据包的条件，该条件是否可以修改？不修改可能会导致能量为负值的情况。
             if (Settings.Default.IsIntialized && this.ResidualEnergy > 0)
             {
-                
+
                 PublicParamerters.NumberofGeneratedPackets += 1;   //数据包总数+1
 
 
                 //打包数据包的相关信息，包括起始ID，生存时间，源节点，数据包长度，数据包类型，数据包ID，以及目的节点等
-                Packet packet = new Packet();                      
+                Packet packet = new Packet();
                 packet.Path = "" + this.ID;
                 packet.TimeToLive = this.ComputeMaxHopsUplink;
                 packet.Source = this;
@@ -637,8 +641,8 @@ namespace MiniSDN.Dataplane
                 packet.Destination = PublicParamerters.SinkNode;
                 IdentifySourceNode(this);
                 // MainWindow.Dispatcher.Invoke(() => MainWindow.lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
-                
-                
+
+
                 //更新主窗口右侧信息
                 MainWindow.MainWindowUpdataMessage();
 
@@ -650,29 +654,29 @@ namespace MiniSDN.Dataplane
 
                 this.SwichToActive();
 
-                
-                 //:准备发送数据包给下一跳节点
-                 //this.SendPacekt(packet);
-              
-                
+
+                //:准备发送数据包给下一跳节点
+                //this.SendPacekt(packet);
+
+
 
             }
         }
 
-       
+
 
         public void GenerateMultipleDataPackets(int numOfPackets)
         {
             for (int i = 0; i < numOfPackets; i++)
             {
                 GenerateDataPacket();
-              //  Thread.Sleep(50);
+                //  Thread.Sleep(50);
             }
         }
 
-       
 
-       
+
+
 
         /// <summary>
         /// downlink
@@ -701,7 +705,7 @@ namespace MiniSDN.Dataplane
 
                 this.SendPacekt(packet);
 
-               // Thread.Sleep(TimeSpan.FromSeconds(1));
+                // Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }
         /// <summary>
@@ -709,7 +713,7 @@ namespace MiniSDN.Dataplane
         /// </summary>
         /// <param name="numOfPackets"></param>
         /// <param name="endone"></param>
-        public void GenerateMultipleControlPackets(int numOfPackets,Sensor endone)
+        public void GenerateMultipleControlPackets(int numOfPackets, Sensor endone)
         {
             for (int i = 0; i < numOfPackets; i++)
             {
@@ -763,7 +767,7 @@ namespace MiniSDN.Dataplane
                         {
                             RandomSelectEndNodes(1);
                         }
-                       
+
                         break;
                     }
                 case "btn_send_10_packet":
@@ -842,7 +846,7 @@ namespace MiniSDN.Dataplane
         // try. 该等待队列在新的发包模式下不使用
         private void DeliveerPacketsInQueuTimer_Tick(object sender, EventArgs e)
         {
-           
+
 
             Packet toppacket = WaitingPacketsQueue.Dequeue();
             Console.WriteLine("NID:" + this.ID + " trying(preamble packet) to sent The  PID:" + toppacket.PID);
@@ -864,7 +868,7 @@ namespace MiniSDN.Dataplane
             //等待队列无数据包时，停止定时器
             if (WaitingPacketsQueue.Count == 0)
             {
-                if(Settings.Default.ShowRadar) Myradar.StopRadio();
+                if (Settings.Default.ShowRadar) Myradar.StopRadio();
 
                 QueuTimer.Stop();
                 Console.WriteLine("NID:" + this.ID + ". Queu Timer is stoped.");
@@ -882,7 +886,7 @@ namespace MiniSDN.Dataplane
         {
             // 计算冗余preamble包的能量消耗和相关参数的统计         
             PublicParamerters.TotalReduntantTransmission += 1;
-            double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.PreamblePacketLength); 
+            double UsedEnergy_Nanojoule = EnergyModel.Receive(PublicParamerters.PreamblePacketLength);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
             reciverNode.ResidualEnergy = reciverNode.ResidualEnergy - UsedEnergy_joule;
             // pacekt.UsedEnergy_Joule += UsedEnergy_joule;
@@ -894,12 +898,12 @@ namespace MiniSDN.Dataplane
         }
 
 
-        public void  Sendpreamble( Sensor sender)
+        public void Sendpreamble(Sensor sender)
         {
             //preamble包的传输距离为通信半径；
             double UsedEnergy_Nanojoule = EnergyModel.Transmit(PublicParamerters.PreamblePacketLength, PublicParamerters.CommunicationRangeRadius);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
-            
+
             //节点相关能耗计算
             sender.ResidualEnergy = sender.ResidualEnergy - UsedEnergy_joule;//剩余能耗
             sender.UsedEnergy += UsedEnergy_joule;//使用能耗
@@ -911,7 +915,23 @@ namespace MiniSDN.Dataplane
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket += UsedEnergy_joule;//总preamble能耗
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket_by_Send += UsedEnergy_joule;//总发送preamble能耗
 
-            //是否要引入delay？
+            //发送preamble包的时延,不管有没有收到ACK都为两倍的时延
+            //若有ACK，则ACK的传输和传播时延与preamble相同，若无ACK，也至少需要这么久的时延才能确定没有节点回复ACK
+            double delay = DelayModel.DelayModel.Delay_Preamble();
+            delay = delay * 2;
+            foreach (Packet packet in NewWaitingPacketsQueue)
+            {
+                packet.TotalDelay += delay;
+                packet.TotalDelay_PreamblePackets += delay;
+
+
+                PublicParamerters.TotalDelayMs += delay;
+                PublicParamerters.TotalDelay_PreamblePackets += delay;
+
+            }
+
+
+
         }
 
         public void Receivepreamble()
@@ -932,12 +952,12 @@ namespace MiniSDN.Dataplane
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket += UsedEnergy_joule;//总preamble能耗
             PublicParamerters.TotalEnergyConsumptionJoule_Preamblepacket_by_Rcceive += UsedEnergy_joule;//总接收preamb能耗
 
-            //是否要引入delay？
+            
         }
 
 
 
-        public void SendACK(Sensor sender ,double Distance_M)
+        public void SendACK(Sensor sender, double Distance_M)
         {
             double UsedEnergy_Nanojoule = EnergyModel.Transmit(PublicParamerters.ACKPacketLength, Distance_M);
             double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
@@ -974,7 +994,7 @@ namespace MiniSDN.Dataplane
 
 
         }
-       
+
 
 
 
@@ -992,9 +1012,9 @@ namespace MiniSDN.Dataplane
                     foreach (MiniFlowTableEntry selectedflow in MiniFlowTable)
                     {
                         //醒着的标记为Forward的且不在传输状态的节点为满足条件的节点
-                        if (pacekt.PacketType == PacketType.Data && selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward && selectedflow.NeighborEntry.NeiNode.TransmitState == false)
+                        if (pacekt.PacketType == PacketType.Data && selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward && selectedflow.NeighborEntry.NeiNode.NewWaitingPacketsQueue.Count == 0)
                         {
-                           
+
                             if (ret == null)
                             {
                                 //第一个满足要求的即为转发节点
@@ -1033,7 +1053,7 @@ namespace MiniSDN.Dataplane
 
                                 //冗余节点发送ACK相关计算
                                 double Distance_M = Operations.DistanceBetweenTwoSensors(this, selectedflow.NeighborEntry.NeiNode);
-                                SendACK(selectedflow.NeighborEntry.NeiNode,Distance_M);
+                                SendACK(selectedflow.NeighborEntry.NeiNode, Distance_M);
                                 //冗余传输（每发送一个冗余的ACK包）
                                 PublicParamerters.TotalReduntantTransmission += 1;
                                 //发送preamble的能耗属于TotalWastedEnergyJoule
@@ -1052,13 +1072,6 @@ namespace MiniSDN.Dataplane
                                 double UsedEnergy_Nanojoule_ReceiveACK = EnergyModel.Receive(PublicParamerters.ACKPacketLength);
                                 double UsedEnergy_joule_ReceiveACK = ConvertToJoule(UsedEnergy_Nanojoule_ReceiveACK);
                                 PublicParamerters.TotalWastedEnergyJoule += UsedEnergy_joule_ReceiveACK;
-
-
-
-
-
-                                //原始版本冗余计算，未考虑ACK
-                                // RedundantTransmisionCost(pacekt, selectedflow.NeighborEntry.NeiNode);
 
                             }
                         }
@@ -1082,10 +1095,105 @@ namespace MiniSDN.Dataplane
             catch
             {
                 ret = null;
-              //  MessageBox.Show(" Null Match.!");
+                //  MessageBox.Show(" Null Match.!");
             }
 
             return ret;
+        }
+
+        public MiniFlowTableEntry NewMatchFlow()
+        {
+
+            MiniFlowTableEntry ret = null;
+            try
+            {
+                if (MiniFlowTable.Count > 0)
+                {
+                    foreach (MiniFlowTableEntry selectedflow in MiniFlowTable)
+                    {
+                        //醒着的标记为Forward的且不在传输状态的节点为满足条件的节点
+                        if (selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward && selectedflow.NeighborEntry.NeiNode.NewWaitingPacketsQueue.Count==0)
+                        {
+
+                            if (ret == null)
+                            {
+                                //第一个满足要求的即为转发节点
+                                ret = selectedflow;
+
+                                //ret也会消耗接收preamble包的能量，原始版本并未计算,现已实现
+                                ret.NeighborEntry.NeiNode.Receivepreamble();
+
+                                if (ret.NeighborEntry.NeiNode.ID != 0) //非sink接收节点接收preamble包后会发送一个ACK包给源节点
+                                {
+                                    double Distance_M = Operations.DistanceBetweenTwoSensors(this, ret.NeighborEntry.NeiNode);
+                                    SendACK(ret.NeighborEntry.NeiNode, Distance_M);
+
+                                }
+                                //源节点接收ACK包
+                                this.ReceiveACK();
+                            }
+                            else
+                            {
+                                //计算冗余传输的能量消耗，除了转发节点外，每一个醒着的标记为forward的节点都会接受源节点的preamble包，这些都是冗余能耗
+                                //原始版本没有引入ACK，是否可以引入ACK包的冗余能耗问题
+                                //已引入ACK包的能量消耗和计算
+
+
+                                //接收preamble相关计算
+                                selectedflow.NeighborEntry.NeiNode.Receivepreamble();
+
+                                //冗余传输（每多接收一个冗余的preamble包）
+                                PublicParamerters.TotalReduntantTransmission += 1;
+
+                                //接收的preamble能耗属于TotalWastedEnergyJoule
+                                double UsedEnergy_Nanojoule_ReceivePreamble = EnergyModel.Receive(PublicParamerters.PreamblePacketLength);
+                                double UsedEnergy_joule_ReceivePreamble = ConvertToJoule(UsedEnergy_Nanojoule_ReceivePreamble);
+                                PublicParamerters.TotalWastedEnergyJoule += UsedEnergy_joule_ReceivePreamble;
+
+
+                                //冗余节点发送ACK相关计算
+                                double Distance_M = Operations.DistanceBetweenTwoSensors(this, selectedflow.NeighborEntry.NeiNode);
+                                SendACK(selectedflow.NeighborEntry.NeiNode, Distance_M);
+                                //冗余传输（每发送一个冗余的ACK包）
+                                PublicParamerters.TotalReduntantTransmission += 1;
+                                //发送preamble的能耗属于TotalWastedEnergyJoule
+                                double UsedEnergy_Nanojoule_SendACK = EnergyModel.Transmit(PublicParamerters.ACKPacketLength, Distance_M);
+                                double UsedEnergy_joule_SendACK = ConvertToJoule(UsedEnergy_Nanojoule_SendACK);
+                                PublicParamerters.TotalWastedEnergyJoule += UsedEnergy_joule_SendACK;
+
+
+                                //源节点接收发来的所有ACK
+                                this.ReceiveACK();
+
+                                //冗余传输（每多接收一个冗余的ACK包） 不考虑ACK冲突
+                                PublicParamerters.TotalReduntantTransmission += 1;
+
+                                //源节点接收ACK的能耗属于TotalWastedEnergyJoule
+                                double UsedEnergy_Nanojoule_ReceiveACK = EnergyModel.Receive(PublicParamerters.ACKPacketLength);
+                                double UsedEnergy_joule_ReceiveACK = ConvertToJoule(UsedEnergy_Nanojoule_ReceiveACK);
+                                PublicParamerters.TotalWastedEnergyJoule += UsedEnergy_joule_ReceiveACK;
+
+                            }
+                        }
+                       
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No Flow!!!. muach flow!");
+                    return null;
+                }
+            }
+            catch
+            {
+                ret = null;
+                //  MessageBox.Show(" Null Match.!");
+            }
+
+            return ret;
+
+
+
         }
 
         // When the sensor open the channel to transmit the data.
@@ -1183,7 +1291,7 @@ namespace MiniSDN.Dataplane
                         //先将源节点队头数据包删除，然后将数据包加入接收节点的等待队列中，接收节点必然处于醒状态
                         //该if语句为防止出现空队列异常
                         if (NewWaitingPacketsQueue.Count >= 1) this.NewWaitingPacketsQueue.Dequeue();
-                   
+
                         //源节点发送data包相关的计算，包括能量消耗以及延时
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
 
@@ -1191,7 +1299,7 @@ namespace MiniSDN.Dataplane
                         Reciver.ReceivePacket(packt);
 
 
-                      
+
 
                     }
                     else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态,等待下次发送premble包
@@ -1223,12 +1331,12 @@ namespace MiniSDN.Dataplane
                     {
                         Sensor Reciver = FlowEntry.NeighborEntry.NeiNode;
                         // sender swich on the redio:
-                     //   SwichToActive(); // this.
+                        //   SwichToActive(); // this.
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
                         FlowEntry.DownLinkStatistics += 1;
-                       // Reciver.SwichToActive();
+                        // Reciver.SwichToActive();
                         Reciver.ReceivePacket(packt);
-                      //  SwichToSleep();// this.
+                        //  SwichToSleep();// this.
                     }
                     else
                     {
@@ -1245,6 +1353,71 @@ namespace MiniSDN.Dataplane
                     }
                 }
             }
+        }
+
+
+
+        public void NewSendPackets()
+        {
+            //标记位，表示有数据要发送，数据发送完毕时会再次改变此标记位
+            TransmitState = true;
+            //首先发送preamble，计算能量消耗和时延
+            Sendpreamble(this);
+
+            lock (MiniFlowTable)
+            {
+                //按照Priority值大小排序邻居节点，前n个节点标记为Forward，剩余m-n个节点标记为Drop，
+                //n是转发节点集大小，m是邻居节点个数
+                MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
+
+                //按照优先级顺序第一个醒着的标记是forward节点就是转发节点，
+                //此函数包含计算接收节点接收preamble包消耗的能量和冗余preamble包的能量消耗，即非转发节点的接收冗余preamble包所消耗的能量
+                //若引入ACK机制，则此函数还应包括转发集中醒着的节点接受preamble包之后发送冗余ACK包的能量消耗。
+                MiniFlowTableEntry flowEntry = NewMatchFlow();
+
+
+                if (flowEntry != null)//有合适的转发节点
+                {
+                    //只有候选节点集合中的节点才有可能成为转发节点
+                    //当候选节点醒着且不在传输数据包时才能接收preamble然后回复ACK
+                    Sensor Reciver = flowEntry.NeighborEntry.NeiNode;
+
+                    //一次性发完所有等待队列中的数据包
+                    //先将源节点队头数据包删除，然后将数据包加入接收节点的等待队列中，接收节点必然处于醒状态
+                    while(NewWaitingPacketsQueue.Count > 0)
+                    {
+                        Packet packt = NewWaitingPacketsQueue.Peek();
+                        this.NewWaitingPacketsQueue.Dequeue();
+                        //源节点发送data包相关的计算，包括能量消耗以及延时
+                        ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
+                        //接收data包的相关计算和处理
+                        Reciver.ReceivePacket(packt);
+                    }
+                    //标记位，此时表示不在传输数据，
+                    TransmitState = false;
+               
+                }
+                else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态,等待下次发送premble包
+                {
+                    //队列中所有数据包delay += CheckQueueTime;时延增加，该部分时延属于因为没有接收者而增加的时延
+                    for (int i = 0; i < NewWaitingPacketsQueue.Count; i++)
+                    {
+
+                        NewWaitingPacketsQueue.ToArray()[i].TotalDelay += this.Mac.CheckQueueTime;
+                        NewWaitingPacketsQueue.ToArray()[i].TotalDelay_NO_ACK += this.Mac.CheckQueueTime;
+                        
+                        PublicParamerters.TotalDelayMs += this.Mac.CheckQueueTime;
+                        PublicParamerters.TotalDelay_NO_ACK += this.Mac.CheckQueueTime;
+                        
+
+                    }
+
+                    if (Settings.Default.ShowRadar) Myradar.StartRadio();
+                    PublicParamerters.MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Fill = Brushes.DeepSkyBlue);
+                    PublicParamerters.MainWindow.Dispatcher.Invoke(() => Ellipse_indicator.Visibility = Visibility.Visible);
+                }
+            }
+
         }
 
         /// <summary>
@@ -1267,39 +1440,36 @@ namespace MiniSDN.Dataplane
                     double UsedEnergy_Nanojoule = EnergyModel.Transmit(packt.PacketLength, Distance_M);
                     double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
 
-
-                  
-
-
                     //节点相关能耗计算
                     ResidualEnergy = this.ResidualEnergy - UsedEnergy_joule; //节点剩余能量
                     UsedEnergy += UsedEnergy_joule;//节点使用的能耗
                     Energy_Used_IN_Data_Packet += UsedEnergy_joule;//节点数据包能耗
                     Energy_Used_IN_Send_Data_Packet += UsedEnergy_joule;//节点发送数据包能耗
 
-
-
                     //总能耗相关计算                   
                     PublicParamerters.TotalEnergyConsumptionJoule += UsedEnergy_joule;//网络总耗能
                     PublicParamerters.TotalEnergyConsumptionJoule_Datapacket += UsedEnergy_joule;//data包总能耗
                     PublicParamerters.TotalEnergyConsumptionJoule_Datapacket_by_Send += UsedEnergy_joule;//发送data包总能耗
 
-
-
                     //该数据包消耗的能量
                     packt.UsedEnergy_Joule += UsedEnergy_joule;
+
+                    //数据包路由距离和跳数
                     packt.RoutingDistance += Distance_M;
                     packt.Hops += 1;
 
-
-
+                    //总路由距离和跳数
+                    PublicParamerters.TotalRoutingDistance += Distance_M;
+                    PublicParamerters.TotalHops += 1;
 
                     //计算数据包延迟和总延迟
-                    double delay = DelayModel.DelayModel.Delay(this, Reciver);
-                    packt.Delay += delay;
+                    double delay = DelayModel.DelayModel.Delay_Data(this, Reciver);
+
+                    packt.TotalDelay += delay;
+                    packt.TotalDelay_DataPackets += delay;
+
                     PublicParamerters.TotalDelayMs += delay;
-
-
+                    PublicParamerters.TotalDelay_DataPackets += delay;
 
                     if (Settings.Default.SaveRoutingLog)
                     {
@@ -1307,7 +1477,7 @@ namespace MiniSDN.Dataplane
                         log.PacketType = PacketType.Data;
                         log.IsSend = true;
                         log.NodeID = this.ID;
-                        log.Operation = "To:" + Reciver.ID; 
+                        log.Operation = "To:" + Reciver.ID;
                         log.Time = DateTime.Now;
                         log.Distance_M = Distance_M;
                         log.UsedEnergy_Nanojoule = UsedEnergy_Nanojoule;
@@ -1332,7 +1502,7 @@ namespace MiniSDN.Dataplane
             }
             else if (enCon == EnergyConsumption.Recive)
             {
-                
+
 
                 double UsedEnergy_Nanojoule = EnergyModel.Receive(packt.PacketLength);
                 double UsedEnergy_joule = ConvertToJoule(UsedEnergy_Nanojoule);
@@ -1406,13 +1576,13 @@ namespace MiniSDN.Dataplane
             {
                 //非sink节点接收数据包，先计算接收此数据包的能量消耗，接收之后再决定是丢弃还是转发
                 //原始版本中非sink节点成功接收数据包时并未计算能量消耗，即该else语句内应调用ComputeOverhead，现已实现。  
-                
+
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 //生存周期已到丢弃该数据包，即该数据包不加入接收节点的等待队列中
                 if (packt.Hops >= packt.TimeToLive)
                 {
-                   
+
 
                     PublicParamerters.NumberofDropedPacket += 1;//丢弃包总数增加1
                     PublicParamerters.DropedbecauseofTTL += 1; //因生存周期而丢弃的数据包
@@ -1461,7 +1631,7 @@ namespace MiniSDN.Dataplane
             string nodemessage = GetNodeMessage();
             label.Content = nodemessage;
             ToolTip = label;
-           
+
 
 
             /*            
@@ -1483,10 +1653,11 @@ namespace MiniSDN.Dataplane
 
         }
 
-        public string GetNodeMessage() {
+        public string GetNodeMessage()
+        {
 
             //节点消息汇总
-            string nodemessage ;
+            string nodemessage;
 
             //ID
             string message_ID = "ID:" + ID + "\n";
@@ -1498,7 +1669,7 @@ namespace MiniSDN.Dataplane
             string message_BatteryIntialEnergy = "BatteryIntialEnergy:" + BatteryIntialEnergy + "J" + "\n";
 
             //能量消耗及其占比
-            string message_UsedEnergy = "UsedEnergy:" + UsedEnergy + "J   " +"UsedEnergyPercentage:" + UsedEnergyPercentage +"%" + "\n";
+            string message_UsedEnergy = "UsedEnergy:" + UsedEnergy + "J   " + "UsedEnergyPercentage:" + UsedEnergyPercentage + "%" + "\n";
 
             //剩余能量及其占比
             string message_ResidualEnergy = "ResidualEnergy:" + ResidualEnergy + "J   " + "ResidualEnergyPercentage:" + ResidualEnergyPercentage + "%" + "\n";
@@ -1522,7 +1693,7 @@ namespace MiniSDN.Dataplane
 
         private void btn_show_routing_log_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(Logs.Count>0)
+            if (Logs.Count > 0)
             {
                 UiShowRelativityForAnode re = new ui.UiShowRelativityForAnode();
                 re.dg_relative_shortlist.ItemsSource = Logs;
@@ -1534,9 +1705,9 @@ namespace MiniSDN.Dataplane
         {
             List<KeyValuePair<int, double>> rands = new List<KeyValuePair<int, double>>();
             int index = 0;
-            foreach (RoutingLog log in Logs )
+            foreach (RoutingLog log in Logs)
             {
-                if(log.IsSend)
+                if (log.IsSend)
                 {
                     index++;
                     rands.Add(new KeyValuePair<int, double>(index, log.ForwardingRandomNumber));
@@ -1549,12 +1720,12 @@ namespace MiniSDN.Dataplane
 
         private void Ellipse_center_MouseEnter(object sender, MouseEventArgs e)
         {
-            
+
         }
 
         private void btn_show_my_duytcycling_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           
+
         }
 
         private void btn_draw_paths_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1562,11 +1733,11 @@ namespace MiniSDN.Dataplane
             NetworkVisualization.UpLinksDrawPaths(this);
         }
 
-       
-         
+
+
         private void btn_show_my_flows_MouseDown(object sender, MouseButtonEventArgs e)
         {
-           
+
             ListControl ConMini = new ui.conts.ListControl();
             ConMini.lbl_title.Content = "Mini-Flow-Table";
             ConMini.dg_date.ItemsSource = MiniFlowTable;
@@ -1630,7 +1801,7 @@ namespace MiniSDN.Dataplane
             {
                 case "Btn_select_me_as_end_node_1":
                     {
-                       PublicParamerters.SinkNode.GenerateMultipleControlPackets(1, this);
+                        PublicParamerters.SinkNode.GenerateMultipleControlPackets(1, this);
 
                         break;
                     }
@@ -1661,7 +1832,7 @@ namespace MiniSDN.Dataplane
 
         /*** Vistualize****/
 
-        public void ShowID(bool isVis )
+        public void ShowID(bool isVis)
         {
             if (isVis) { lbl_Sensing_ID.Visibility = Visibility.Visible; lbl_hops_to_sink.Visibility = Visibility.Visible; }
             else { lbl_Sensing_ID.Visibility = Visibility.Hidden; lbl_hops_to_sink.Visibility = Visibility.Hidden; }
@@ -1679,7 +1850,7 @@ namespace MiniSDN.Dataplane
             else Ellipse_Communication_range.Visibility = Visibility.Hidden;
         }
 
-        public void ShowBattery(bool isVis) 
+        public void ShowBattery(bool isVis)
         {
             if (isVis) Prog_batteryCapacityNotation.Visibility = Visibility.Visible;
             else Prog_batteryCapacityNotation.Visibility = Visibility.Hidden;
@@ -1692,22 +1863,22 @@ namespace MiniSDN.Dataplane
 
         private void lbl_MouseLeave(object sender, MouseEventArgs e)
         {
-            
-           
-             this.Ellipse_Communication_range.Visibility = Visibility.Hidden;
+
+
+            this.Ellipse_Communication_range.Visibility = Visibility.Hidden;
             foreach (Arrow arr in this.MyArrows)
             {
                 arr.StrokeThickness = 0.2;
                 arr.HeadHeight = 0.2;
                 arr.HeadWidth = 0.2;
 
-               
+
 
             }
 
-            
 
-            
+
+
         }
     }
 }

@@ -67,6 +67,8 @@
             <ComboBox Width="100" Name="com_UpdateLossPercentage"></ComboBox>
             <Label>%</Label>
         </StackPanel>
+        
+        
 
 
         <GroupBox FontWeight="Medium" Header="Controls" Margin="0,0,10,0">

@@ -264,6 +264,17 @@ namespace MiniSDN.ui
             lbl_par_L.Content = "0";
             lbl_par_R.Content = "0";
 
+            lbl_total_delay.Content = "0";
+            lbl_total_delay_by_waiting_in_queue.Content = "0";
+            lbl_total_delay_by_waiting_in_queue_percentage.Content = "0";
+            lbl_total_delay_by_no_ack.Content = "0";
+            lbl_total_delay_by_no_ack_percentage.Content = "0";
+            lbl_total_delay_by_data_packet.Content = "0";
+            lbl_total_delay_by_data_packet_percentage.Content = "0";
+            lbl_total_delay_by_preamble_packet.Content = "0";
+            lbl_total_delay_by_preamble_packet_percentage.Content = "0";
+            lbl_average_delay.Content = "0";
+
             lbl_Number_of_Delivered_Packet.Content = "0";
             lbl_Number_of_Droped_Packet.Content = "0";
             lbl_Droped_because_of_Cannot_Send.Content = "0";
@@ -363,10 +374,35 @@ namespace MiniSDN.ui
             //新丢包率      丢弃包/（总生成包-总队列包）==========丢弃包/（成功传输包+丢弃包）
             Dispatcher.Invoke(() => lbl_new_droped_ratio.Content = PublicParamerters.NewDropedRatio,DispatcherPriority.Send);
             //冗余传输
-            Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission);
+            Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission,DispatcherPriority.Send);
 
-            
 
+
+            //delay相关显示,单位：S
+
+            //总delay
+            Dispatcher.Invoke(() => lbl_total_delay.Content = Math.Round( PublicParamerters.TotalDelayMs/1000,2), DispatcherPriority.Send);
+
+            //平均时延 端到端 end-end
+            Dispatcher.Invoke(() => lbl_average_delay.Content = PublicParamerters.Total_Average_Delay, DispatcherPriority.Send);
+
+
+
+            //因为等待节点醒来而产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_waiting_in_queue.Content =Math.Round( PublicParamerters.TotalDelay_IN_Queue/1000,0), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_waiting_in_queue_percentage.Content = PublicParamerters.Total_Delay_by_Waiting_In_Queue_Percentage, DispatcherPriority.Send);
+
+            //因为没有ACK回复产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_no_ack.Content =Math.Round( PublicParamerters.TotalDelay_NO_ACK/1000,0), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_no_ack_percentage.Content = PublicParamerters.Total_Delay_by_No_ACK_Percentage, DispatcherPriority.Send);
+
+            //因为发送data包产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_data_packet.Content =Math.Round( PublicParamerters.TotalDelay_DataPackets/1000,2), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_data_packet_percentage.Content = PublicParamerters.Total_Delay_by_Data_Packet_Percentage, DispatcherPriority.Send);
+
+            //因为发送preamb包产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_preamble_packet.Content = Math.Round(PublicParamerters.TotalDelay_PreamblePackets/1000,2), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_preamble_packet_percentage.Content = PublicParamerters.Total_Delay_by_Preamble_Packet_Percentage, DispatcherPriority.Send);
 
 
 

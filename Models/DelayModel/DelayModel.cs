@@ -31,5 +31,30 @@ namespace MiniSDN.DelayModel
             double PropagationDelay = Distance / PublicParamerters.SpeedOfLight;
             return TransmissionDelay + PropagationDelay;
         }
+
+        public static double Delay_Preamble()
+        {
+
+            double Distance = PublicParamerters.CommunicationRangeRadius;
+            //https://en.wikipedia.org/wiki/Transmission_delay
+            double TransmissionDelay = PublicParamerters.PreamblePacketLength / PublicParamerters.TransmissionRate;
+            //https://en.wikipedia.org/wiki/Propagation_delay
+            double PropagationDelay = Distance / PublicParamerters.SpeedOfLight;
+            return (TransmissionDelay + PropagationDelay)*1000; //单位转换成毫秒
+
+
+
+        }
+
+        public static double Delay_Data(Sensor tx, Sensor rc)
+        {
+            double Distance = Operations.DistanceBetweenTwoSensors(tx, rc);
+            //https://en.wikipedia.org/wiki/Transmission_delay
+            double TransmissionDelay = PublicParamerters.RoutingDataLength / PublicParamerters.TransmissionRate;
+            //https://en.wikipedia.org/wiki/Propagation_delay
+            double PropagationDelay = Distance / PublicParamerters.SpeedOfLight;
+            return (TransmissionDelay + PropagationDelay)*1000;
+        }
+
     }
 }
