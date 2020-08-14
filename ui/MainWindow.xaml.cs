@@ -470,6 +470,16 @@ namespace MiniSDN.ui
 
             //转发表相关的初始化
             foreach (Sensor sen in myNetWork) { UplinkRouting.ComputeUplinkFlowEnery(sen); }
+            /*
+            MLApp.MLApp matlab = new MLApp.MLApp();
+            matlab.Execute(@"cd C:\Users\Kang\Documents\MATLAB");
+            object result = null;
+            matlab.Feval("myfunc", 2, out result, 1300, 14, "kang");
+            object[] res = result as object[];
+            Console.WriteLine(res[0]);
+            Console.WriteLine(res[1]);
+            Console.ReadLine();
+            */
 
             MyGraph = Graph.ConvertNodeToVertex(myNetWork);
 

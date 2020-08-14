@@ -51,7 +51,7 @@ namespace MiniSDN.Dataplane
         public static double Efs = 0.1;// unit( nJ/bit/m^2 ) //Free space model of transmitter amplifier
         public static double Emp = 0.0000013; // unit( nJ/bit/m^4) //Multi-path model of transmitter amplifier
         public static double CommunicationRangeRadius { get { return SensingRangeRadius * 2; } } // sensing range is R in the DB.
-        public static double TransmissionRate = 2 * 1000000;////2Mbps 100 × 10^6 bit/s , //https://en.wikipedia.org/wiki/Transmission_time
+        public static double TransmissionRate = 250*1000;//// 250Kbit/s , 
         public static double SpeedOfLight = 299792458;//https://en.wikipedia.org/wiki/Speed_of_light // s
         public static string PowersString { get; set; }
 

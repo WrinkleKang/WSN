@@ -242,7 +242,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 _MainWindow.GenerateUplinkPacketsRandomly(Convert.ToInt32(numpackets));
                 _MainWindow.PacketRate = "1 packet per " + packetRate + " s";
             }
-            else if (Settings.Default.StopeWhenFirstNodeDeid == true)//当第一个节点能量耗尽时停止程序
+            else if (Settings.Default.StopeWhenFirstNodeDeid == true)//当选择第一个节点能量耗尽时停止程序
             {
                 int stime = 100000000;
                 double packper = Convert.ToDouble(comb_packet_rate.Text);//发包速率
