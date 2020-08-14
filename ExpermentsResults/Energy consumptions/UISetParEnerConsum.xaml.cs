@@ -31,10 +31,17 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
             try
             {
+                //醒周期时间到了仍然有数据包没有发送出去，则
+                //0==>立马睡  1==>多延迟一个醒周期  2==>一直等
+                comb_active_no_receive.Items.Add(0);
+
+                comb_active_no_receive.Items.Add(1);
+
+                comb_active_no_receive.Items.Add(2);
+
+                comb_active_no_receive.Text = Settings.Default.ActiveNoReceive.ToString();
 
 
-               
-            
 
                 //每损失多少能量广播一次消息
                 for (int i = 5; i <= 50; i++)
@@ -348,6 +355,15 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             object objval = comb_batteryIntialEnergy.SelectedItem as object;
            double va = Convert.ToDouble(objval);
             Settings.Default.BatteryIntialEnergy = va;
+
+        }
+
+        private void comb_active_no_Receive_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            object objval = comb_active_no_receive.SelectedItem as object;
+            int va = Convert.ToInt16(objval);
+            Settings.Default.ActiveNoReceive = va;
 
         }
     }

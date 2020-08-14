@@ -67,6 +67,18 @@
             <ComboBox Width="100" Name="com_UpdateLossPercentage"></ComboBox>
             <Label>%</Label>
         </StackPanel>
+
+        <StackPanel Margin="2" Orientation="Horizontal">
+            <Label Width="150" Content="Active No Receive"/>
+            <ComboBox Width="100" Name="comb_active_no_receive"
+                SelectionChanged="comb_active_no_Receive_SelectionChanged" >
+
+            </ComboBox>
+
+
+
+
+        </StackPanel>
         
         
 

@@ -346,5 +346,17 @@ namespace MiniSDN.Properties {
                 this["SliderValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double ActiveNoReceive {
+            get {
+                return ((double)(this["ActiveNoReceive"]));
+            }
+            set {
+                this["ActiveNoReceive"] = value;
+            }
+        }
     }
 }

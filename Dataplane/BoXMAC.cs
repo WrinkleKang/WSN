@@ -105,21 +105,24 @@ namespace MiniSDN.Dataplane
       
                 //Periods.ActivePeriod值是ActivePeriod默认值
                 //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
-
-                //当醒周期超过预定时间且节点不处于传输数据包状态时才进入睡眠模式
                 if (ActiveCounter >= ActivePeriod)
                 {
-                    
-                    //此时正在传输数据
-                    //if (Node.TransmitState)
-                   if(Node.NewWaitingPacketsQueue.Count>0)
+                  
+                    if (Node.NewWaitingPacketsQueue.Count>0)//当有数据包没发送完时
                     {
-                        //延长一个醒周期
-                        ActivePeriod = 2 * Periods.ActivePeriod;
-                        if (ActiveCounter >= ActivePeriod)
-                        {
-                            
+                        if (Settings.Default.ActiveNoReceive == 0)  //去睡觉
                             SwichToSleep();
+                        if (Settings.Default.ActiveNoReceive == 1)  //延迟一个醒周期再去睡觉
+                        {
+                            ActivePeriod = 2 * Periods.ActivePeriod;
+                            if (ActiveCounter >= ActivePeriod)
+                            {
+                                SwichToSleep();
+                            }
+
+                        }
+                        if (Settings.Default.ActiveNoReceive == 2)  //一直等，不去睡觉
+                        {
 
                         }
 
@@ -130,8 +133,6 @@ namespace MiniSDN.Dataplane
                         SwichToSleep(); //若不在传输数据包，则醒周期到了立马睡觉
                     }
                     
-
-                   // SwichToSleep();
                 }
 
             }
