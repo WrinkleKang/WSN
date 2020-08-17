@@ -32,14 +32,16 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             try
             {
                 //醒周期时间到了仍然有数据包没有发送出去，则
-                //0==>立马睡  1==>多延迟一个醒周期  2==>一直等
-                comb_active_no_receive.Items.Add(0);
+                //Sleep at once ==>立马睡  
+                //One more active period==>多延迟一个醒周期  
+                //Waitting all the time==>一直等
 
-                comb_active_no_receive.Items.Add(1);
+                comb_active_no_receive.Items.Add("Sleep at once");
+                comb_active_no_receive.Items.Add("One more active period");
+                comb_active_no_receive.Items.Add("Waitting all the time");
 
-                comb_active_no_receive.Items.Add(2);
 
-                comb_active_no_receive.Text = Settings.Default.ActiveNoReceive.ToString();
+                comb_active_no_receive.Text = Settings.Default.ActiveNoReceive;
 
 
 
@@ -362,8 +364,11 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         {
 
             object objval = comb_active_no_receive.SelectedItem as object;
-            int va = Convert.ToInt16(objval);
-            Settings.Default.ActiveNoReceive = va;
+            object objval2 = comb_active_no_receive.SelectedItem as string;
+            object ob3 = comb_active_no_receive.SelectedItem.ToString();
+            Settings.Default.ActiveNoReceive = comb_active_no_receive.SelectedItem.ToString();
+            //  string va = objval;
+            //  Settings.Default.ActiveNoReceive = va;
 
         }
     }

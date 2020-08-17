@@ -110,9 +110,9 @@ namespace MiniSDN.Dataplane
                   
                     if (Node.NewWaitingPacketsQueue.Count>0)//当有数据包没发送完时
                     {
-                        if (Settings.Default.ActiveNoReceive == 0)  //去睡觉
+                        if (Settings.Default.ActiveNoReceive == "Sleep at once")  //去睡觉
                             SwichToSleep();
-                        if (Settings.Default.ActiveNoReceive == 1)  //延迟一个醒周期再去睡觉
+                        if (Settings.Default.ActiveNoReceive == "One more active period")  //延迟一个醒周期再去睡觉
                         {
                             ActivePeriod = 2 * Periods.ActivePeriod;
                             if (ActiveCounter >= ActivePeriod)
@@ -121,7 +121,7 @@ namespace MiniSDN.Dataplane
                             }
 
                         }
-                        if (Settings.Default.ActiveNoReceive == 2)  //一直等，不去睡觉
+                        if (Settings.Default.ActiveNoReceive == "Waitting all the time")  //一直等，不去睡觉
                         {
 
                         }

@@ -70,12 +70,11 @@
 
         <StackPanel Margin="2" Orientation="Horizontal">
             <Label Width="150" Content="Active No Receive"/>
-            <ComboBox Width="100" Name="comb_active_no_receive"
+            <ComboBox Width="100" Name="comb_active_no_receive"                     
                 SelectionChanged="comb_active_no_Receive_SelectionChanged" >
-
             </ComboBox>
 
-
+            
 
 
         </StackPanel>

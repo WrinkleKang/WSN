@@ -53,8 +53,8 @@ namespace MiniSDN.DelayModel
             double TransmissionDelay = PublicParamerters.RoutingDataLength / PublicParamerters.TransmissionRate;
             //https://en.wikipedia.org/wiki/Propagation_delay
             double PropagationDelay = Distance / PublicParamerters.SpeedOfLight;
-            return (TransmissionDelay + PropagationDelay)*1000;
+            return (TransmissionDelay + PropagationDelay)*1000;//单位转换成毫秒       
         }
 
-    }
+        }
 }
