@@ -107,30 +107,36 @@ namespace MiniSDN.Dataplane
                 //可双击MiniSDN /Properties查看，可双击MiniSDN/App.config查找后进行修改
                 if (ActiveCounter >= ActivePeriod)
                 {
-                  
-                    if (Node.NewWaitingPacketsQueue.Count>0)//当有数据包没发送完时
+
+                    //当有数据包没发送完时
+                    if (Node.NewWaitingPacketsQueue.Count>0)
                     {
-                        if (Settings.Default.ActiveNoReceive == "Sleep at once")  //去睡觉
-                            SwichToSleep();
-                        if (Settings.Default.ActiveNoReceive == "One more active period")  //延迟一个醒周期再去睡觉
+
+
+                        switch (Settings.Default.ActiveNoReceive)
                         {
-                            ActivePeriod = 2 * Periods.ActivePeriod;
-                            if (ActiveCounter >= ActivePeriod)
-                            {
+
+                            case "Sleep at once":
                                 SwichToSleep();
-                            }
+                                break;
+                            case "One more active period":
+                                ActivePeriod = 2 * Periods.ActivePeriod;
+                                if (ActiveCounter >= ActivePeriod)
+                                {
+                                    SwichToSleep();
+                                }
+                                break;
+                            case "Waitting all the time":
+                                break;
 
                         }
-                        if (Settings.Default.ActiveNoReceive == "Waitting all the time")  //一直等，不去睡觉
-                        {
-
-                        }
-
-
+                  
                     }
-                    else {
+                    //若不在传输数据包，则醒周期到了立马睡觉
+                    else
+                    {
 
-                        SwichToSleep(); //若不在传输数据包，则醒周期到了立马睡觉
+                        SwichToSleep(); 
                     }
                     
                 }

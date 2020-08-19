@@ -86,5 +86,8 @@
     <Setting Name="ActiveNoReceive" Type="System.String" Scope="User">
       <Value Profile="(Default)">One more active period</Value>
     </Setting>
+    <Setting Name="RoutingAlgorithm" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AHP_Fuzzy</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

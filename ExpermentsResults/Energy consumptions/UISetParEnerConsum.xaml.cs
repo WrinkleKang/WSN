@@ -44,6 +44,12 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 comb_active_no_receive.Text = Settings.Default.ActiveNoReceive;
 
 
+                //选择路由协议
+                comb_routing_algorithm.Items.Add("LORA");
+                comb_routing_algorithm.Items.Add("AHP_Fuzzy");
+                comb_routing_algorithm.Text = Settings.Default.RoutingAlgorithm;
+
+
 
                 //每损失多少能量广播一次消息
                 for (int i = 5; i <= 50; i++)
@@ -363,13 +369,16 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         private void comb_active_no_Receive_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            object objval = comb_active_no_receive.SelectedItem as object;
-            object objval2 = comb_active_no_receive.SelectedItem as string;
-            object ob3 = comb_active_no_receive.SelectedItem.ToString();
+            
             Settings.Default.ActiveNoReceive = comb_active_no_receive.SelectedItem.ToString();
             //  string va = objval;
             //  Settings.Default.ActiveNoReceive = va;
 
+        }
+
+        private void comb_routing_algorithm_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.Default.RoutingAlgorithm = comb_routing_algorithm.SelectedItem.ToString();
         }
     }
 }

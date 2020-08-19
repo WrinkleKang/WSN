@@ -39,6 +39,7 @@ namespace MiniSDN.DataPlane.NeighborsDiscovery
                                 NeighborsTableEntry en = new NeighborsTableEntry();
                                 en.NeiNode = node;
                                 en.R = Operations.DistanceBetweenTwoSensors(i, node);//R表示源节点到某邻居节点的距离
+                                en.angle = Operations.Angle_SenderReceive_TO_SenderSink(i, node, PublicParamerters.SinkNode);
                                 i.NeighborsTable.Add(en);
                             }
                         }

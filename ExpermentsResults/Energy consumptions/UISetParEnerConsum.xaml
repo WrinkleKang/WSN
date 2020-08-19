@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="SingleBorderWindow"
         
-        Title="UISetParEnerConsum" Height="500" Width="520">
+        Title="UISetParEnerConsum" Height="500" Width="600">
     
     <StackPanel Margin="10" Orientation="Vertical">
         <StackPanel Margin="2" Orientation="Horizontal">
@@ -69,12 +69,15 @@
         </StackPanel>
 
         <StackPanel Margin="2" Orientation="Horizontal">
-            <Label Width="150" Content="Active No Receive"/>
-            <ComboBox Width="100" Name="comb_active_no_receive"                     
+            <Label Width="150" Content="Active No Receive"></Label>
+            <ComboBox Width="auto" Name="comb_active_no_receive"                     
                 SelectionChanged="comb_active_no_Receive_SelectionChanged" >
             </ComboBox>
 
-            
+            <Label Width="auto" Content="Routing Algorithm"></Label>
+            <ComboBox Width="auto" Name="comb_routing_algorithm"                     
+                SelectionChanged="comb_routing_algorithm_SelectionChanged">
+            </ComboBox>
 
 
         </StackPanel>

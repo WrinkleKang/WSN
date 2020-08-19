@@ -13,7 +13,7 @@ namespace MiniSDN.Dataplane.PacketRouter
     {
         public int ID { get { return NeiNode.ID; } } // id of candidate.
                                                      // Elementry values:
-
+        public double angle { get; set; }
         
         public double HP { get; set; } // hops to sink.
         public double EP { get; set; } // ECLIDIAN DISTANCE

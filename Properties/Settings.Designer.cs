@@ -358,5 +358,17 @@ namespace MiniSDN.Properties {
                 this["ActiveNoReceive"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AHP_Fuzzy")]
+        public string RoutingAlgorithm {
+            get {
+                return ((string)(this["RoutingAlgorithm"]));
+            }
+            set {
+                this["RoutingAlgorithm"] = value;
+            }
+        }
     }
 }
