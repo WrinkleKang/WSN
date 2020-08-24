@@ -452,6 +452,8 @@ namespace MiniSDN.ui
             PublicParamerters.SinkNode = myNetWork[rootNodeId];//设置sink节点
             NeighborsDiscovery overlappingNodesFinder = new NeighborsDiscovery(myNetWork);
             overlappingNodesFinder.GetOverlappingForAllNodes();//邻居发现，通信距离=感知距离*2，通信距离内的节点为邻居节点
+
+
             string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
             PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
             lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息，参数为其他算法路由参数
@@ -460,7 +462,7 @@ namespace MiniSDN.ui
             PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
             DisplaySimulationParameters(rootNodeId, "Random");//在主窗口右侧显示仿真参数
 
-            EngageMacAndRadioProcol();//为节点增加醒睡模式和MAC层相关设置
+            
 
             TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);//节点间动画显示相关
 
@@ -474,8 +476,8 @@ namespace MiniSDN.ui
                 if(sen.ID != 0)
                 UplinkRouting.ComputeUplinkFlowEnery(sen);
             }
-           
 
+            EngageMacAndRadioProcol();//为节点增加醒睡模式和MAC层相关设置
             MyGraph = Graph.ConvertNodeToVertex(myNetWork);
 
 

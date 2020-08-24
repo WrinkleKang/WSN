@@ -293,7 +293,7 @@ namespace MiniSDN.Dataplane
             if (val <= 0)
             {
                 MainWindow.RandomSelectSourceNodesTimer.Stop();
-
+                
                 // dead certificate:
                 ExpermentsResults.Lifetime.DeadNodesRecord recod = new ExpermentsResults.Lifetime.DeadNodesRecord();
                 recod.DeadAfterPackets = PublicParamerters.NumberofGeneratedPackets;
@@ -1395,6 +1395,8 @@ namespace MiniSDN.Dataplane
                     }
                     //标记位，此时表示不在传输数据，
                     TransmitState = false;
+                    //数据包发送完毕之后进入睡眠状态
+                    //SwichToSleep();
                
                 }
                 else  //没有合适的转发节点，所有标记forward的节点都处于睡眠状态,等待下次发送premble包
