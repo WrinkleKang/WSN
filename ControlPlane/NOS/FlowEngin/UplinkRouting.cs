@@ -211,6 +211,8 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     //全零矩阵，用作上传数据至自动化Matlab中时充当虚部矩阵
                     double[] pr = new double[number_of_MiniFlowTable];
 
+
+                
                     //构建相关矩阵
                     for (int i = 0; i < number_of_MiniFlowTable; i++)
                     {
@@ -569,7 +571,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
 
 
-
+                  
 
 
 

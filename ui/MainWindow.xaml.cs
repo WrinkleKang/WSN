@@ -49,6 +49,7 @@ namespace MiniSDN.ui
 
         public List<Vertex> MyGraph = new List<Vertex>();
         public List<Sensor> myNetWork = new List<Sensor>();
+        public int index = 1;
 
         bool isCoverageSelected = false;
 
@@ -108,15 +109,25 @@ namespace MiniSDN.ui
             // start sending after the nodes are intilized all.
             if (PublicParamerters.SimulationTime > PublicParamerters.MacStartUp)
             {
+
+                /*
                 int index = 1 + Convert.ToInt16(UnformRandomNumberGenerator.GetUniform(PublicParamerters.NumberofNodes - 2));
                 if (index != PublicParamerters.SinkNode.ID)
                 {
-                    //随机选择一个节点，该点将执行生成数据包的函数
-                    
+                    //随机选择一个节点，该点将执行生成数据包的函数                  
                     myNetWork[index].GenerateDataPacket();
 
-                   
                 }
+                */
+
+
+                //按顺序生成数据包，原始版本为随机选择一个节点生成数据包
+                if (index == 0)
+                    index++;
+                myNetWork[index].GenerateDataPacket();
+                index = (index + 1) % myNetWork.Count;
+               
+
             }
         }
 

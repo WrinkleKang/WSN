@@ -315,9 +315,15 @@ namespace MiniSDN.Dataplane
                     MainWindow.stopSimlationWhen = PublicParamerters.SimulationTime;
                     MainWindow.top_menu.IsEnabled = true;
                 }
-                Mac.SwichToSleep();
-                Mac.SwichOnTimer.Stop();
-                Mac.ActiveSleepTimer.Stop();
+                foreach (Sensor node in MainWindow.myNetWork)
+                {
+                    node.Mac.SwichToSleep();
+                    node.Mac.SwichOnTimer.Stop();                   
+                    node.Mac.ActiveSleepTimer.Stop();
+                    node.Mac.QueueTimer.Stop();
+
+                }
+               
                 if (this.ResidualEnergy <= 0)
                 {
                     while (this.NewWaitingPacketsQueue.Count > 0)
@@ -427,6 +433,16 @@ namespace MiniSDN.Dataplane
                                 range.isUpdated = true;
                                 // update the uplink.
                                 UplinkRouting.UpdateUplinkFlowEnery(this);
+                                /*
+
+                                foreach (NeighborsTableEntry nei in this.NeighborsTable)
+                                {
+
+                                    UplinkRouting.UpdateUplinkFlowEnery(nei.NeiNode);
+
+                                }
+
+                            */
 
                             }
                         }
@@ -1109,8 +1125,10 @@ namespace MiniSDN.Dataplane
             {
                 if (MiniFlowTable.Count > 0)
                 {
+                    
                     foreach (MiniFlowTableEntry selectedflow in MiniFlowTable)
                     {
+                        
                         //醒着的标记为Forward的且不在传输状态的节点为满足条件的节点
                         if (selectedflow.SensorState == SensorState.Active && selectedflow.UpLinkAction == FlowAction.Forward && selectedflow.NeighborEntry.NeiNode.NewWaitingPacketsQueue.Count==0)
                         {
@@ -1189,6 +1207,7 @@ namespace MiniSDN.Dataplane
                 ret = null;
                 //  MessageBox.Show(" Null Match.!");
             }
+            
 
             return ret;
 
