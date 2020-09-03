@@ -199,7 +199,7 @@ namespace MiniSDN.Dataplane
                 {
                     packets_in_queue.ActiveCount += 1;
 
-                    if (packets_in_queue.ActiveCount <= 7)//若某数据包经历了7次醒周期都没有发送成功，则丢弃
+                    if (packets_in_queue.ActiveCount <= 3)//若某数据包经历了3次醒周期都没有发送成功，则丢弃
                     {
 
 

@@ -737,16 +737,10 @@ namespace MiniSDN.ui
                     queue.Enqueue(topsensor);
 
                     Enqueuecount++;
-                    //出现死循环，破环使得程序继续执行
+                    //出现死循环，此次nmax计算无效
                     if (Enqueuecount > 1000)
                     {
-                        for (int i = 0; i < myNetWork.Count; i++)
-                        {
-                            if(NonLeafNodes[i] > 0)
-                                NonLeafNodes[i]--;
-
-                        }
-                        Enqueuecount = 0;
+                        return Double.MaxValue;
                     }
 
                 }

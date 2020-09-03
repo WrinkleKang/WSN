@@ -183,7 +183,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
                     {
                         //筛选一：仅当夹角为锐角且距离sin跳数更近的邻居节点才加入MiniFlowTable，初始UpLinkAction = Forward 
-                        if (neiEntry.angle <= 90 && neiEntry.NeiNode.HopsToSink <= sender.HopsToSink)
+                        if (neiEntry.angle <= 90 && neiEntry.NeiNode.HopsToSink < sender.HopsToSink)
                         {
                             MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
                             MiniEntry.NeighborEntry = neiEntry;
