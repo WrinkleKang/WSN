@@ -50,7 +50,7 @@ namespace MiniSDN.Intilization
                         // to queue.未执行过此算法且不在队列中的节点，入队，等待出队，然后执行此算法
                         if (i.NeiNode.trun == false)
                         {
-                            if(!IsInTheQuue(i.NeiNode)) queu.Enqueue(i.NeiNode);
+                            if(!IsInTheQuue(i.NeiNode)) queu .Enqueue(i.NeiNode);
                         }
                     }
                     while (queu.Count>0)

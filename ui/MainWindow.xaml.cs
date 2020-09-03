@@ -21,6 +21,7 @@ using MiniSDN.Charts.Intilization;
 using MiniSDN.ControlPlane.NOS.Visualizating;
 using System.Threading;
 using System.Windows.Input;
+using MiniSDN.Dataplane.PacketRouter;
 
 namespace MiniSDN.ui
 {
@@ -35,6 +36,8 @@ namespace MiniSDN.ui
         public DispatcherTimer RandomSelectSourceNodesTimer = new DispatcherTimer();
         public static double Swith;// sensing feild width.
         public static double Sheigh;// sensing feild height.
+        //若使用ORR路由协议，则该定时器定时计算最优nmax且更新节点的转发集
+        public DispatcherTimer ORRTimer = new DispatcherTimer();
 
         /// <summary>
         /// the area of sensing feild.
@@ -479,6 +482,16 @@ namespace MiniSDN.ui
 
             HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);//跳数初始化
 
+            if (Settings.Default.RoutingAlgorithm == "ORR")
+            {
+                ORRCompute(); //ORR相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
+                ORRTimer.Interval = TimeSpan.FromSeconds(30);
+                ORRTimer.Tick += ORRTimer_Tick;
+                ORRTimer.Start();
+
+            }
+            
+
             // fill flows:
 
             //转发表相关的初始化
@@ -488,13 +501,373 @@ namespace MiniSDN.ui
                 UplinkRouting.ComputeUplinkFlowEnery(sen);
             }
 
+            
+
             EngageMacAndRadioProcol();//为节点增加醒睡模式和MAC层相关设置
             MyGraph = Graph.ConvertNodeToVertex(myNetWork);
 
 
         }
 
+        private void ORRTimer_Tick(object sender, EventArgs e)
+        {
+            //重新计算nmax和生成节点的转发集
+            ORRCompute();
+        }
+
+        Queue<Sensor> U = new Queue<Sensor>();
+        private void ORRCompute()
+        {
+            int nmax = 1;
+
+            double EstimatedForwardingCost = 0;
+            double EstimatedForwardingCost_Min = Double.MaxValue;
+            //循环尝试可能的n值，取最小代价的n为nmax；
+            for (int n = 2; n < 20; n++) {
+                //Algorithm2,假设算法中nmax值为n
+                Algorithm2(n);
+                //在当前nmax=n情况下计算平均消耗
+                EstimatedForwardingCost = CalculateEstimatedForwardingCost();
+               // Console.WriteLine("n: "+ n +"   EstimatedForwardingCost: " + EstimatedForwardingCost);
+
+                if (EstimatedForwardingCost < EstimatedForwardingCost_Min)
+                {
+                    EstimatedForwardingCost_Min = EstimatedForwardingCost;
+                    nmax = n;
+
+                }
+
+
+            }
+           // Console.WriteLine("nmax: " + nmax );
+
+            Algorithm2(nmax);
+
+
+
+
+        }
+
+        private double CalculateEstimatedForwardingCost()
+        {
+            //数组下标表示对应ID的节点，初始值为0，最终值表示对应节点包含在多少节点的Forwarders内,
+            int[] NonLeafNodes = new int[myNetWork.Count];
+            //需要计算的节点的队列
+            Queue<Sensor> queue = new Queue<Sensor>();
+
+            double cost = 0;
+            foreach (Sensor sensor in myNetWork)
+            {
+                //每个节点的初始Expected_number_of_transmisstion为1，表示自身产生一个数据包
+                if (sensor.ID != 0)
+                    sensor.Expected_number_of_transmisstion = 1;
+
+                //非叶子节点在数组对应位置的值表示有多少个节点的forward中包含该节点
+                foreach (Sensor node in sensor.Forwarders)
+                {
+                    NonLeafNodes[node.ID] += 1;
+                }
+
+
+
+            }
+            //构建初始队列，该队列中的节点均为叶子节点
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (NonLeafNodes[sensor.ID] == 0)
+                {                   
+                    queue.Enqueue(sensor);
+                }
+
+            }
+
+            int Enqueuecount = 0;
+            while (queue.Count > 0)
+            {
+                 Sensor topsensor = queue.Dequeue();
+                //此函数中NonLeafNodes数组值为零表示可以将该节点的ENT加入总Cost中
+                if (NonLeafNodes[topsensor.ID] == 0)
+                {
+                    foreach (Sensor sensor in topsensor.Forwarders)
+                    {
+                        //来自上一层节点的ENT增值
+                        sensor.Expected_number_of_transmisstion += Formula_26(topsensor);
+
+                        NonLeafNodes[sensor.ID]--;
+
+                        if (queue.Contains(sensor) == false)
+                            queue.Enqueue(sensor);
+                    }
+                    cost += topsensor.Expected_number_of_transmisstion;
+                }
+                //否则表明该节点还有上一层节点的ENT未计算完成
+                else
+                {
+                   
+                    queue.Enqueue(topsensor);
+
+                    Enqueuecount++;
+                    //出现死循环，破环使得程序继续执行
+                    if (Enqueuecount > 1000)
+                    {
+                        for (int i = 0; i < myNetWork.Count; i++)
+                        {
+                            if(NonLeafNodes[i] > 0)
+                                NonLeafNodes[i]--;
+
+                        }
+                        Enqueuecount = 0;
+                    }
+
+                }
+                    
+
+            }
+            
+
+            return cost;
+        }
+
+        private double Formula_26(Sensor topsensor)
+        {
+            double Uplink_ENT = 0;
+            double number = topsensor.Forwarders.Count;
+            double R = Formula_25(topsensor);
+
+            Uplink_ENT = R * topsensor.Expected_number_of_transmisstion / number;
+           // Uplink_ENT = topsensor.Expected_number_of_transmisstion / number;
+            return Uplink_ENT;
+        }
+
+        private double Formula_25(Sensor topsensor)
+        {
+            double value = 0;
+            int n = topsensor.Forwarders.Count;
+           
+            
+            double S = PublicParamerters.T / PublicParamerters.Ta;
+
+            
+            for (int i = 2; i <= S; i++)
+            {
+                for (int j = 1; j <= n - 1; j++)
+                {
+                    value += (j + 1) * Formula_23(n, S, j, i) * Formula_24(j, i - 1);
+                }
+            }
+            
+            
+
+            value += n * Formula_24(n, S); 
+            return value;
+
+
+        }
         
+        private double Formula_24(int l, double m)
+        {
+            double sum = 0;
+            for (int k = 1; k <= m; k++)
+            {
+                sum += Formula_21(l, m, k);
+            }
+            return 1 - sum;
+        }
+        
+        
+        
+        private double Formula_21(int n, double S, int m)
+        {
+            double res = 0;
+            int t = n;
+            if (m < n)
+            {
+                t = m;
+            }
+            for (int i = 1; i <= t; i++)
+            {
+                //Console.WriteLine("Formula_21");
+                res += Math.Pow(-1, i + 1) * CombineNumber(m - 1, i - 1) * Formula_15(n, S, i);
+            }
+            return res;
+        }
+
+        private double Formula_15(int n, double S, int k)
+        {
+            //Console.WriteLine("Formula_15");
+            double term_1 = CombineNumber(n, k);
+            double term_2 = factorial(k);
+            double term_3 = Math.Pow(1.0 / S, k);
+            double term_4 = Math.Pow(1 - k / S, n - k);
+            double res = term_1 * term_2 * term_3 * term_4;
+            return res;
+        }
+
+        private double Formula_23(int n, double S, int l, double m)
+        {
+            //Console.WriteLine("Formula_23  term_1");
+            double term_1 = CombineNumber(n, l);
+            //Console.WriteLine("Formula_23  term_2");
+            double term_2 = CombineNumber(n - l, 1);
+            double term_3 = Math.Pow((double)(m - 1) / S, l);
+            double term_4 = 1.0 / S;
+            double term_5 = Math.Pow((double)(S - m) / S, n - l - 1);
+            double res = term_1 * term_2 * term_3 * term_4 * term_5;
+            return res;
+        }
+        
+        
+        
+        public int CombineNumber(int n, int r)
+        {
+            int res = 0;
+            //Console.WriteLine("n:"+ n);
+            //res = (double)factorial(n) / (double)(factorial(r) * factorial(n - r));
+            res = factorial(n) / (factorial(r) * factorial(n - r));
+            return res;
+        }
+        
+        
+       
+       
+        
+        public int factorial(int n)
+        {
+            int res = 1;
+            for (int i = n; i > 1; i--)
+            {
+                res *= i;
+            }
+            return res;
+        }
+        
+        
+        private void Algorithm2(int n)
+        {
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (sensor.ID == PublicParamerters.SinkNode.ID)
+                {
+                    //sink节点FS为0
+                    myNetWork[PublicParamerters.SinkNode.ID].FS = 0;
+
+                }
+                else if (sensor.HopsToSink == 1)
+                {
+                    //sink的邻居节点的FS由公式9计算得到,转发表仅包括sink节点
+                    sensor.FS = Formula_9(sensor);
+                    //sink的邻居节点的转发表中仅包含唯一一个sink节点
+                    if(sensor.Forwarders.Contains(PublicParamerters.SinkNode) == false)
+                        sensor.Forwarders.Add(PublicParamerters.SinkNode);
+                }
+                else
+                {
+                    sensor.FS = PublicParamerters.FS0;
+                    sensor.Forwarders.Clear();
+                    U.Enqueue(sensor);
+
+                }
+            }
+            while (U.Count > 0)
+            {
+                Sensor sensor = U.Dequeue();
+                double FS_Old = sensor.FS;
+                Algorithm1(sensor, n);
+                if (sensor.FS < FS_Old)
+                {
+                    foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+                    {
+                        if (sensor.FS < nei.NeiNode.FS)
+                        {
+                            U.Enqueue(nei.NeiNode);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        //ORR Algorithm1
+        private void Algorithm1(Sensor sensor, int nmax)
+        {
+            List<Sensor> V = new List<Sensor>();          
+            sensor.Forwarders.Clear();
+            sensor.FS = PublicParamerters.FS0;
+            foreach ( NeighborsTableEntry nei in sensor.NeighborsTable)
+            {
+                if (nei.NeiNode.FS < sensor.FS)
+                {
+                    V.Add(nei.NeiNode);
+                }
+
+            }
+
+            while (V.Count > 0 && sensor.Forwarders.Count < nmax)
+            {
+                
+                Sensor Node_MinFS = FindNode_MinFS(V);
+                V.Remove(Node_MinFS);
+                if (Node_MinFS.FS < sensor.FS)
+                {
+                    sensor.Forwarders.Add(Node_MinFS);
+
+                }
+                else {
+                    break;
+                }
+
+                //recalculate FSi using Formula_7
+                sensor.FS = Formula_7(sensor);
+
+            }
+
+
+        }
+
+        private double Formula_7(Sensor sensor)
+        {
+            double number = sensor.Forwarders.Count;
+            double sum = 0;
+            foreach (Sensor i in sensor.Forwarders)
+            {
+                sum += i.FS;
+            }
+            double firstterm = 1.0 / ((number + 1) * Math.Pow(Formula_8(sensor), 1));
+            double secondterm = sum / number;
+            return firstterm + secondterm;
+        }
+
+        private Sensor FindNode_MinFS(List<Sensor> v)
+        {
+            Sensor res = null;
+            double min = Double.MaxValue;
+            foreach (Sensor i in v)
+            {
+                if (min > i.FS)
+                {
+                    res = i;
+                    min = i.FS;
+                }
+            }
+            return res;
+        }
+
+        private double Formula_9(Sensor sensor)
+        {
+            double Residual_Energy_Percentage = Formula_8(sensor);
+            double Ta = PublicParamerters.Ta;
+            double T = PublicParamerters.T;
+            //假设公式9中指数值为1
+            double FSi = Ta / (T * Math.Pow(Residual_Energy_Percentage, 1));
+            return FSi;
+        }
+
+        private double Formula_8(Sensor sensor)
+        {
+            double g = 10;
+            double rate = sensor.ResidualEnergy / PublicParamerters.BatteryIntialEnergy;
+            return Math.Ceiling(rate * g);
+        }
 
         private void Coverage_Click(object sender, RoutedEventArgs e)
         {

@@ -169,12 +169,12 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                    ------------------------------------
                   |MiniFlowTable|NeighborEntry|NeiNode |
                    ------------------------------------                            
-                 */
+                */
 
 
                 //构建MiniFlowTable
 
-                //不可直接发给sink的节点
+                //与sink不相邻的节点
                 if (sender.HopsToSink > 1)
 
                 {
@@ -395,9 +395,12 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                  归一化特征向量 （0.1217 0.6457 0.2286）
 
                     */
-                    double[,] AHP_Level1 = { {1, 1.0/5,1.0/2 },
-                                         {5 ,   1,    3 },
-                                         {2,   1.0/3, 1 } };
+                    double[,] AHP_Level1 = 
+                     { 
+                       {1, 1.0/5,1.0/2 },
+                       {5 ,   1,    3 },
+                       {2,   1.0/3, 1 }
+                    };
 
                     //第一层特征向量,依次表示能量，距离，角度的权重
                     Array AHP_Level1_Eigenvector = new double[3];
@@ -420,7 +423,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
 
                     //构建FAHP
-                    //AHP中每个元素Aij都有三个值，以此增大，分别表示某主观判断下的最低，适中，和最高权重
+                    //AHP中每个元素Aij都有三个值，依次增大，分别表示某主观判断下的最低，适中，和最高权重
 
                     //第一此主观下的三个矩阵：最低权重矩阵、适中权重矩阵、最高权重矩阵
                     double[,] FAHP_Min_First = new double[3, 3];
@@ -579,10 +582,10 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
                 }
 
-                //可直接发给sink的节点
+                //与sink相邻的节点
                 else
                 {
-
+                    //转发表中只有sink节点
                     foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
                     {
                         if (neiEntry.ID == 0)
@@ -598,14 +601,48 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     }
 
 
-
-
-
                 }
 
 
 
 
+
+            }
+
+            if (Settings.Default.RoutingAlgorithm == "ORR")
+            {
+                //sink的邻居节点
+                if (sender.HopsToSink == 1)
+                {
+                    //转发表中仅包括sink节点
+                    foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
+                    {
+                        if (neiEntry.ID == 0)
+                        {
+                            MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
+                            MiniEntry.NeighborEntry = neiEntry;
+                            MiniEntry.UpLinkPriority = 1;
+                            sender.MiniFlowTable.Add(MiniEntry);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (NeighborsTableEntry nei in sender.NeighborsTable)
+                    {
+                        if (sender.Forwarders.Contains(nei.NeiNode))
+                        {
+                            MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
+                            MiniEntry.NeighborEntry = nei;
+                            //FS越大则表示离sink越远，所以优先级越低
+                            MiniEntry.UpLinkPriority = 1 - nei.NeiNode.FS;
+                            sender.MiniFlowTable.Add(MiniEntry);
+                        }
+
+                    }
+
+
+                }
 
             }
         }

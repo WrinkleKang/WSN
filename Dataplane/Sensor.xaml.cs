@@ -55,6 +55,13 @@ namespace MiniSDN.Dataplane
         private DispatcherTimer QueuTimer = new DispatcherTimer();// to check the packets in the queue right now.
         public Queue<Packet> WaitingPacketsQueue = new Queue<Packet>(); // packets queue.
 
+        //以下为ORR增加相关变量
+        public double FS = PublicParamerters.FS0;//每个节点的初始FS都设为FS0。FS越小表示离sink越近
+        public List<Sensor> Forwarders = new List<Sensor>();//存放转发集节点
+       // public List<Sensor> Forwarders { get; set; }
+        public double Expected_number_of_transmisstion = 0;//用于计算最优nmax
+        //以上为ORR增加变量
+
         public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
 
 
@@ -644,6 +651,8 @@ namespace MiniSDN.Dataplane
             {
 
                 PublicParamerters.NumberofGeneratedPackets += 1;   //数据包总数+1
+
+                
 
 
                 //打包数据包的相关信息，包括起始ID，生存时间，源节点，数据包长度，数据包类型，数据包ID，以及目的节点等
