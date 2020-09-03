@@ -645,7 +645,45 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                 }
 
             }
+
+            if (Settings.Default.RoutingAlgorithm == "ORW")
+            {
+                //sink的邻居节点
+                if (sender.HopsToSink == 1)
+                {
+                    //转发表中仅包括sink节点
+                    foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
+                    {
+                        if (neiEntry.ID == 0)
+                        {
+                            MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
+                            MiniEntry.NeighborEntry = neiEntry;
+                            MiniEntry.UpLinkPriority = 1;
+                            sender.MiniFlowTable.Add(MiniEntry);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (NeighborsTableEntry nei in sender.NeighborsTable)
+                    {
+                        if (sender.Forwarders.Contains(nei.NeiNode))
+                        {
+                            MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
+                            MiniEntry.NeighborEntry = nei;
+                            //EDC越大则表示离sink越远，所以优先级越低
+                            MiniEntry.UpLinkPriority = 1 - nei.NeiNode.EDC;
+                            sender.MiniFlowTable.Add(MiniEntry);
+                        }
+
+                    }
+
+
+                }
+
+            }
         }
+
 
         private static Array Normalization(Array Eigenvector)
         {

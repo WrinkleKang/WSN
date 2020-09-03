@@ -62,6 +62,11 @@ namespace MiniSDN.Dataplane
         public double Expected_number_of_transmisstion = 0;//用于计算最优nmax
         //以上为ORR增加变量
 
+
+        //以下为ORW增加的相关变量
+        public double EDC = PublicParamerters.EDC0;//每个节点的初始值都设为EDC0.EDC越小表示离sink越近
+        //以上为ORW增加的相关变量
+
         public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
 
 

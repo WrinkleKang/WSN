@@ -20,8 +20,11 @@ namespace MiniSDN.Dataplane
         public static double FS0 = Double.MaxValue;
         public static double Ta  { get { return PublicParamerters.Periods.ActivePeriod; } }
         public static double T { get { return PublicParamerters.Periods.ActivePeriod + PublicParamerters.Periods.SleepPeriod; } }
-
         //以上为ORR创建的公有参数
+
+        //以下为ORW创建的公有参数
+        public static double EDC0 = Double.MaxValue;
+        //以上为ORW创建的公有参数
 
         public static long NumberofControlPackets { get; set; }
         public static double EnergyComsumedForControlPackets { get; set; }

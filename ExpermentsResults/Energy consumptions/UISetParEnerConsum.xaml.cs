@@ -48,6 +48,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
                 comb_routing_algorithm.Items.Add("LORA");
                 comb_routing_algorithm.Items.Add("AHP_Fuzzy");
                 comb_routing_algorithm.Items.Add("ORR");
+                comb_routing_algorithm.Items.Add("ORW");
                 comb_routing_algorithm.Text = Settings.Default.RoutingAlgorithm;
 
 

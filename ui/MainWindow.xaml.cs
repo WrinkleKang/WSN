@@ -490,7 +490,12 @@ namespace MiniSDN.ui
                 ORRTimer.Start();
 
             }
-            
+
+            if (Settings.Default.RoutingAlgorithm == "ORW")
+            {
+                ORWCompute(); //ORW相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
+
+            }
 
             // fill flows:
 
@@ -509,6 +514,131 @@ namespace MiniSDN.ui
 
         }
 
+        private void ORWCompute()
+        {
+           
+
+            
+            Algorithm2_ORW();
+
+
+
+        }
+
+        Queue<Sensor> U_ORW = new Queue<Sensor>();
+        private void Algorithm2_ORW()
+        {
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (sensor.ID == PublicParamerters.SinkNode.ID)
+                {
+                    //sink节点EDC为0
+                    myNetWork[PublicParamerters.SinkNode.ID].EDC = 0;
+
+                }
+                else if (sensor.HopsToSink == 1) 
+                {
+                    //sink的邻居节点的EDC
+                    sensor.EDC = PublicParamerters.Ta/PublicParamerters.T;
+                    //sink的邻居节点的转发表中仅包含唯一一个sink节点
+                    
+                    sensor.Forwarders.Add(PublicParamerters.SinkNode);
+                }
+                else
+                {
+                    sensor.EDC = PublicParamerters.EDC0;
+                    sensor.Forwarders.Clear();
+                    U_ORW.Enqueue(sensor);
+
+                }
+            }
+            while (U_ORW.Count > 0)
+            {
+                Sensor sensor = U_ORW.Dequeue();
+                double EDC_Old = sensor.EDC;
+                Algorithm1_ORW(sensor);
+                if (sensor.EDC < EDC_Old)
+                {
+                    foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+                    {
+                        if (sensor.EDC < nei.NeiNode.EDC)
+                        {
+                            U_ORW.Enqueue(nei.NeiNode);
+                        }
+                    }
+                }
+            }
+
+
+
+        }
+
+        private void Algorithm1_ORW(Sensor sensor)
+        {
+            List<Sensor> V = new List<Sensor>();
+            sensor.Forwarders.Clear();
+            sensor.EDC = PublicParamerters.EDC0;
+            foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+            {
+                if (nei.NeiNode.EDC < sensor.EDC)
+                {
+                    V.Add(nei.NeiNode);
+                }
+
+            }
+
+            while (V.Count > 0 )
+            {
+
+                Sensor Node_MinEDC = FindNode_MinEDC(V);
+                V.Remove(Node_MinEDC);
+                if (Node_MinEDC.EDC < sensor.EDC)
+                {
+                    sensor.Forwarders.Add(Node_MinEDC);
+
+                }
+                else
+                {
+                    break;
+                }
+
+                //recalculate EDCi using Formula_1
+                sensor.EDC = Formula_1(sensor);
+                
+
+            }
+        }
+
+        private double Formula_1(Sensor sensor)
+        {
+            //假设Pij均为1，w=0
+            double number = sensor.Forwarders.Count;
+            double sum = 0;
+            foreach (Sensor i in sensor.Forwarders)
+            {
+                sum += i.EDC;
+            }
+            double firstterm = 1.0 / number;
+            double secondterm = sum / number;
+            double thirdterm = 0;
+            return firstterm + secondterm + thirdterm;
+        }
+
+        private Sensor FindNode_MinEDC(List<Sensor> v)
+        {
+            Sensor res = null;
+            double min = Double.MaxValue;
+            foreach (Sensor i in v)
+            {
+                if (min > i.EDC)
+                {
+                    res = i;
+                    min = i.EDC;
+                }
+            }
+            return res;
+        }
+
         private void ORRTimer_Tick(object sender, EventArgs e)
         {
             //重新计算nmax和生成节点的转发集
@@ -525,7 +655,7 @@ namespace MiniSDN.ui
             //循环尝试可能的n值，取最小代价的n为nmax；
             for (int n = 2; n < 20; n++) {
                 //Algorithm2,假设算法中nmax值为n
-                Algorithm2(n);
+                Algorithm2_ORR(n);
                 //在当前nmax=n情况下计算平均消耗
                 EstimatedForwardingCost = CalculateEstimatedForwardingCost();
                // Console.WriteLine("n: "+ n +"   EstimatedForwardingCost: " + EstimatedForwardingCost);
@@ -541,7 +671,7 @@ namespace MiniSDN.ui
             }
            // Console.WriteLine("nmax: " + nmax );
 
-            Algorithm2(nmax);
+            Algorithm2_ORR(nmax);
 
 
 
@@ -742,7 +872,7 @@ namespace MiniSDN.ui
         }
         
         
-        private void Algorithm2(int n)
+        private void Algorithm2_ORR(int n)
         {
             foreach (Sensor sensor in myNetWork)
             {
@@ -772,7 +902,7 @@ namespace MiniSDN.ui
             {
                 Sensor sensor = U.Dequeue();
                 double FS_Old = sensor.FS;
-                Algorithm1(sensor, n);
+                Algorithm1_ORR(sensor, n);
                 if (sensor.FS < FS_Old)
                 {
                     foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
@@ -788,7 +918,7 @@ namespace MiniSDN.ui
         }
 
         //ORR Algorithm1
-        private void Algorithm1(Sensor sensor, int nmax)
+        private void Algorithm1_ORR(Sensor sensor, int nmax)
         {
             List<Sensor> V = new List<Sensor>();          
             sensor.Forwarders.Clear();
