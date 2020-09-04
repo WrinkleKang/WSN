@@ -202,8 +202,6 @@ namespace MiniSDN.Dataplane
                     if (packets_in_queue.ActiveCount <= 3)//若某数据包经历了3次醒周期都没有发送成功，则丢弃
                     {
 
-
-
                         //若队列中数据包在下一次醒来之前依然存在于等待队列中，则所有数据包延迟 += SleepPeriod
                         packets_in_queue.TotalDelay += SleepPeriod;
                         packets_in_queue.TotalDelay_IN_Sleep += SleepPeriod;

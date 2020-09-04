@@ -182,9 +182,10 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     //从邻居表中筛选出部分节点加入路由表中
                     foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
                     {
-                        //筛选一：仅当夹角为锐角且距离sin跳数更近的邻居节点才加入MiniFlowTable，初始UpLinkAction = Forward 
-                        if (neiEntry.angle <= 90 && neiEntry.NeiNode.HopsToSink < sender.HopsToSink)
+                        //筛选一：仅当夹角为锐角且距离sink跳数更近的邻居节点才加入MiniFlowTable，初始UpLinkAction = Forward 
+                        if (neiEntry.angle <= 90 && neiEntry.NeiNode.HopsToSink <= sender.HopsToSink)
                         {
+
                             MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
                             MiniEntry.NeighborEntry = neiEntry;
                             sender.MiniFlowTable.Add(MiniEntry);
@@ -420,163 +421,47 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
                     }
 
-
-
-                    //构建FAHP
-                    //AHP中每个元素Aij都有三个值，依次增大，分别表示某主观判断下的最低，适中，和最高权重
-
-                    //第一此主观下的三个矩阵：最低权重矩阵、适中权重矩阵、最高权重矩阵
-                    double[,] FAHP_Min_First = new double[3, 3];
-                    double[,] FAHP_Mid_First = new double[3, 3];
-                    double[,] FAHP_Max_First = new double[3, 3];
-
-                    //第二次主观下的三个矩阵
-                    double[,] FAHP_Min_Second = new double[3, 3];
-                    double[,] FAHP_Mid_Second = new double[3, 3];
-                    double[,] FAHP_Max_Second = new double[3, 3];
-
-                    //第三次主观性下的三个矩阵
-                    double[,] FAHP_Min_Third = new double[3, 3];
-                    double[,] FAHP_Mid_Third = new double[3, 3];
-                    double[,] FAHP_Max_Third = new double[3, 3];
-
-
-
-                    //构建AHP矩阵
-                    /*
-                    Energy   Distance   Angle
-                      1         1/5     1/2
-                      5         1       3
-                      2         1/3     1
-
-
-                 特征向量 （0.1217  0.6457   0.2286）
-
-                    */
-
-
-
-
-
-
-                    //将上述AHP矩阵中的值Fuzzy化得到矩阵如下
-
-
-
-                    double[,,,] FAHP = {
-
-                  { 
-                     //AHP[0,0]
-                    { {1,1,1 },{1,1,1 },{1,1,1 } },
-                    //AHP[0,1]==1/5  其中共有三个一维矩阵，表示三次主观，每个一维矩阵有三个值，表示最低，中等，最高比值
-                    { {3.0/16.0,1.0/5.0,2.0/9.0 },{5.0/22.0,1.0/4.0,3.0/11.0 },{2.0/11.0,1.0/5.0,5.0/24.0 } },
-                    //AHP[0,2]==1/2
-                    { {2.0/5.0,1.0/2.0,2.0/3.0 },{5.0/13.0,1.0/2.0,3.0/2.0 },{1.0/2.0,2.0/3.0,1.0 } },
-
-                  },
-
-                  { 
-                     //AHP[1,0]
-                    { {9.0/2.0,5,16.0/3.0 },{11.0/3.0,4,2.0/5.0 },{24.0/5.0,5,11.0/2.0 } },
-                    //AHP[1,1]
-                    { {1,1,1 },{1,1,1 },{1,1,1 } },
-                    //AHP[1,2]
-                    { {7.0/3.0,3,10.0/3.0 },{2,5.0/2,14.0/5 },{8.0/3,3,7.0/2 } },
-
-                   },
-
-                  {
-                    //AHP[2,0]
-                    { {3.0/2,2,5.0/2 },{2.0/3,2,13.0/5 },{1,3.0/2,2 } },
-                    //AHP[2,1]
-                    { {3.0/10,1.0/3,3.0/7 },{5.0/14,2.0/5,1.0/2 },{2.0/7,1/3.0,3.0/8 } },
-                    //AHP[2,2]
-                    { {1,1,1 },{1,1,1 },{1,1,1 } },
-
-                  },
-
-
-                };
-
-
-                    //构建三次主观下的三个矩阵
-                    // FAHP[i,j,k,m]
-                    for (int k = 0; k < 3; k++)
+                    //Priority归一化
+                    double Priority_sum = 0;
+                    foreach (MiniFlowTableEntry miniFlow in sender.MiniFlowTable)
                     {
-                        for (int m = 0; m < 3; m++)
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                for (int j = 0; j < 3; j++)
-                                {
-                                    if (k == 0 && m == 0)
-                                    {
-                                        //所有矩阵的第[0,0]元素，对应于第一次主观的最小矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 0 && m == 1)
-                                    {
-                                        //所有矩阵的第[0,1]元素，对应于第一次主观的适中矩阵的值
-                                        FAHP_Mid_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 0 && m == 2)
-                                    {
-                                        //所有矩阵的第[0,2]元素，对应于第一次主观的最大矩阵的值
-                                        FAHP_Max_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 1 && m == 0)
-                                    {
-                                        //所有矩阵的第[1,0]元素，对应于第二次主观的最小矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 1 && m == 1)
-                                    {
-                                        //所有矩阵的第[1,1]元素，对应于第二次主观的适中矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 1 && m == 2)
-                                    {
-                                        //所有矩阵的第[1,2]元素，对应于第二次主观的最大矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 2 && m == 0)
-                                    {
-                                        //所有矩阵的第[2,0]元素，对应于第三次主观的最小矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 2 && m == 1)
-                                    {
-                                        //所有矩阵的第[2.1]元素，对应于第三次主观的适中矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-                                    if (k == 2 && m == 2)
-                                    {
-                                        //所有矩阵的第[2,2]元素，对应于第三次主观的最大矩阵的值
-                                        FAHP_Min_First[i, j] = FAHP[i, j, k, m];
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                        Priority_sum += miniFlow.UpLinkPriority;
 
                     }
+                    foreach (MiniFlowTableEntry miniFlow in sender.MiniFlowTable)
+                    {
+                        miniFlow.UpLinkPriority = miniFlow.UpLinkPriority / Priority_sum;
+
+                    }
+                    //排序
+                    sender.MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
+
+                    
+                    //候选集大小阈值
+                    int Ftheashoeld = Convert.ToInt16(Math.Ceiling(Math.Sqrt(sender.NeighborsTable.Count)));
+                    int forwardersCount = 0;
+                    foreach (MiniFlowTableEntry MiniEntry in sender.MiniFlowTable)
+                    {
+                        if (forwardersCount < Ftheashoeld)
+                        {
+                            MiniEntry.UpLinkAction = FlowAction.Forward;
+                            forwardersCount++;
+                        }
+                        else
+                            MiniEntry.UpLinkAction = FlowAction.Drop;
+
+                        foreach (MiniFlowTableEntry mini in MiniEntry.NeighborEntry.NeiNode.MiniFlowTable)
+                        {
+                            if (mini.ID == sender.ID)
+                            {
+                                MiniEntry.UpLinkAction = FlowAction.Drop;
+
+                            }
+                        }
 
 
 
-                  
-
-
+                    }
 
 
 
@@ -682,6 +567,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                 }
 
             }
+
         }
 
 

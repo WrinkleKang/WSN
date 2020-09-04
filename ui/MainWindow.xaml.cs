@@ -648,12 +648,12 @@ namespace MiniSDN.ui
         Queue<Sensor> U = new Queue<Sensor>();
         private void ORRCompute()
         {
-            int nmax = 1;
+            int nmax = 3;
 
             double EstimatedForwardingCost = 0;
             double EstimatedForwardingCost_Min = Double.MaxValue;
             //循环尝试可能的n值，取最小代价的n为nmax；
-            for (int n = 2; n < 20; n++) {
+            for (int n = 3; n < 20; n++) {
                 //Algorithm2,假设算法中nmax值为n
                 Algorithm2_ORR(n);
                 //在当前nmax=n情况下计算平均消耗
