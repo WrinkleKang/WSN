@@ -173,13 +173,16 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             
             }
 
-            comb_batteryIntialEnergy.Text = "0.005";
+            comb_batteryIntialEnergy.Text = "0.05";
+            comb_batteryIntialEnergy.Items.Add("0.005");
             comb_batteryIntialEnergy.Items.Add("0.01");
             comb_batteryIntialEnergy.Items.Add("0.025");
             comb_batteryIntialEnergy.Items.Add("0.05");
             comb_batteryIntialEnergy.Items.Add("0.1");
             comb_batteryIntialEnergy.Items.Add("0.25");
             comb_batteryIntialEnergy.Items.Add("0.5");
+            comb_batteryIntialEnergy.Items.Add("1");
+            comb_batteryIntialEnergy.Items.Add("5");
 
 
 

@@ -1,5 +1,6 @@
 ﻿using MiniSDN.Dataplane;
 using MiniSDN.Dataplane.PacketRouter;
+using MiniSDN.Forwarding;
 using MiniSDN.Intilization;
 using MiniSDN.Properties;
 using System;
@@ -11,7 +12,7 @@ using System.Windows;
 
 namespace MiniSDN.ControlPlane.NOS.FlowEngin
 {
-
+  
     public class MiniFlowTableSorterUpLinkPriority : IComparer<MiniFlowTableEntry>
     {
 
@@ -62,6 +63,8 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
     public class UplinkRouting
     {
+        public static int number_loop = 0;
+        public static int number_loop_decrease = 0;
 
         public static void UpdateUplinkFlowEnery(Sensor sender)
         {
@@ -77,6 +80,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
         public static void ComputeUplinkFlowEnery(Sensor sender)
         {
+
 
             if (Settings.Default.RoutingAlgorithm == "LORA")
             {
@@ -183,7 +187,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     foreach (NeighborsTableEntry neiEntry in sender.NeighborsTable)
                     {
                         //筛选一：仅当夹角为锐角且距离sink跳数更近的邻居节点才加入MiniFlowTable，初始UpLinkAction = Forward 
-                        if (neiEntry.angle <= 90 && neiEntry.NeiNode.HopsToSink <= sender.HopsToSink)
+                        if (neiEntry.angle < 90 && neiEntry.NeiNode.HopsToSink <= sender.HopsToSink)
                         {
 
                             MiniFlowTableEntry MiniEntry = new MiniFlowTableEntry();
@@ -236,15 +240,15 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
                     }
 
-                    //最终需要上传的属性矩阵
+                    //定义最终需要上传的属性矩阵
 
-                    //最终需要上传的能量矩阵
+                    //定义最终需要上传的能量矩阵
                     double[] Energy_Up_To_Matlab = new double[number_of_MiniFlowTable];
 
-                    //最终需要上传的距离矩阵
+                    //定义最终需要上传的距离矩阵
                     double[] Distance_Up_To_Matlab = new double[number_of_MiniFlowTable];
 
-                    //最终需要上传的角度矩阵
+                    //定义最终需要上传的角度矩阵
                     double[] Angle_Up_To_Matlab = new double[number_of_MiniFlowTable];
 
                     //构建最终需要上传的属性矩阵
@@ -354,7 +358,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     Array AHP_Distance_Eigenvector = new double[number_of_MiniFlowTable];
                     Array AHP_Angle_Eigenvector = new double[number_of_MiniFlowTable];
 
-                    //接收来自Matlab自动化服务器的特征向量的虚部,全零
+                    //接收来自Matlab自动化服务器的特征向量的虚部,此矩阵为全零矩阵
                     Array AHP_Eigenvector_pr = new double[number_of_MiniFlowTable];
 
                     //通过Matlab求AHP_Energy矩阵的最大特征值和对应的特征向量
@@ -386,37 +390,46 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
 
                     //构建AHP矩阵
-                    /*
-                    Energy   Distance   Angle
-                      1         1/5     1/2
-                      5         1       3
-                      2         1/3     1
-
-                 特征向量        (0.1747 0.9281 0.3288)
-                 归一化特征向量 （0.1217 0.6457 0.2286）
-
-                    */
-                    double[,] AHP_Level1 = 
-                     { 
-                       {1, 1.0/5,1.0/2 },
-                       {5 ,   1,    3 },
+                    
+                    double[,] array =
+                    {
+                       {1, 1.0/3,1.0/2 },
+                       {3 ,   1,    3 },
                        {2,   1.0/3, 1 }
                     };
+                    //第一层AHP矩阵
+                    Array AHP_Level1 = new double[3,3];
+                    AHP_Level1 = array ;
+
+                    Array AHP_Level1_pr_in = new double[3, 3];
+                    Array AHP_Level1_pr_out = new double[3];
+                    double AHP_Level1_Eigenvalue = 0; 
 
                     //第一层特征向量,依次表示能量，距离，角度的权重
                     Array AHP_Level1_Eigenvector = new double[3];
-                    AHP_Level1_Eigenvector.SetValue(0.1217, 0);
-                    AHP_Level1_Eigenvector.SetValue(0.6457, 1);
-                    AHP_Level1_Eigenvector.SetValue(0.2286, 2);
+                    
+
+                    //通过Matlab求AHP_Level1矩阵的最大特征值和对应的特征向量
+                    matlab.PutFullMatrix("Matrix", "base", AHP_Level1, AHP_Level1_pr_in);
+                    matlab.Execute("[Eigenvalue,Eigenvector] = Get_Max_Eigenvalue_Eigenvector(Matrix)");
+                    AHP_Level1_Eigenvalue = matlab.GetVariable("Eigenvalue", "base");
+                    matlab.GetFullMatrix("Eigenvector", "base", ref AHP_Level1_Eigenvector, ref AHP_Level1_pr_out);
+
+                    //第一层特征向量归一化
+                    Array AHP_Level1_Eigenvector_Normalization = Normalization(AHP_Level1_Eigenvector);
+
+
+
+
 
 
                     //求Priority == 属性在总目标上的权重 * 节点在该属性上的权重   然后求和
                     for (int i = 0; i < sender.MiniFlowTable.Count; i++)
                     {
 
-                        double Priority_Energy = (double)AHP_Level1_Eigenvector.GetValue(0) * (double)AHP_Energy_Eigenvector_Normalization.GetValue(i);
-                        double Priority_Distance = (double)AHP_Level1_Eigenvector.GetValue(1) * (double)AHP_Distance_Eigenvector_Normalization.GetValue(i);
-                        double Priority_Angle = (double)AHP_Level1_Eigenvector.GetValue(2) * (double)AHP_Angle_Eigenvector_Normalization.GetValue(i);
+                        double Priority_Energy = (double)AHP_Level1_Eigenvector_Normalization.GetValue(0) * (double)AHP_Energy_Eigenvector_Normalization.GetValue(i);
+                        double Priority_Distance = (double)AHP_Level1_Eigenvector_Normalization.GetValue(1) * (double)AHP_Distance_Eigenvector_Normalization.GetValue(i);
+                        double Priority_Angle = (double)AHP_Level1_Eigenvector_Normalization.GetValue(2) * (double)AHP_Angle_Eigenvector_Normalization.GetValue(i);
                         sender.MiniFlowTable.ToArray()[i].UpLinkPriority = Priority_Energy + Priority_Distance + Priority_Angle;
 
                     }
@@ -437,34 +450,49 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     sender.MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
 
                     
-                    //候选集大小阈值
+                    //候选集大小阈值，邻居节点总数开平方，然后向上取整
                     int Ftheashoeld = Convert.ToInt16(Math.Ceiling(Math.Sqrt(sender.NeighborsTable.Count)));
-                    int forwardersCount = 0;
+                    sender.forwardnumber = 0;
                     foreach (MiniFlowTableEntry MiniEntry in sender.MiniFlowTable)
                     {
-                        if (forwardersCount < Ftheashoeld)
+                        if (sender.forwardnumber < Ftheashoeld)
                         {
                             MiniEntry.UpLinkAction = FlowAction.Forward;
-                            forwardersCount++;
+                            sender.forwardnumber++;
                         }
                         else
                             MiniEntry.UpLinkAction = FlowAction.Drop;
 
-                        foreach (MiniFlowTableEntry mini in MiniEntry.NeighborEntry.NeiNode.MiniFlowTable)
+                    }
+
+                    //环检测
+                    foreach (MiniFlowTableEntry MiniEntry in sender.MiniFlowTable)
+                    {
+                        if (MiniEntry.UpLinkAction == FlowAction.Forward)
                         {
-                            if (mini.ID == sender.ID)
-                            {
-                                MiniEntry.UpLinkAction = FlowAction.Drop;
+                            foreach (MiniFlowTableEntry mini in MiniEntry.NeighborEntry.NeiNode.MiniFlowTable)
+                            {   
+                                //发现环
+                                if (mini.ID == sender.ID && mini.UpLinkAction == FlowAction.Forward)
+                                {
+                                    if (sender.forwardnumber >= MiniEntry.NeighborEntry.NeiNode.forwardnumber)
+                                    {
+                                        MiniEntry.UpLinkAction = FlowAction.Drop;
+                                        sender.forwardnumber--;
+
+                                    }
+                                    else
+                                    {
+                                        mini.UpLinkAction = FlowAction.Drop;
+                                        MiniEntry.NeighborEntry.NeiNode.forwardnumber--;
+
+                                    }
+                                    number_loop_decrease++;
+                                }
 
                             }
                         }
-
-
-
                     }
-
-
-
                 }
 
                 //与sink相邻的节点

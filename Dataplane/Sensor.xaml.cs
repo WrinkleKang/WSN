@@ -67,6 +67,8 @@ namespace MiniSDN.Dataplane
         public double EDC = PublicParamerters.EDC0;//每个节点的初始值都设为EDC0.EDC越小表示离sink越近
         //以上为ORW增加的相关变量
 
+        public int forwardnumber = 0;//记录forward数量
+
         public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
 
 
@@ -445,7 +447,7 @@ namespace MiniSDN.Dataplane
                                 range.isUpdated = true;
                                 // update the uplink.
                                 UplinkRouting.UpdateUplinkFlowEnery(this);
-                                /*
+                                
 
                                 foreach (NeighborsTableEntry nei in this.NeighborsTable)
                                 {
@@ -454,7 +456,7 @@ namespace MiniSDN.Dataplane
 
                                 }
 
-                            */
+                            
 
                             }
                         }
@@ -608,8 +610,9 @@ namespace MiniSDN.Dataplane
         {
             get
             {
-                double DIS = Operations.DistanceBetweenTwoSensors(PublicParamerters.SinkNode, this);
-                return Convert.ToInt16(Math.Ceiling((Math.Sqrt(PublicParamerters.Density) * (DIS / ComunicationRangeRadius))));
+                return 16;
+                //double DIS = Operations.DistanceBetweenTwoSensors(PublicParamerters.SinkNode, this);
+                //return Convert.ToInt16(Math.Ceiling((Math.Sqrt(PublicParamerters.Density) * (DIS / ComunicationRangeRadius))));
             }
         }
 
@@ -1692,7 +1695,8 @@ namespace MiniSDN.Dataplane
         {
 
             //节点消息汇总
-            string nodemessage;
+            string nodemessage_part1 = null;
+            string nodemessage_part2 = null;
 
             //ID
             string message_ID = "ID:" + ID + "\n";
@@ -1721,8 +1725,23 @@ namespace MiniSDN.Dataplane
             string message_Energy_Used_In_ACKpacket_Percentage = "EnergyUsedInACKpacketPercentage:" + Energy_Used_IN_ACK_Packet_Percentage + "%   "
                 + "Send:" + Energy_Used_IN_Send_ACK_Packet_Percentage + "%   " + "Receive:" + Energy_Used_IN_Receive_ACK_Packet_Percentage + "%" + "\n";
 
-            nodemessage = message_ID + message_State + message_BatteryIntialEnergy + message_UsedEnergy + message_ResidualEnergy + message_Energy_Used_In_Datapacket_Percentage + message_Energy_Used_In_Preamblepacket_Percentage + message_Energy_Used_In_ACKpacket_Percentage;
-            return nodemessage;
+
+            nodemessage_part1 = message_ID + message_State + message_BatteryIntialEnergy + message_UsedEnergy + message_ResidualEnergy + message_Energy_Used_In_Datapacket_Percentage + message_Energy_Used_In_Preamblepacket_Percentage + message_Energy_Used_In_ACKpacket_Percentage;
+
+
+
+            nodemessage_part2 = "MiniFlowTable.Count = " + this.MiniFlowTable.Count + "\n";
+            foreach (MiniFlowTableEntry miniFlowTableEntry in this.MiniFlowTable)
+            {
+                nodemessage_part2 += "ID: " + miniFlowTableEntry.NeighborEntry.NeiNode.ID + " UpLinkAction: " + miniFlowTableEntry.UpLinkAction + " UpLinkPriority: " + miniFlowTableEntry.UpLinkPriority + "\n";
+
+
+            }
+
+
+
+
+            return nodemessage_part1 + nodemessage_part2;
 
         }
 

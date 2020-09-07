@@ -485,7 +485,7 @@ namespace MiniSDN.ui
             if (Settings.Default.RoutingAlgorithm == "ORR")
             {
                 ORRCompute(); //ORR相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
-                ORRTimer.Interval = TimeSpan.FromSeconds(30);
+                ORRTimer.Interval = TimeSpan.FromSeconds(100);
                 ORRTimer.Tick += ORRTimer_Tick;
                 ORRTimer.Start();
 
@@ -669,6 +669,7 @@ namespace MiniSDN.ui
 
 
             }
+
            // Console.WriteLine("nmax: " + nmax );
 
             Algorithm2_ORR(nmax);

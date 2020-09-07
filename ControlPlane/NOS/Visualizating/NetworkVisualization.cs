@@ -32,6 +32,16 @@ namespace MiniSDN.ControlPlane.NOS
             }
             */
 
+            //箭头粗细表示priority大小
+            double StrokeThickness_Max = 2;
+            int forwardnumber = 0;
+            foreach (MiniFlowTableEntry mini in startFrom.MiniFlowTable)
+            {
+                if (mini.UpLinkAction == FlowAction.Forward)
+                    forwardnumber ++;
+
+            }
+            double ARR_grad = StrokeThickness_Max / forwardnumber;
             foreach (MiniFlowTableEntry Neighbor_Sensor_TableEntry in startFrom.MiniFlowTable)
             {
                 foreach (Arrow arr in startFrom.MyArrows)
@@ -39,10 +49,16 @@ namespace MiniSDN.ControlPlane.NOS
                     if (Neighbor_Sensor_TableEntry.UpLinkAction == FlowAction.Forward && arr.To.ID == Neighbor_Sensor_TableEntry.ID)
                     {
                         arr.Stroke = Brushes.Black;
-                        arr.StrokeThickness = 2;
+                        arr.StrokeThickness = StrokeThickness_Max;
                         arr.HeadHeight = 8;
                         arr.HeadWidth = 8;
-                        
+
+
+
+                        StrokeThickness_Max -= ARR_grad;
+                       // HeadHeight_Max = HeadHeight_Max - 2;
+                       // HeadWidth_Max = HeadWidth_Max - 2;
+
                     }
 
                 }

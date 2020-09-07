@@ -60,7 +60,7 @@
       <Value Profile="(Default)">0.2</Value>
     </Setting>
     <Setting Name="BatteryIntialEnergy" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0.5</Value>
+      <Value Profile="(Default)">0.05</Value>
     </Setting>
     <Setting Name="MacStartUp" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10</Value>
