@@ -68,6 +68,8 @@ namespace MiniSDN.Dataplane
         //以上为ORW增加的相关变量
 
         public int forwardnumber = 0;//记录forward数量
+        public Array AHP_Distance_Eigenvector_Normalization;
+        public Array AHP_Angle_Eigenvector_Normalization;
 
         public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
 
@@ -448,14 +450,20 @@ namespace MiniSDN.Dataplane
                                 // update the uplink.
                                 UplinkRouting.UpdateUplinkFlowEnery(this);
                                 
-
+                                //同时更新相关节点的路由表信息
+                                /*
                                 foreach (NeighborsTableEntry nei in this.NeighborsTable)
                                 {
+                                    foreach (MiniFlowTableEntry mini in nei.NeiNode.MiniFlowTable)
+                                    {
+                                        if(mini.ID == this.ID && mini.UpLinkAction == FlowAction.Forward)
+                                            UplinkRouting.UpdateUplinkFlowEnery(nei.NeiNode);
 
-                                    UplinkRouting.UpdateUplinkFlowEnery(nei.NeiNode);
+                                    }
 
                                 }
-
+                                */
+                                
                             
 
                             }

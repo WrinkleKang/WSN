@@ -71,9 +71,20 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
             //sender.GenerateDataPacket(); // send packet to controller.
 
             //PublicParamerters.SinkNode.GenerateControlPacket(sender);// response from controller.
+            if (Settings.Default.RoutingAlgorithm == "AHP_Fuzzy")
+            {
 
-            sender.MiniFlowTable.Clear();
-            ComputeUplinkFlowEnery(sender);
+                sender.MiniFlowTable.Clear();
+                ComputeUplinkFlowEnery(sender);
+
+            }
+            else {
+                sender.MiniFlowTable.Clear();
+                ComputeUplinkFlowEnery(sender);
+
+
+
+            }
 
 
         }
@@ -175,7 +186,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                    ------------------------------------                            
                 */
 
-
+                
                 //构建MiniFlowTable
 
                 //与sink不相邻的节点
@@ -255,14 +266,15 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     for (int i = 0; i < number_of_MiniFlowTable; i++)
                     {
                         //值越大越好,比重与数值成正比
+                        //Energy_Up_To_Matlab[i] = Standardization_Energy(Energy[i]);
                         Energy_Up_To_Matlab[i] = Energy[i];
 
                         //值越小越好,比重与数值成反比
+                        //Distance_Up_To_Matlab[i] = Standardization_Distance(Distance[i]);
                         Distance_Up_To_Matlab[i] = 1 - Distance[i];
-
                         //值越小越好,比重与数值成反比
+                        //Angle_Up_To_Matlab[i] = Standardization_Angle(Angle[i]);
                         Angle_Up_To_Matlab[i] = 1 - Angle[i];
-
                     }
 
                     //利用Matlab构建对应矩阵
@@ -310,11 +322,11 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     MLApp.MLApp matlab = new MLApp.MLApp();
                     matlab.Execute(@"cd C:\Users\Kang\Documents\MATLAB\Fuzzy");
                     //上传Energy_Up_To_Matlab矩阵到自动化服务器工作区，
-                    matlab.PutFullMatrix("Energy_Up_To_Matlab", "base", Energy, pr);
+                    matlab.PutFullMatrix("Energy_Up_To_Matlab", "base", Energy_Up_To_Matlab, pr);
                     //上传Distance_Up_To_Matlab矩阵自动化服务器工作区
-                    matlab.PutFullMatrix("Distance_Up_To_Matlab", "base", Distance, pr);
+                    matlab.PutFullMatrix("Distance_Up_To_Matlab", "base", Distance_Up_To_Matlab, pr);
                     //上传Angle_Up_To_Matlab矩阵自动化服务器工作区
-                    matlab.PutFullMatrix("Angle_Up_To_Matlab", "base", Angle, pr);
+                    matlab.PutFullMatrix("Angle_Up_To_Matlab", "base", Angle_Up_To_Matlab, pr);
 
                     //在自动化服务器中执行此命令
                     matlab.Execute("[AHP_Energy_output,AHP_Distance_output,AHP_Angle_output]=AHP_Fuzzy(Energy_Up_To_Matlab,Distance_Up_To_Matlab,Angle_Up_To_Matlab)");
@@ -387,15 +399,19 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                     Array AHP_Angle_Eigenvector_Normalization = Normalization(AHP_Angle_Eigenvector);
 
 
+                    //保留距离和角度归一化向量
+                    sender.AHP_Angle_Eigenvector_Normalization = AHP_Angle_Eigenvector_Normalization;
+                    sender.AHP_Distance_Eigenvector_Normalization = AHP_Distance_Eigenvector_Normalization;
+
 
 
                     //构建AHP矩阵
-                    
+
                     double[,] array =
                     {
-                       {1, 1.0/3,1.0/2 },
-                       {3 ,   1,    3 },
-                       {2,   1.0/3, 1 }
+                       {1,      1,  3 },
+                       {1 ,     1,  2 },
+                       {1.0/3,  1.0/2,  1 }
                     };
                     //第一层AHP矩阵
                     Array AHP_Level1 = new double[3,3];
@@ -597,7 +613,68 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
             }
 
         }
+        //logistic函数 增函数
+        private static double Standardization_Energy(double energy) {
 
+            double y = 0;
+            double A1 = 0.0065285;
+            double A2 = 1.16336;
+            double x0 = 0.25684;
+            double p = 1.34544;
+            
+            y = A2 + (A1 - A2) / (1 + Math.Pow((energy / x0), p));
+
+            //防止溢出越界
+            if (y >= 1)
+                y = 1;
+            if (y <= 0)
+                y = 0;
+
+            return y;
+        }
+        //Boltzmann函数 减函数
+        private static double Standardization_Distance(double distance)
+        {
+
+            double y = 0;
+            double k = 1;//函数返回值的系数[0，1]
+            double A1 = 0.979;
+            double A2 = -0.00809;
+            double x0 = 0.55135;
+            double dx = 0.09909;
+
+            y = A2 + (A1 - A2) / (1+Math.Exp((distance-x0)/dx));
+
+            //防止溢出越界
+            if (y >= 1)
+                y = 1;
+            if (y <= 0)
+                y = 0;
+
+            return k*y;
+        }
+        //Hill函数 减函数
+        private static double Standardization_Angle(double angle)
+        {
+
+            double y = 0;
+            double a = 1;//返回值系数
+            double START = 0.80317;
+            double END = 0.168;
+            double k = 0.58447;
+            double n = 5.40456;
+
+            y = START + (END - START) * Math.Pow(angle, n) / (Math.Pow(k, n) + Math.Pow(angle, n));
+
+
+            //防止溢出越界
+            if (y >= 1)
+                y = 1;
+            if (y <= 0)
+                y = 0;
+
+            return a*y;
+        }
 
         private static Array Normalization(Array Eigenvector)
         {
