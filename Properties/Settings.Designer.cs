@@ -349,7 +349,7 @@ namespace MiniSDN.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("One more active period")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Waitting all the time")]
         public string ActiveNoReceive {
             get {
                 return ((string)(this["ActiveNoReceive"]));

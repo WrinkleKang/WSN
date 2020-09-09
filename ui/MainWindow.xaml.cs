@@ -95,7 +95,7 @@ namespace MiniSDN.ui
             {
                 Dispatcher.Invoke(() => PublicParamerters.SimulationTime += 1, DispatcherPriority.Send);
                 //每秒都会对主窗口最左上方的文字进行更新，显示实验进行的时间，单位：秒
-                Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString(), DispatcherPriority.Send);
+                Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString() + "  RoutingAlgorithm: " + Settings.Default.RoutingAlgorithm, DispatcherPriority.Send);
                 MainWindowUpdataMessage();
             }
             else
@@ -216,7 +216,8 @@ namespace MiniSDN.ui
 
             TimerCounter.Interval=TimeSpan.FromSeconds(1); // START count the running time.
             TimerCounter.Start(); // START count the running time.
-            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口的显示信息
+
+            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口的显示信息，包括主窗口最上方文字显示
 
             //:主窗口右侧各参数显示
            // prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
@@ -474,7 +475,8 @@ namespace MiniSDN.ui
 
             isCoverageSelected = true;
             PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
-            DisplaySimulationParameters(rootNodeId, "Random");//在主窗口右侧显示仿真参数
+
+            DisplaySimulationParameters(rootNodeId, "Random");//相关参数显示，包括窗体最上方内容显示
 
             
 

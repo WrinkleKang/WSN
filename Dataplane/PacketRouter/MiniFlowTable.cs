@@ -18,6 +18,10 @@ namespace MiniSDN.Dataplane.PacketRouter
         public double Hops_To_Sink { get { return NeighborEntry.NeiNode.HopsToSink; } }
 
         public double UpLinkPriority { get; set; }
+        public double UpLinkPriority_Energy { get; set; }//能量得分
+        public double UpLinkPriority_Distance { get; set; }//距离得分
+        public double UpLinkPriority_Angle { get; set; }//角度得分
+
         public FlowAction UpLinkAction { get; set; }
         public double UpLinkStatistics { get; set; }  
 
@@ -28,6 +32,9 @@ namespace MiniSDN.Dataplane.PacketRouter
         public SensorState SensorState { get { return NeighborEntry.NeiNode.CurrentSensorState; } }
         public double Statistics { get { return UpLinkStatistics + DownLinkStatistics; } }
         public  NeighborsTableEntry NeighborEntry { get; set; } 
+
+
+        
 
     }
 }

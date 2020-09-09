@@ -70,6 +70,22 @@ namespace MiniSDN.Dataplane
         public int forwardnumber = 0;//记录forward数量
         public Array AHP_Distance_Eigenvector_Normalization;
         public Array AHP_Angle_Eigenvector_Normalization;
+        public double MiniFlowTable_Energy_average {
+
+            get {
+                double miniflowtable_energy_average = 0;
+                foreach (MiniFlowTableEntry mini in this.MiniFlowTable)
+                {
+                    
+                        miniflowtable_energy_average += (mini.NeighborEntry.NeiNode.ResidualEnergy/PublicParamerters.BatteryIntialEnergy);
+
+                }
+                miniflowtable_energy_average = miniflowtable_energy_average / this.MiniFlowTable.Count;
+
+                return miniflowtable_energy_average;
+            }
+
+        }
 
         public Queue<Packet> NewWaitingPacketsQueue = new Queue<Packet>(); // 接收的数据包都会在等待队列中
 
@@ -447,25 +463,13 @@ namespace MiniSDN.Dataplane
                             if (range.isUpdated == false)
                             {
                                 range.isUpdated = true;
-                                // update the uplink.
+                               
+
                                 UplinkRouting.UpdateUplinkFlowEnery(this);
+
                                 
-                                //同时更新相关节点的路由表信息
-                                /*
-                                foreach (NeighborsTableEntry nei in this.NeighborsTable)
-                                {
-                                    foreach (MiniFlowTableEntry mini in nei.NeiNode.MiniFlowTable)
-                                    {
-                                        if(mini.ID == this.ID && mini.UpLinkAction == FlowAction.Forward)
-                                            UplinkRouting.UpdateUplinkFlowEnery(nei.NeiNode);
 
-                                    }
-
-                                }
-                                */
-                                
-                            
-
+   
                             }
                         }
                     }
@@ -1738,10 +1742,13 @@ namespace MiniSDN.Dataplane
 
 
 
-            nodemessage_part2 = "MiniFlowTable.Count = " + this.MiniFlowTable.Count + "\n";
+            nodemessage_part2 = "MiniFlowTable.Count = " + this.MiniFlowTable.Count + " MiniFolwTable_Energy_Average = " + Math.Round( this.MiniFlowTable_Energy_average*100,2)+"%" +"\n";
             foreach (MiniFlowTableEntry miniFlowTableEntry in this.MiniFlowTable)
             {
-                nodemessage_part2 += "ID: " + miniFlowTableEntry.NeighborEntry.NeiNode.ID + " UpLinkAction: " + miniFlowTableEntry.UpLinkAction + " UpLinkPriority: " + miniFlowTableEntry.UpLinkPriority + "\n";
+                nodemessage_part2 += "ID: " + miniFlowTableEntry.NeighborEntry.NeiNode.ID + " Action: " + miniFlowTableEntry.UpLinkAction + " Priority= " + Math.Round( miniFlowTableEntry.UpLinkPriority ,2)+ " E= " 
+                    + Math.Round( miniFlowTableEntry.UpLinkPriority_Energy,2) + " D= " + Math.Round(miniFlowTableEntry.UpLinkPriority_Distance,2) + " A= " + Math.Round(miniFlowTableEntry.UpLinkPriority_Angle,2) + "\n";
+
+               
 
 
             }
