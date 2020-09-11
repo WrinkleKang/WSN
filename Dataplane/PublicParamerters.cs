@@ -46,6 +46,9 @@ namespace MiniSDN.Dataplane
         public static long TotalWaitingTime { get; set; } // how many times the node waitted for its coordinate to wake up.
         public static long TotalWaitingTimes_IN_Queue { get; set; }//由于在醒周期未发送完而进入等待队列的次数
         public static long TotalReduntantTransmission { get; set; } // how many transmission are redundant, that is to say, recived and canceled.
+        public static double TotalReduntantTransmission_per_packet { get { return Math.Round((double)PublicParamerters.TotalReduntantTransmission / (double)PublicParamerters.NumberofGeneratedPackets, 2); } }
+
+
         public static bool IsNetworkDied { get; set; } // yes if the first node deide.
         public static double SensingRangeRadius { get; set; }
         public static double Density { get; set; } // average number of neighbores (stander deiviation)

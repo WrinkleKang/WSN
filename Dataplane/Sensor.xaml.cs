@@ -70,6 +70,10 @@ namespace MiniSDN.Dataplane
         public int forwardnumber = 0;//记录forward数量
         public Array AHP_Distance_Eigenvector_Normalization;
         public Array AHP_Angle_Eigenvector_Normalization;
+        public MLApp.MLApp matlab = new MLApp.MLApp();
+        
+
+
         public double MiniFlowTable_Energy_average {
 
             get {
@@ -1100,7 +1104,7 @@ namespace MiniSDN.Dataplane
                                 double Distance_M = Operations.DistanceBetweenTwoSensors(this, selectedflow.NeighborEntry.NeiNode);
                                 SendACK(selectedflow.NeighborEntry.NeiNode, Distance_M);
                                 //冗余传输（每发送一个冗余的ACK包）
-                                PublicParamerters.TotalReduntantTransmission += 1;
+                               // PublicParamerters.TotalReduntantTransmission += 1;
                                 //发送preamble的能耗属于TotalWastedEnergyJoule
                                 double UsedEnergy_Nanojoule_SendACK = EnergyModel.Transmit(PublicParamerters.ACKPacketLength, Distance_M);
                                 double UsedEnergy_joule_SendACK = ConvertToJoule(UsedEnergy_Nanojoule_SendACK);
@@ -1111,7 +1115,7 @@ namespace MiniSDN.Dataplane
                                 this.ReceiveACK();
 
                                 //冗余传输（每多接收一个冗余的ACK包） 不考虑ACK冲突
-                                PublicParamerters.TotalReduntantTransmission += 1;
+                               // PublicParamerters.TotalReduntantTransmission += 1;
 
                                 //源节点接收ACK的能耗属于TotalWastedEnergyJoule
                                 double UsedEnergy_Nanojoule_ReceiveACK = EnergyModel.Receive(PublicParamerters.ACKPacketLength);

@@ -389,7 +389,7 @@ namespace MiniSDN.ui
             //新丢包率      丢弃包/（总生成包-总队列包）==========丢弃包/（成功传输包+丢弃包）
             Dispatcher.Invoke(() => lbl_new_droped_ratio.Content = PublicParamerters.NewDropedRatio,DispatcherPriority.Send);
             //冗余传输
-            Dispatcher.Invoke(() => lbl_Redundant_packets.Content = PublicParamerters.TotalReduntantTransmission,DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_Redundant_packets.Content =PublicParamerters.TotalReduntantTransmission_per_packet,DispatcherPriority.Send);
 
 
 

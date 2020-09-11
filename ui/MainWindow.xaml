@@ -369,7 +369,7 @@
                                         
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Redundant Transmissions:</Label>
+                                            <Label>Redundant Transmissions per packet:</Label>
                                             <Label Name="lbl_Redundant_packets">0</Label>
                                         </StackPanel>
 

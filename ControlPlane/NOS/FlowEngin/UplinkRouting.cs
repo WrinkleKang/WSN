@@ -64,7 +64,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
     public class UplinkRouting
     {
        
-        public static int number_loop_decrease = 0;
+      
 
         public static void UpdateUplinkFlowEnery(Sensor sender)
         {
@@ -72,6 +72,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
             if (Settings.Default.RoutingAlgorithm == "AHP_Fuzzy")
             {
 
+                
                 if (sender.HopsToSink == 1)
                 {
                     Queue<Sensor> queue = new Queue<Sensor>();
@@ -101,7 +102,13 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
               
                 ComputeUplinkFlowEnery_Updataenergy(sender);
+
                
+
+                /*
+                sender.MiniFlowTable.Clear();
+                ComputeUplinkFlowEnery(sender);
+                */
 
             }
             else {
@@ -181,7 +188,8 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
                 //与Matlab建立连接
 
-                MLApp.MLApp matlab = new MLApp.MLApp();
+                // MLApp.MLApp matlab = new MLApp.MLApp();
+                MLApp.MLApp matlab = sender.matlab;
                 matlab.Execute(@"cd C:\Users\Kang\Documents\MATLAB\Fuzzy");
                 //上传Energy_Up_To_Matlab矩阵到自动化服务器工作区，
                 matlab.PutFullMatrix("Energy_Up_To_Matlab", "base", Energy_Up_To_Matlab, pr);
@@ -580,7 +588,8 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
 
                     //与Matlab建立连接
 
-                    MLApp.MLApp matlab = new MLApp.MLApp();
+                    // MLApp.MLApp matlab = new MLApp.MLApp();
+                    MLApp.MLApp matlab = sender.matlab;
                     matlab.Execute(@"cd C:\Users\Kang\Documents\MATLAB\Fuzzy");
                     //上传Energy_Up_To_Matlab矩阵到自动化服务器工作区，
                     matlab.PutFullMatrix("Energy_Up_To_Matlab", "base", Energy_Up_To_Matlab, pr);
@@ -757,7 +766,7 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
                                         MiniEntry.NeighborEntry.NeiNode.forwardnumber--;
 
                                     }
-                                    number_loop_decrease++;
+                                    
                                 }
 
                             }
