@@ -288,7 +288,8 @@ namespace MiniSDN.ui
             lbl_total_delay_by_data_packet_percentage.Content = "0";
             lbl_total_delay_by_preamble_packet.Content = "0";
             lbl_total_delay_by_preamble_packet_percentage.Content = "0";
-            lbl_average_delay.Content = "0";
+            lbl_average_delay_one_hop.Content = "0";
+            lbl_average_delay_End_TO_End.Content = "0";
 
             lbl_Number_of_Delivered_Packet.Content = "0";
             lbl_Number_of_Droped_Packet.Content = "0";
@@ -317,6 +318,12 @@ namespace MiniSDN.ui
 
             //生命周期内消耗的能量
             Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule,4), DispatcherPriority.Send);
+
+            //平均每个数据包消耗的能耗
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_packet .Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_packet, 4), DispatcherPriority.Send);
+
+            //平均每一跳消耗的能耗
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_hop.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_hop, 4), DispatcherPriority.Send);
 
             //总能量的使用率
             Dispatcher.Invoke(() => lbl_total_consumed_energy_percentage.Content = PublicParamerters.Total_Energy_Consumption_Percentage,DispatcherPriority.Send );
@@ -398,10 +405,11 @@ namespace MiniSDN.ui
             //总delay
             Dispatcher.Invoke(() => lbl_total_delay.Content = Math.Round( PublicParamerters.TotalDelayMs/1000,2), DispatcherPriority.Send);
 
-            //平均时延 端到端 end-end
-            Dispatcher.Invoke(() => lbl_average_delay.Content = PublicParamerters.Total_Average_Delay, DispatcherPriority.Send);
+            //平均单跳时延
+            Dispatcher.Invoke(() => lbl_average_delay_one_hop.Content = PublicParamerters.Total_Average_Delay_One_Hop, DispatcherPriority.Send);
 
-
+            //平均端到端时延
+            Dispatcher.Invoke(() => lbl_average_delay_End_TO_End.Content = PublicParamerters.Total_Average_Delay_End_TO_End, DispatcherPriority.Send);
 
             //因为等待节点醒来而产生的总时延
             Dispatcher.Invoke(() => lbl_total_delay_by_waiting_in_queue.Content =Math.Round( PublicParamerters.TotalDelay_IN_Queue/1000,0), DispatcherPriority.Send);

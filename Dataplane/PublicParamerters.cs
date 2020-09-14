@@ -71,6 +71,8 @@ namespace MiniSDN.Dataplane
         public static double TotalRoutingDistance { get; set; }
         public static double TotalHops { get; set; }
         public static double TotalEnergyConsumptionJoule { get; set; } // keep all energy consumption. 
+        public static double TotalEnergyConsumptionJoule_per_packet { get { return TotalEnergyConsumptionJoule / (double)NumberofDeliveredPacket; } }//平均每个包的能量消耗
+        public static double TotalEnergyConsumptionJoule_per_hop { get { return TotalEnergyConsumptionJoule/TotalHops; } }//平均每一跳的能量消耗
         public static double TotalEnergy { get { return (NumberofNodes-1) * BatteryIntialEnergy; } }//不包括sink节点的能量
 
         public static double TotalEnergyConsumptionJoule_Datapacket { get; set; } //数据包消耗的总能量
@@ -311,7 +313,7 @@ namespace MiniSDN.Dataplane
 
         }
 
-        public static double Total_Average_Delay
+        public static double Total_Average_Delay_One_Hop
         {
             get {
                 return Math.Round((Convert.ToDouble(TotalDelayMs/1000) / Convert.ToDouble(TotalHops)), 3);
@@ -319,7 +321,15 @@ namespace MiniSDN.Dataplane
             }
 
         }
+        public static double Total_Average_Delay_End_TO_End
+        {
+            get
+            {
+                return Math.Round((Convert.ToDouble(TotalDelayMs / 1000) / Convert.ToDouble(NumberofDeliveredPacket)), 3);
 
+            }
+
+        }
 
 
         public static double DropedRatio

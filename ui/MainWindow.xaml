@@ -230,10 +230,15 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Total Energy(J):</Label>
                                             <Label Foreground="Green" Name="lbl_total_energy">0.00</Label>
+                                            
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Total Energy Consumption (J):</Label>
                                             <Label Foreground="Green" Name="lbl_total_consumed_energy">0.00</Label>
+                                            <Label>Average per packet:</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_per_packet">0.00</Label>
+                                            <Label>Average per hop:</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_per_hop">0.00</Label>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Total Energy Consumption Percentage(%):</Label>
@@ -283,10 +288,12 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Generated Packets:</Label>
                                             <Label Name="lbl_num_of_gen_packets">0</Label>
-                                            <Label>Total Delay(s):</Label>
+                                            <Label>Total Delay:</Label>
                                             <Label Name="lbl_total_delay">0</Label>
-                                            <Label>Average OneHop Delay(s):</Label>
-                                            <Label Name="lbl_average_delay">0</Label>
+                                            <Label>OneHop Delay:</Label>
+                                            <Label Name="lbl_average_delay_one_hop">0</Label>
+                                            <Label>End-End delay:</Label>
+                                            <Label Name="lbl_average_delay_End_TO_End">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
@@ -364,10 +371,7 @@
                                             <Label Name="lbl_new_droped_ratio">0</Label>
                                         </StackPanel>
 
-                                        
-                                        
-                                        
-
+                                                                           
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Redundant Transmissions per packet:</Label>
                                             <Label Name="lbl_Redundant_packets">0</Label>

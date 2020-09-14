@@ -76,6 +76,8 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             //能量相关显示
             List.Add(new ValParPair() { Par = "CheckQueue Time", Val = Settings.Default.CheckQueueTime.ToString() + " ms"});
             List.Add(new ValParPair() { Par = "Total_Energy_Consumption_Percentage", Val = PublicParamerters.Total_Energy_Consumption_Percentage.ToString() });
+            List.Add(new ValParPair() { Par = "Consumed_energy_per_packet", Val = PublicParamerters.TotalEnergyConsumptionJoule_per_packet .ToString() });
+            List.Add(new ValParPair() { Par = "Consumed_energy_one_hop", Val = PublicParamerters.TotalEnergyConsumptionJoule_per_hop.ToString() });
             List.Add(new ValParPair() { Par = "Data Consumption Percentage(%)", Val = PublicParamerters.Total_Data_Packet_Consumption_Percentage.ToString() });
             List.Add(new ValParPair() { Par = "Preamble Consumption Percentage(%)", Val = PublicParamerters.Total_Preamble_Packet_Consumption_Percentage.ToString() });
             List.Add(new ValParPair() { Par = "ACK Consumption Percentage(%)", Val = PublicParamerters.Total_ACK_Packet_Consumption_Percentage.ToString() });
@@ -85,11 +87,11 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
 
             //包相关显示
             List.Add(new ValParPair() { Par = "Generated Packets", Val = PublicParamerters.NumberofGeneratedPackets.ToString() });
-            List.Add(new ValParPair() { Par = "Average OneHop Delay(s)", Val = PublicParamerters.Total_Average_Delay.ToString() });
+            List.Add(new ValParPair() { Par = "Average OneHop Delay(s)", Val = PublicParamerters.Total_Average_Delay_One_Hop.ToString() });
+            List.Add(new ValParPair() { Par = "Average End-End Delay(s)", Val = PublicParamerters.Total_Average_Delay_End_TO_End.ToString() });
             List.Add(new ValParPair() { Par = "Redundant Transmissions/data_packet", Val = PublicParamerters.TotalReduntantTransmission_per_packet.ToString()});
-
-            List.Add(new ValParPair() { Par = "Average Hops/packet", Val = res.AverageHops.ToString() });
-            List.Add(new ValParPair() { Par = "Average Transmission Distance/Hop", Val = res.AverageTransmissionDistance.ToString() });
+            List.Add(new ValParPair() { Par = "Average Hops per packet", Val = res.AverageHops.ToString() });
+            List.Add(new ValParPair() { Par = "Average Transmission Distance one Hop", Val = res.AverageTransmissionDistance.ToString() });
 
 
 

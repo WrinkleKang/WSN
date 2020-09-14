@@ -1442,6 +1442,7 @@ namespace MiniSDN.Dataplane
                         this.NewWaitingPacketsQueue.Dequeue();
                         //源节点发送data包相关的计算，包括能量消耗以及延时
                         ComputeOverhead(packt, EnergyConsumption.Transmit, Reciver);
+                        
                         //接收data包的相关计算和处理
                         Reciver.ReceivePacket(packt);
                     }
@@ -1606,7 +1607,7 @@ namespace MiniSDN.Dataplane
                 Console.WriteLine("PID:" + packt.PID + " has been delivered.");
 
 
-                //接收数据包消耗的能量
+                //接收数据包消耗的能量和相关计算
                 ComputeOverhead(packt, EnergyConsumption.Recive, null);
 
                 /*
