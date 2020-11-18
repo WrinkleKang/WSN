@@ -1687,6 +1687,7 @@ namespace MiniSDN.ui
                     RandomSelectSourceNodesTimer.Stop();
                     UplinkalreadyGeneratedPackets = 0;
                     UplinkTobeGeneratedPackets = 0;
+                    top_menu.IsEnabled = true;
                 }
             }
                 

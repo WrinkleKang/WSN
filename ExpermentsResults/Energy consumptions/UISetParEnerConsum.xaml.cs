@@ -173,7 +173,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             
             }
 
-            comb_batteryIntialEnergy.Text = "0.05";
+            comb_batteryIntialEnergy.Text = Settings.Default.BatteryIntialEnergy.ToString();
             comb_batteryIntialEnergy.Items.Add("0.005");
             comb_batteryIntialEnergy.Items.Add("0.01");
             comb_batteryIntialEnergy.Items.Add("0.025");

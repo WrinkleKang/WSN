@@ -253,7 +253,7 @@ namespace MiniSDN.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
         public double BatteryIntialEnergy {
             get {
                 return ((double)(this["BatteryIntialEnergy"]));

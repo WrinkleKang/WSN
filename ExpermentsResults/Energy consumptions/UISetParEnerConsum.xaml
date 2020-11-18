@@ -14,7 +14,7 @@
             <Label Width="150">Simulation Time</Label>
             <ComboBox Text="480" Width="100" Name="comb_simuTime"></ComboBox>
             <Label>s</Label>
-            <CheckBox Unchecked="chk_stope_when_first_node_deis_Unchecked" Checked="chk_stope_when_first_node_deis_Checked" x:Name="chk_stope_when_first_node_deis" IsChecked="True" VerticalContentAlignment="Center" Content="Stop when the first node dies" />
+            <CheckBox Unchecked="chk_stope_when_first_node_deis_Unchecked" Checked="chk_stope_when_first_node_deis_Checked" x:Name="chk_stope_when_first_node_deis" IsChecked="False" VerticalContentAlignment="Center" Content="Stop when the first node dies" />
         </StackPanel>
 
         <StackPanel Margin="2" Orientation="Horizontal">
