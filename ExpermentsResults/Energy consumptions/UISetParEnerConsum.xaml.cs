@@ -184,7 +184,17 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             comb_batteryIntialEnergy.Items.Add("1");
             comb_batteryIntialEnergy.Items.Add("5");
 
-
+            comb_communicationradius.Text = Settings.Default.CommunicationRadius.ToString();
+            comb_communicationradius.Items.Add("30");
+            comb_communicationradius.Items.Add("40");
+            comb_communicationradius.Items.Add("50");
+            comb_communicationradius.Items.Add("60");
+            comb_communicationradius.Items.Add("70");
+            comb_communicationradius.Items.Add("80");
+            comb_communicationradius.Items.Add("90");
+            comb_communicationradius.Items.Add("100");
+            comb_communicationradius.Items.Add("150");
+            comb_communicationradius.Items.Add("200");
 
 
 
@@ -228,7 +238,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
             Settings.Default.ActivePeriod = Convert.ToInt16(comb_active.Text);
             Settings.Default.SleepPeriod = Convert.ToInt16(comb_sleep.Text);
             Settings.Default.MacStartUp = (Settings.Default.ActivePeriod + Settings.Default.SleepPeriod)/1000;//节点启动醒睡模式将在一个醒睡周期内完成
-
+            Settings.Default.CommunicationRadius = Convert.ToDouble(comb_communicationradius.Text);
 
 
             Settings.Default.UpdateLossPercentage = Convert.ToInt16(com_UpdateLossPercentage.Text);
@@ -366,7 +376,7 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         private void comb_batteryIntialEnergy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             object objval = comb_batteryIntialEnergy.SelectedItem as object;
-           double va = Convert.ToDouble(objval);
+            double va = Convert.ToDouble(objval);
             Settings.Default.BatteryIntialEnergy = va;
 
         }
@@ -384,6 +394,14 @@ namespace MiniSDN.ExpermentsResults.Energy_consumptions
         private void comb_routing_algorithm_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Settings.Default.RoutingAlgorithm = comb_routing_algorithm.SelectedItem.ToString();
+        }
+
+        private void comb_communicationradius_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            object objval = comb_batteryIntialEnergy.SelectedItem as object;
+            double va = Convert.ToDouble(objval);
+            Settings.Default.CommunicationRadius = va;
         }
     }
 }

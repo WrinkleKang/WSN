@@ -38,6 +38,7 @@ namespace MiniSDN.Dataplane
         public double SensingRangeRadius { get { return SR; } }
         public static double CR { get; set; }  // the radios of COMUNICATION range. double OF SENSING RANGE
         public double ComunicationRangeRadius { get { return CR; } }
+     
         public double BatteryIntialEnergy; // jouls // value will not be changed
         private double _ResidualEnergy; //// jouls this value will be changed according to useage of battery
         public List<int> DutyCycleString = new List<int>(); // return the first letter of each state.
@@ -70,8 +71,9 @@ namespace MiniSDN.Dataplane
         public int forwardnumber = 0;//记录forward数量
         public Array AHP_Distance_Eigenvector_Normalization;
         public Array AHP_Angle_Eigenvector_Normalization;
-        public MLApp.MLApp matlab = new MLApp.MLApp();
-        
+        // public MLApp.MLApp matlab = new MLApp.MLApp();
+        public MLApp.MLApp matlab ;
+
 
 
         public double MiniFlowTable_Energy_average {

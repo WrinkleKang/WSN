@@ -235,9 +235,9 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Total Energy Consumption (J):</Label>
                                             <Label Foreground="Green" Name="lbl_total_consumed_energy">0.00</Label>
-                                            <Label>Average per packet:</Label>
+                                            <Label>One_packet(uJ):</Label>
                                             <Label Foreground="Green" Name="lbl_total_consumed_energy_per_packet">0.00</Label>
-                                            <Label>Average per hop:</Label>
+                                            <Label>One_hop(uJ):</Label>
                                             <Label Foreground="Green" Name="lbl_total_consumed_energy_per_hop">0.00</Label>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">

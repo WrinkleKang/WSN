@@ -57,10 +57,16 @@
             <ComboBox Width="100" Name="comb_batteryIntialEnergy" SelectionChanged="comb_batteryIntialEnergy_SelectionChanged" IsEditable="True" />
             <Label>J</Label>
         </StackPanel>
-        
-        
-        
-            
+
+        <StackPanel Margin="2" Orientation="Horizontal">
+            <Label Width="150" Content="Communication radius"/>
+            <ComboBox Width="100" Name="comb_communicationradius"  SelectionChanged="comb_communicationradius_SelectionChanged" IsEditable="True" />
+            <Label>m</Label>
+        </StackPanel>
+
+
+
+
 
         <StackPanel Margin="2" Orientation="Horizontal">
             <Label Width="150" Content="UpdateLossPercentage"/>

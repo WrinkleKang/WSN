@@ -319,11 +319,11 @@ namespace MiniSDN.ui
             //生命周期内消耗的能量
             Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule,4), DispatcherPriority.Send);
 
-            //平均每个数据包消耗的能耗
-            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_packet .Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_packet, 4), DispatcherPriority.Send);
+            //平均每个数据包消耗的能耗，单位：uJ
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_packet .Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_packet*1000000, 2), DispatcherPriority.Send);
 
-            //平均每一跳消耗的能耗
-            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_hop.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_hop, 4), DispatcherPriority.Send);
+            //平均每一跳消耗的能耗 ，单位：uJ
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_hop.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_hop*1000000, 2), DispatcherPriority.Send);
 
             //总能量的使用率
             Dispatcher.Invoke(() => lbl_total_consumed_energy_percentage.Content = PublicParamerters.Total_Energy_Consumption_Percentage,DispatcherPriority.Send );
@@ -459,6 +459,7 @@ namespace MiniSDN.ui
                 
                 sen.Prog_batteryCapacityNotation.Value = PublicParamerters.BatteryIntialEnergy;
                 sen.Prog_batteryCapacityNotation.Maximum = PublicParamerters.BatteryIntialEnergy;
+                //sen.CR = Settings.Default.CommunicationRadius;
 
             }
 
@@ -466,7 +467,7 @@ namespace MiniSDN.ui
 
         public void RandomDeplayment(int sinkIndex)
         {
-            //为每个节点重新分配初始能量 
+            //为每个节点重新分配初始能量和通信半径
             SetAllNodesIntialEnergy();
 
 
@@ -504,6 +505,15 @@ namespace MiniSDN.ui
             if (Settings.Default.RoutingAlgorithm == "ORW")
             {
                 ORWCompute(); //ORW相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
+
+            }
+
+            if (Settings.Default.RoutingAlgorithm == "AHP_Fuzzy")
+            {
+                foreach (Sensor sen in myNetWork)
+                {
+                    sen.matlab = new MLApp.MLApp();
+                }
 
             }
 

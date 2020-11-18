@@ -370,5 +370,17 @@ namespace MiniSDN.Properties {
                 this["RoutingAlgorithm"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double CommunicationRadius {
+            get {
+                return ((double)(this["CommunicationRadius"]));
+            }
+            set {
+                this["CommunicationRadius"] = value;
+            }
+        }
     }
 }
