@@ -162,12 +162,15 @@ namespace MiniSDN.db
         /// <returns></returns>
         public static List<string> LoadTables(string dbName, string dbPassword) 
         {
+            //连接数据库，数据库位置在代码保存的文件夹下的bin/Debug/db.accdb 密码：_12_LG1705504004 
+            //密码也可在MiniSDN_db_dbSetting.cs下找到
             OleDbConnection con = null;
             DataTable dataTable = null;
-
+            //将数据库中的数据转换之后存放在re中，函数返回re
             List<string> re = new List<string>();
             try
             {
+
                 con = new OleDbConnection();
                 string cs = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + dbName + ".accdb;Jet OLEDB:Database Password=" + dbPassword + ";";
                 con.ConnectionString = cs;

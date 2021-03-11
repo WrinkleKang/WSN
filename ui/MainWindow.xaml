@@ -3,8 +3,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Mini-Flow" 
+        Loaded="Window_Loaded"
         WindowState="Maximized"
-        Height="800"
+        Height="1200"
         Width="1200">
     <Border>
         <StackPanel>
@@ -157,11 +158,20 @@
 
                 </Menu>
             </DockPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel  Orientation="Horizontal" Width="auto">
                 <TabControl SelectionChanged="tab_network_SelectionChanged" Name="tab_network">
-                    <TabItem Header="Network">
+                    <TabItem >
+                        <TabItem.Header>
+                            <StackPanel Height="20" Orientation="Horizontal">
+                                <TextBlock Name="txt_net">Network</TextBlock>
+                                <Label Width="10"></Label>
+                                <Slider  Value="{Binding ElementName=Canvas_SensingFeild, Path=LayoutTransform.ScaleX, Mode=OneWay}" Name="_slider" Maximum="10"  Width="120" ValueChanged="Slider_ValueChanged"></Slider>
+                                <TextBlock Name="lbl_zome_percentage">100%</TextBlock>
+                            </StackPanel>
+                        </TabItem.Header>
                         <StackPanel>
                             <Canvas 
+                                 PreviewMouseWheel="Canvas_SensingFeild_PreviewMouseWheel"
                              VerticalAlignment="Top" 
                              HorizontalAlignment="Left" 
                              Background="Transparent" 
@@ -175,7 +185,7 @@
                        
                     </TabItem>
 
-                    <TabItem Name="tab_location" Header="Locations">
+                    <TabItem Name="tab_location" Header="Locations" Margin="18,0,-22,-2">
 
                         <StackPanel Orientation="Vertical">
                             <chartingToolkit:Chart Height="400" Width="600" Background="Transparent" Foreground="Black" BorderBrush="{x:Null}" Margin="1"   HorizontalAlignment="Left"  Title="Network Nodes" VerticalAlignment="Bottom">
@@ -210,14 +220,65 @@
                 HorizontalAlignment="Left"
                 Background="White"
                 Name="StackTreeNodes">
-                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts">
+                    <TabControl SelectionChanged="tconrol_charts_SelectionChanged"  Name="tconrol_charts" Width="590">
                         <TabItem Name="tab_Simulation_Parameters" Header="Simulation Parameters">
                             <StackPanel Orientation="Vertical">
                                 
-                                <GroupBox Height="65" Header="Energy">
+                                <GroupBox Height="auto" Header="Energy" Width="auto">
+
                                     <StackPanel Orientation="Vertical">
-                                        <ProgressBar Background="Green" Height="20" Name="prog_total_energy"/>
-                                        <Label Foreground="Green" Name="lbl_total_consumed_energy"></Label>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy(J):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_energy">0.00</Label>
+                                            
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy Consumption (J):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy">0.00</Label>
+                                            <Label>One_packet(uJ):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_per_packet">0.00</Label>
+                                            <Label>One_hop(uJ):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_per_hop">0.00</Label>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Energy Consumption Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_consumed_energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Data Consumption Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_data_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_data_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_data_consumed_receive">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Preamble Consumption Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_preamble_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_preamble_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_preamle_consumed_receive">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>ACK Consumption Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_total_ack_packet_consumed_energy_percentage">0.00</Label>
+                                            <Label>Send(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_ack_consumed_send">0.00</Label>
+                                            <Label>Receive(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_ack_consumed_receive">0.00</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Total Redundant Transmissions Wasted Energy Percentage(%):</Label>
+                                            <Label Foreground="Green" Name="lbl_Wasted_Energy_percentage">0.00</Label>
+                                        </StackPanel>
+
+
+
                                     </StackPanel>
                                 </GroupBox>
 
@@ -227,48 +288,101 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Generated Packets:</Label>
                                             <Label Name="lbl_num_of_gen_packets">0</Label>
+                                            <Label>Total Delay:</Label>
+                                            <Label Name="lbl_total_delay">0</Label>
+                                            <Label>OneHop Delay:</Label>
+                                            <Label Name="lbl_average_delay_one_hop">0</Label>
+                                            <Label>End-End delay:</Label>
+                                            <Label Name="lbl_average_delay_End_TO_End">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of inQueu Packets:</Label>
                                             <Label Name="lbl_nymber_inQueu">0</Label>
+                                            <Label>Total Delay by Queue(s):</Label>
+                                            <Label Name="lbl_total_delay_by_waiting_in_queue">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_waiting_in_queue_percentage">0</Label>
                                         </StackPanel>
 
-                                        
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Delivered Packets:</Label>
                                             <Label Name="lbl_Number_of_Delivered_Packet">0</Label>
+                                            <Label>Total Delay by NO ACK(s):</Label>
+                                            <Label Name="lbl_total_delay_by_no_ack">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_no_ack_percentage">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Control Packets:</Label>
                                             <Label Name="lbl_number_of_control_packets">0</Label>
+                                            <Label>Total Delay by Data(s):</Label>
+                                            <Label Name="lbl_total_delay_by_data_packet">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_data_packet_percentage">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
                                             <Label>Number of Droped Packets: </Label>
                                             <Label  Name="lbl_Number_of_Droped_Packet">0</Label>
+                                            <Label>Total Delay by Preamble(s):</Label>
+                                            <Label Name="lbl_total_delay_by_preamble_packet">0</Label>
+                                            <Label>Percentage(%)</Label>
+                                            <Label Name="lbl_total_delay_by_preamble_packet_percentage">0</Label>
+                                        </StackPanel>
+                                        
+                                       
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped because of Cannot Send:</Label>
+                                            <Label Name="lbl_Droped_because_of_Cannot_Send">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Delivered Ratio(%):</Label>
+                                            <Label>Droped because of TTL:</Label>
+                                            <Label Name="lbl_Droped_because_of_TTL">0</Label>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Droped because of No Energy:</Label>
+                                            <Label Name="lbl_Droped_because_of_No_Energy">0</Label>
+                                        </StackPanel>
+
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Delivered Ratio(%)(Delivered/Generated):</Label>
                                             <Label Name="lbl_sucess_ratio">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label>Redundant Transmissions:</Label>
-                                            <Label Name="lbl_Redundant_packets">0</Label>
+                                            <Label>Droped Ratio(%)(Droped/Generated):</Label>
+                                            <Label Name="lbl_droped_ratio">0</Label>
+                                        </StackPanel>
+
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>New Delivered Ratio(%)(Delivered/(Generated-inQueu)):</Label>
+                                            <Label Name="lbl_new_delivered_ratio">0</Label>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal">
-                                            <Label> Wasted Energy Percentage:</Label>
-                                            <Label Name="lbl_Wasted_Energy_percentage">0</Label>
+                                            <Label>New Droped Ratio(%)(Droped/(Generated-inQueu)):</Label>
+                                            <Label Name="lbl_new_droped_ratio">0</Label>
                                         </StackPanel>
+
+                                                                           
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label>Redundant Transmissions per packet:</Label>
+                                            <Label Name="lbl_Redundant_packets">0</Label>
+                                        </StackPanel>
+
+                                       
                                         
                                     </StackPanel>
                                 </GroupBox>
 
-                                <GroupBox Width="500"  Header="System Parameters">
+                                <GroupBox Width="auto"  Header="System Parameters">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label>L</Label>
                                         <Label Name="lbl_par_L">0</Label>
@@ -283,7 +397,7 @@
                                     </WrapPanel>
                                 </GroupBox>
                                 
-                                <GroupBox Width="500"  Header="Timers">
+                                <GroupBox Width="auto"  Header="Timers">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label>Start up time</Label>
                                         <Label Name="lbl_x_start_up_time">0</Label>
@@ -291,13 +405,13 @@
                                         <Label Name="lbl_x_active_time">0</Label>
                                         <Label>Sleep Time</Label>
                                         <Label Name="lbl_x_sleep_time">0</Label>
-                                        <Label>Queue Time</Label>
+                                        <Label> Check Queue Time</Label>
                                         <Label Name="lbl_x_queue_time">0</Label>
                                     </WrapPanel>
                                 </GroupBox>
                                    
                                         
-                                        <GroupBox Width="500"  Header="Indicators">
+                                        <GroupBox Width="auto"  Header="Indicators">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <Label Width="134" FontWeight="Bold">
                                             Node State Indicator:
@@ -482,7 +596,7 @@
                                     </WrapPanel>
                                 </GroupBox>
 
-                                <GroupBox Width="500" Header="Settings">
+                                <GroupBox Width="auto" Header="Settings">
                                     <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Orientation="Horizontal">
                                         <StackPanel Orientation="Horizontal">
                                             <Label FontWeight="Bold">Network Size:</Label>
@@ -660,10 +774,8 @@
 
             </StackPanel>
             
-            <StackPanel>
-                
-            </StackPanel>
-            
+          
+          
 
         </StackPanel>
     </Border>

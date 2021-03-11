@@ -62,20 +62,35 @@
     <Setting Name="BatteryIntialEnergy" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.5</Value>
     </Setting>
-    <Setting Name="MacStartUp" Type="System.Int32" Scope="User">
+    <Setting Name="MacStartUp" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="ActivePeriod" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="SleepPeriod" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="QueueTime" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">2000</Value>
     </Setting>
     <Setting Name="UpdateLossPercentage" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="QueueTime" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="CheckQueueTime" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="SliderValue" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ActiveNoReceive" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Waitting all the time</Value>
+    </Setting>
+    <Setting Name="RoutingAlgorithm" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AHP_Fuzzy</Value>
+    </Setting>
+    <Setting Name="CommunicationRadius" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
     </Setting>
   </Settings>
 </SettingsFile>

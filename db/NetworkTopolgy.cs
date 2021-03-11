@@ -94,9 +94,10 @@ namespace MiniSDN.db
        /// <returns></returns>
        public static List<NetwokImport>  ImportNetworkNames(UiImportTopology ui)
        {
+            //导入数据库相对应的节点信息构成网络
            List<NetwokImport> networks = new List<NetwokImport>();
            List<string> tables = DatabaseManager.LoadTables(DbSetting.DATABASENAME, DbSetting.DATABASEPASSWORD);
-           // all tables.
+           // all tables.  
            int i=1;
            foreach (string table in tables)
            {

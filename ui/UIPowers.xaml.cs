@@ -57,6 +57,7 @@ namespace MiniSDN.ui
                     comb_startup.Items.Add(i);
                 }
                 comb_startup.Text = "10";
+                
 
 
                 for (int i = 1; i <= 5; i++)
@@ -123,7 +124,7 @@ namespace MiniSDN.ui
                 Settings.Default.SleepPeriod = Convert.ToDouble(comb_sleep.Text);
                 Settings.Default.ActivePeriod = Convert.ToDouble(comb_active.Text);
                 Settings.Default.BatteryIntialEnergy = Convert.ToDouble(com_intail_energy.Text);
-                Settings.Default.MacStartUp= Convert.ToInt16(comb_startup.Text);
+                Settings.Default.MacStartUp= Convert.ToInt16(comb_startup.Text);              
                 Settings.Default.QueueTime= Convert.ToInt16(com_queueTime.Text);
 
                 Settings.Default.ExpoRCnt = Convert.ToDouble(com_R.Text);

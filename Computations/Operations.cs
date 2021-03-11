@@ -6,6 +6,48 @@ namespace MiniSDN.Intilization
 {
     public class Operations
     {
+        public static double Angle_SenderReceive_TO_SenderSink(Sensor Sender, Sensor Receive, Sensor Sink)
+        {
+            double Angle = 0;
+            //sink节点不考虑角度值，非sink节点邻居表中加入角度值
+            if(Sender.ID != 0)
+            {
+                //获取三点坐标
+                double sender_x = Sender.CenterLocation.X;
+                double sender_y = Sender.CenterLocation.Y;
+                double receive_x = Receive.CenterLocation.X;
+                double receive_y = Receive.CenterLocation.Y;
+                double sink_x = Sink.CenterLocation.X;
+                double sink_y = Sink.CenterLocation.Y;
+
+                //获取A向量坐标 A=(sender_receive_x，sender_receive_y)，起点为sender节点，终点为receive节点
+                double sender_receive_x = receive_x - sender_x;
+                double sender_receive_y = receive_y - sender_y;
+
+                //获取B向量坐标 B=(sender_sink_x，sender_sink_y)，起点为sender节点，终点为sink节点
+                double sender_sink_x = sink_x - sender_x;
+                double sender_sink_y = sink_y - sender_y;
+
+                //先求AB的向量积
+                double AB = sender_receive_x * sender_sink_x + sender_receive_y * sender_sink_y;
+
+                //再求A,B的模
+                double A_length = Math.Sqrt(sender_receive_x * sender_receive_x + sender_receive_y * sender_receive_y);
+                double B_length = Math.Sqrt(sender_sink_x * sender_sink_x + sender_sink_y * sender_sink_y);
+
+                //cosM = A.B/|AB|  cosM = 向量积/模的乘积
+                double cosM = AB / (A_length * B_length);
+
+                
+
+                //反三角函数取夹角,角度与弧度需要转换
+                 Angle = Math.Acos(cosM) * 180 / Math.PI;
+            }
+            
+
+
+            return Angle;
+        }
 
         public static double DistanceBetweenTwoSensors(Sensor sensor1, Sensor sensor2)
         {

@@ -20,6 +20,8 @@ using MiniSDN.ui.conts;
 using MiniSDN.Charts.Intilization;
 using MiniSDN.ControlPlane.NOS.Visualizating;
 using System.Threading;
+using System.Windows.Input;
+using MiniSDN.Dataplane.PacketRouter;
 
 namespace MiniSDN.ui
 {
@@ -34,6 +36,8 @@ namespace MiniSDN.ui
         public DispatcherTimer RandomSelectSourceNodesTimer = new DispatcherTimer();
         public static double Swith;// sensing feild width.
         public static double Sheigh;// sensing feild height.
+        //若使用ORR路由协议，则该定时器定时计算最优nmax且更新节点的转发集
+        public DispatcherTimer ORRTimer = new DispatcherTimer();
 
         /// <summary>
         /// the area of sensing feild.
@@ -48,6 +52,7 @@ namespace MiniSDN.ui
 
         public List<Vertex> MyGraph = new List<Vertex>();
         public List<Sensor> myNetWork = new List<Sensor>();
+        public int index = 1;
 
         bool isCoverageSelected = false;
 
@@ -89,7 +94,9 @@ namespace MiniSDN.ui
             if (PublicParamerters.SimulationTime <= stopSimlationWhen + PublicParamerters.MacStartUp)
             {
                 Dispatcher.Invoke(() => PublicParamerters.SimulationTime += 1, DispatcherPriority.Send);
-                Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString(), DispatcherPriority.Send);
+                //每秒都会对主窗口最左上方的文字进行更新，显示实验进行的时间，单位：秒
+                Dispatcher.Invoke(() => Title = "MiniSDN:" + PublicParamerters.SimulationTime.ToString() + "  RoutingAlgorithm: " + Settings.Default.RoutingAlgorithm, DispatcherPriority.Send);
+                MainWindowUpdataMessage();
             }
             else
             {
@@ -105,11 +112,25 @@ namespace MiniSDN.ui
             // start sending after the nodes are intilized all.
             if (PublicParamerters.SimulationTime > PublicParamerters.MacStartUp)
             {
+
+                /*
                 int index = 1 + Convert.ToInt16(UnformRandomNumberGenerator.GetUniform(PublicParamerters.NumberofNodes - 2));
                 if (index != PublicParamerters.SinkNode.ID)
                 {
+                    //随机选择一个节点，该点将执行生成数据包的函数                  
                     myNetWork[index].GenerateDataPacket();
+
                 }
+                */
+
+
+                //按顺序生成数据包，原始版本为随机选择一个节点生成数据包
+                if (index == 0)
+                    index++;
+                myNetWork[index].GenerateDataPacket();
+                index = (index + 1) % myNetWork.Count;
+               
+
             }
         }
 
@@ -141,7 +162,7 @@ namespace MiniSDN.ui
             string Header = item.Header.ToString();
             switch (Header)
             {
-                case "_Multiple Nodes":
+                case "_Multiple Nodes"://手动生成新的拓扑图，原始版本功能未完善，现已完成
                     {
                         UiAddNodes ui = new UiAddNodes();
                         ui.MainWindow = this;
@@ -149,14 +170,14 @@ namespace MiniSDN.ui
                         break;
                     }
 
-                case "_Export Topology":
+                case "_Export Topology"://导出拓扑图
                     {
                         UiExportTopology top = new UiExportTopology(myNetWork);
                         top.Show();
                         break;
                     }
 
-                case "_Import Topology":
+                case "_Import Topology"://导入一个拓扑图，即将数据库中的节点信息导入构成网络拓扑图
                     {
                         UiImportTopology top = new UiImportTopology(this);
                         top.Show();
@@ -177,6 +198,7 @@ namespace MiniSDN.ui
             PublicParamerters.SinkNode.Ellipse_battryIndicator.Fill = Brushes.OrangeRed;
             PublicParamerters.SinkNode.Ellipse_MAC.Fill = Brushes.OrangeRed;
 
+            //显示各参数内容
             PublicParamerters.SinkNode.lbl_Sensing_ID.Foreground = Brushes.Blue;
             PublicParamerters.SinkNode.lbl_Sensing_ID.FontWeight = FontWeights.Bold;
             lbl_sink_id.Content = rootNodeId;
@@ -194,16 +216,17 @@ namespace MiniSDN.ui
 
             TimerCounter.Interval=TimeSpan.FromSeconds(1); // START count the running time.
             TimerCounter.Start(); // START count the running time.
-            TimerCounter.Tick += TimerCounter_Tick;
 
-            //:
-            prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
-            prog_total_energy.Value = 0;
+            TimerCounter.Tick += TimerCounter_Tick;//每秒都会更新主窗口的显示信息，包括主窗口最上方文字显示
+
+            //:主窗口右侧各参数显示
+           // prog_total_energy.Maximum = Convert.ToDouble(myNetWork.Count) * PublicParamerters.BatteryIntialEnergy;
+           // prog_total_energy.Value = 0;
 
 
 
             lbl_x_active_time.Content = Settings.Default.ActivePeriod + ",";
-            lbl_x_queue_time.Content = Settings.Default.QueueTime + ".";
+            lbl_x_queue_time.Content = Settings.Default.CheckQueueTime + ".";
             lbl_x_sleep_time.Content = Settings.Default.SleepPeriod + ",";
             lbl_x_start_up_time.Content = Settings.Default.MacStartUp + ",";
             lbl_intial_energy.Content = Settings.Default.BatteryIntialEnergy;
@@ -256,12 +279,28 @@ namespace MiniSDN.ui
             lbl_par_L.Content = "0";
             lbl_par_R.Content = "0";
 
+            lbl_total_delay.Content = "0";
+            lbl_total_delay_by_waiting_in_queue.Content = "0";
+            lbl_total_delay_by_waiting_in_queue_percentage.Content = "0";
+            lbl_total_delay_by_no_ack.Content = "0";
+            lbl_total_delay_by_no_ack_percentage.Content = "0";
+            lbl_total_delay_by_data_packet.Content = "0";
+            lbl_total_delay_by_data_packet_percentage.Content = "0";
+            lbl_total_delay_by_preamble_packet.Content = "0";
+            lbl_total_delay_by_preamble_packet_percentage.Content = "0";
+            lbl_average_delay_one_hop.Content = "0";
+            lbl_average_delay_End_TO_End.Content = "0";
+
             lbl_Number_of_Delivered_Packet.Content = "0";
             lbl_Number_of_Droped_Packet.Content = "0";
+            lbl_Droped_because_of_Cannot_Send.Content = "0";
+            lbl_Droped_because_of_TTL.Content = "0";
+            lbl_Droped_because_of_No_Energy.Content = "0";
             lbl_num_of_gen_packets.Content = "0";
             lbl_nymber_inQueu.Content = "0";
             lbl_Redundant_packets.Content = "0";
             lbl_sucess_ratio.Content = "0";
+            lbl_droped_ratio.Content = "0";
             lbl_Wasted_Energy_percentage.Content = "0";
             lbl_update_percentage.Content = "0";
             lbl_number_of_control_packets.Content = "0";
@@ -270,53 +309,710 @@ namespace MiniSDN.ui
             PublicParamerters.SimulationTime = 0;
         }
 
+        public void MainWindowUpdataMessage()
+        {
+            //Energy 相关显示
+
+            //网络总能量
+            Dispatcher.Invoke(() => lbl_total_energy.Content = PublicParamerters.TotalEnergy, DispatcherPriority.Send);
+
+            //生命周期内消耗的能量
+            Dispatcher.Invoke(() => lbl_total_consumed_energy.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule,4), DispatcherPriority.Send);
+
+            //平均每个数据包消耗的能耗，单位：uJ
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_packet .Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_packet*1000000, 2), DispatcherPriority.Send);
+
+            //平均每一跳消耗的能耗 ，单位：uJ
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_per_hop.Content = Math.Round(PublicParamerters.TotalEnergyConsumptionJoule_per_hop*1000000, 2), DispatcherPriority.Send);
+
+            //总能量的使用率
+            Dispatcher.Invoke(() => lbl_total_consumed_energy_percentage.Content = PublicParamerters.Total_Energy_Consumption_Percentage,DispatcherPriority.Send );
+
+            //数据包消耗的总能量占比
+            Dispatcher.Invoke(() => lbl_total_data_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Data_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //数据包发送能耗占比
+            Dispatcher.Invoke(() => lbl_data_consumed_send.Content = PublicParamerters.Data_Packet_Consumption_Send_Percentage, DispatcherPriority.Send);
+
+            //数据包接收能耗占比
+            Dispatcher.Invoke(() => lbl_data_consumed_receive.Content = PublicParamerters.Data_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send );
+
+            //preamble包消耗的总能量占比
+            Dispatcher.Invoke(() => lbl_total_preamble_packet_consumed_energy_percentage.Content = PublicParamerters.Total_Preamble_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //preamble包发送能耗占比
+            Dispatcher.Invoke(() => lbl_preamble_consumed_send.Content = PublicParamerters.Preamble_Packet_Consumption_Send_Percentage,DispatcherPriority.Send);
+
+            //preamble包接收能耗占比
+            Dispatcher.Invoke(() => lbl_preamle_consumed_receive.Content = PublicParamerters.Preamble_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send );
+
+            //ACK包消耗的总能量占比
+            Dispatcher.Invoke(() => lbl_total_ack_packet_consumed_energy_percentage.Content = PublicParamerters.Total_ACK_Packet_Consumption_Percentage,DispatcherPriority.Send);
+
+            //ACK包发送能耗占比
+            Dispatcher.Invoke(() => lbl_ack_consumed_send.Content = PublicParamerters.ACK_Packet_Consumption_Send_Percentage,DispatcherPriority.Send);
+
+            //ACK包接收能耗占比
+            Dispatcher.Invoke(() => lbl_ack_consumed_receive.Content = PublicParamerters.ACK_Packet_Consumption_Receive_Percentage,DispatcherPriority.Send);
+            
+            //冗余传输消耗的能量占总消耗能量的比率
+            Dispatcher.Invoke(() => lbl_Wasted_Energy_percentage.Content = PublicParamerters.WastedEnergyPercentage);
+           
+            
+            //Packet相关显示
+
+            //总生成包
+            Dispatcher.Invoke(() => lbl_num_of_gen_packets.Content = PublicParamerters.NumberofGeneratedPackets, DispatcherPriority.Normal);
+
+            //总队列包
+            Dispatcher.Invoke(() => lbl_nymber_inQueu.Content = PublicParamerters.NumberofInAllQueuePackets.ToString());
+
+            //总成功传输包
+            Dispatcher.Invoke(() => lbl_Number_of_Delivered_Packet.Content = PublicParamerters.NumberofDeliveredPacket, DispatcherPriority.Send);
+
+            //总控制包
+            Dispatcher.Invoke(() => lbl_number_of_control_packets.Content = PublicParamerters.NumberofControlPackets, DispatcherPriority.Normal);
+
+            //总丢弃包
+            Dispatcher.Invoke(() => lbl_Number_of_Droped_Packet.Content = PublicParamerters.NumberofDropedPacket, DispatcherPriority.Send);
+           
+            //发不出去的而丢弃的数据包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_Cannot_Send.Content = PublicParamerters.DropedbecauseofCannotSend, DispatcherPriority.Send);
+
+            //TTL丢弃的数据包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_TTL.Content = PublicParamerters.DropedbecauseofTTL,DispatcherPriority.Send);
+
+            //节点能量耗尽丢弃的队列中的包
+            Dispatcher.Invoke(() => lbl_Droped_because_of_No_Energy.Content = PublicParamerters.DropedbecauseofNoEnergy,DispatcherPriority.Send);
+
+            //成功率（成功传输包/总生成包）
+            Dispatcher.Invoke(() => lbl_sucess_ratio.Content = PublicParamerters.DeliveredRatio, DispatcherPriority.Send);
+
+            //丢包率 （丢弃包/总生成包）
+            Dispatcher.Invoke(() =>lbl_droped_ratio.Content = PublicParamerters.DropedRatio, DispatcherPriority.Send);
+
+            // 新成功率     成功传输包/（总生成包-总队列包）==========成功传输包/（成功传输包+丢弃包）
+            Dispatcher.Invoke(() => lbl_new_delivered_ratio.Content = PublicParamerters.NewDeliveredRatio,DispatcherPriority.Send);
+            //新丢包率      丢弃包/（总生成包-总队列包）==========丢弃包/（成功传输包+丢弃包）
+            Dispatcher.Invoke(() => lbl_new_droped_ratio.Content = PublicParamerters.NewDropedRatio,DispatcherPriority.Send);
+            //冗余传输
+            Dispatcher.Invoke(() => lbl_Redundant_packets.Content =PublicParamerters.TotalReduntantTransmission_per_packet,DispatcherPriority.Send);
+
+
+
+            //delay相关显示,单位：S
+
+            //总delay
+            Dispatcher.Invoke(() => lbl_total_delay.Content = Math.Round( PublicParamerters.TotalDelayMs/1000,2), DispatcherPriority.Send);
+
+            //平均单跳时延
+            Dispatcher.Invoke(() => lbl_average_delay_one_hop.Content = PublicParamerters.Total_Average_Delay_One_Hop, DispatcherPriority.Send);
+
+            //平均端到端时延
+            Dispatcher.Invoke(() => lbl_average_delay_End_TO_End.Content = PublicParamerters.Total_Average_Delay_End_TO_End, DispatcherPriority.Send);
+
+            //因为等待节点醒来而产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_waiting_in_queue.Content =Math.Round( PublicParamerters.TotalDelay_IN_Queue/1000,0), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_waiting_in_queue_percentage.Content = PublicParamerters.Total_Delay_by_Waiting_In_Queue_Percentage, DispatcherPriority.Send);
+
+            //因为没有ACK回复产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_no_ack.Content =Math.Round( PublicParamerters.TotalDelay_NO_ACK/1000,0), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_no_ack_percentage.Content = PublicParamerters.Total_Delay_by_No_ACK_Percentage, DispatcherPriority.Send);
+
+            //因为发送data包产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_data_packet.Content =Math.Round( PublicParamerters.TotalDelay_DataPackets/1000,2), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_data_packet_percentage.Content = PublicParamerters.Total_Delay_by_Data_Packet_Percentage, DispatcherPriority.Send);
+
+            //因为发送preamb包产生的总时延
+            Dispatcher.Invoke(() => lbl_total_delay_by_preamble_packet.Content = Math.Round(PublicParamerters.TotalDelay_PreamblePackets/1000,2), DispatcherPriority.Send);
+            Dispatcher.Invoke(() => lbl_total_delay_by_preamble_packet_percentage.Content = PublicParamerters.Total_Delay_by_Preamble_Packet_Percentage, DispatcherPriority.Send);
+
+
+
+        }
 
 
         private void EngageMacAndRadioProcol()
         {
             foreach (Sensor sen in myNetWork)
             {
-                sen.Mac = new BoXMAC(sen);
+                sen.Mac = new BoXMAC(sen);//实现节点醒睡模式
                 sen.BatRangesList = PublicParamerters.getRanges();
                 sen.Myradar = new Intilization.Radar(sen);
             }
         }
 
 
-        public void RandomDeplayment(int sinkIndex)
+
+        private void SetAllNodesIntialEnergy()
         {
-            PublicParamerters.NumberofNodes = myNetWork.Count;
-            int rootNodeId = sinkIndex;
-            PublicParamerters.SinkNode = myNetWork[rootNodeId];
-            NeighborsDiscovery overlappingNodesFinder = new NeighborsDiscovery(myNetWork);
-            overlappingNodesFinder.GetOverlappingForAllNodes();
 
-            string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
-            PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
-            lbl_PowersString.Content = PublicParamerters.PowersString;
+            foreach (Sensor sen in myNetWork)
+            {
 
-            isCoverageSelected = true;
-            PublicParamerters.Density = Density.GetDensity(myNetWork);
-            DisplaySimulationParameters(rootNodeId, "Random");
-
-            EngageMacAndRadioProcol();
-
-            TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);
-
-            HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);
-
-            // fill flows:
-            foreach (Sensor sen in myNetWork) { UplinkRouting.ComputeUplinkFlowEnery(sen); }
-
-            MyGraph = Graph.ConvertNodeToVertex(myNetWork);
+                if (sen.ID == 0) sen.BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergyForSink; // the value will not be change
+                else
+                    sen.BatteryIntialEnergy = PublicParamerters.BatteryIntialEnergy;
 
 
-            //
+                sen.ResidualEnergy = sen.BatteryIntialEnergy;
+                
+                sen.Prog_batteryCapacityNotation.Value = PublicParamerters.BatteryIntialEnergy;
+                sen.Prog_batteryCapacityNotation.Maximum = PublicParamerters.BatteryIntialEnergy;
+                //sen.CR = Settings.Default.CommunicationRadius;
 
-           
+            }
 
         }
 
+        public void RandomDeplayment(int sinkIndex)
+        {
+            //为每个节点重新分配初始能量和通信半径
+            SetAllNodesIntialEnergy();
+
+
+            PublicParamerters.NumberofNodes = myNetWork.Count;
+            int rootNodeId = sinkIndex;
+            PublicParamerters.SinkNode = myNetWork[rootNodeId];//设置sink节点
+            NeighborsDiscovery overlappingNodesFinder = new NeighborsDiscovery(myNetWork);
+            overlappingNodesFinder.GetOverlappingForAllNodes();//邻居发现，通信距离=感知距离*2，通信距离内的节点为邻居节点
+
+
+            string PowersString = "γL=" + Settings.Default.ExpoLCnt + ",γR=" + Settings.Default.ExpoRCnt + ", γH=" + Settings.Default.ExpoHCnt + ",γD" + Settings.Default.ExpoDCnt;
+            PublicParamerters.PowersString = PublicParamerters.NetworkName + ",  " + PowersString;
+            lbl_PowersString.Content = PublicParamerters.PowersString;//此语句是一条显示信息，参数为其他算法路由参数
+
+            isCoverageSelected = true;
+            PublicParamerters.Density = Density.GetDensity(myNetWork);//获取网络密度
+
+            DisplaySimulationParameters(rootNodeId, "Random");//相关参数显示，包括窗体最上方内容显示
+
+            
+
+            TopologyConstractor.BuildToplogy(Canvas_SensingFeild, myNetWork);//节点间动画显示相关
+
+            HopsToSinkComputation.ComputeHopsToSink(PublicParamerters.SinkNode);//跳数初始化
+
+            if (Settings.Default.RoutingAlgorithm == "ORR")
+            {
+                ORRCompute(); //ORR相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
+                ORRTimer.Interval = TimeSpan.FromSeconds(100);
+                ORRTimer.Tick += ORRTimer_Tick;
+                ORRTimer.Start();
+
+            }
+
+            if (Settings.Default.RoutingAlgorithm == "ORW")
+            {
+                ORWCompute(); //ORW相关参数的初始化，函数执行完之后每个节点的forward中的节点都将加入MiniFlowTable
+
+            }
+
+            if (Settings.Default.RoutingAlgorithm == "AHP_Fuzzy")
+            {
+                foreach (Sensor sen in myNetWork)
+                {
+                    sen.matlab = new MLApp.MLApp();
+                }
+
+            }
+
+            // fill flows:
+
+            //转发表相关的初始化
+            foreach (Sensor sen in myNetWork)
+            {
+                if(sen.ID != 0)
+                UplinkRouting.ComputeUplinkFlowEnery(sen);
+            }
+
+            
+
+            EngageMacAndRadioProcol();//为节点增加醒睡模式和MAC层相关设置
+            MyGraph = Graph.ConvertNodeToVertex(myNetWork);
+
+
+        }
+
+        private void ORWCompute()
+        {
+           
+
+            
+            Algorithm2_ORW();
+
+
+
+        }
+
+        Queue<Sensor> U_ORW = new Queue<Sensor>();
+        private void Algorithm2_ORW()
+        {
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (sensor.ID == PublicParamerters.SinkNode.ID)
+                {
+                    //sink节点EDC为0
+                    myNetWork[PublicParamerters.SinkNode.ID].EDC = 0;
+
+                }
+                else if (sensor.HopsToSink == 1) 
+                {
+                    //sink的邻居节点的EDC
+                    sensor.EDC = PublicParamerters.Ta/PublicParamerters.T;
+                    //sink的邻居节点的转发表中仅包含唯一一个sink节点
+                    
+                    sensor.Forwarders.Add(PublicParamerters.SinkNode);
+                }
+                else
+                {
+                    sensor.EDC = PublicParamerters.EDC0;
+                    sensor.Forwarders.Clear();
+                    U_ORW.Enqueue(sensor);
+
+                }
+            }
+            while (U_ORW.Count > 0)
+            {
+                Sensor sensor = U_ORW.Dequeue();
+                double EDC_Old = sensor.EDC;
+                Algorithm1_ORW(sensor);
+                if (sensor.EDC < EDC_Old)
+                {
+                    foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+                    {
+                        if (sensor.EDC < nei.NeiNode.EDC)
+                        {
+                            U_ORW.Enqueue(nei.NeiNode);
+                        }
+                    }
+                }
+            }
+
+
+
+        }
+
+        private void Algorithm1_ORW(Sensor sensor)
+        {
+            List<Sensor> V = new List<Sensor>();
+            sensor.Forwarders.Clear();
+            sensor.EDC = PublicParamerters.EDC0;
+            foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+            {
+                if (nei.NeiNode.EDC < sensor.EDC)
+                {
+                    V.Add(nei.NeiNode);
+                }
+
+            }
+
+            while (V.Count > 0 )
+            {
+
+                Sensor Node_MinEDC = FindNode_MinEDC(V);
+                V.Remove(Node_MinEDC);
+                if (Node_MinEDC.EDC < sensor.EDC)
+                {
+                    sensor.Forwarders.Add(Node_MinEDC);
+
+                }
+                else
+                {
+                    break;
+                }
+
+                //recalculate EDCi using Formula_1
+                sensor.EDC = Formula_1(sensor);
+                
+
+            }
+        }
+
+        private double Formula_1(Sensor sensor)
+        {
+            //假设Pij均为1，w=0
+            double number = sensor.Forwarders.Count;
+            double sum = 0;
+            foreach (Sensor i in sensor.Forwarders)
+            {
+                sum += i.EDC;
+            }
+            double firstterm = 1.0 / number;
+            double secondterm = sum / number;
+            double thirdterm = 0;
+            return firstterm + secondterm + thirdterm;
+        }
+
+        private Sensor FindNode_MinEDC(List<Sensor> v)
+        {
+            Sensor res = null;
+            double min = Double.MaxValue;
+            foreach (Sensor i in v)
+            {
+                if (min > i.EDC)
+                {
+                    res = i;
+                    min = i.EDC;
+                }
+            }
+            return res;
+        }
+
+        private void ORRTimer_Tick(object sender, EventArgs e)
+        {
+            //重新计算nmax和生成节点的转发集
+            ORRCompute();
+        }
+
+        Queue<Sensor> U = new Queue<Sensor>();
+        private void ORRCompute()
+        {
+            int nmax = 3;
+
+            double EstimatedForwardingCost = 0;
+            double EstimatedForwardingCost_Min = Double.MaxValue;
+            //循环尝试可能的n值，取最小代价的n为nmax；
+            for (int n = 3; n < 20; n++) {
+                //Algorithm2,假设算法中nmax值为n
+                Algorithm2_ORR(n);
+                //在当前nmax=n情况下计算平均消耗
+                EstimatedForwardingCost = CalculateEstimatedForwardingCost();
+               // Console.WriteLine("n: "+ n +"   EstimatedForwardingCost: " + EstimatedForwardingCost);
+
+                if (EstimatedForwardingCost < EstimatedForwardingCost_Min)
+                {
+                    EstimatedForwardingCost_Min = EstimatedForwardingCost;
+                    nmax = n;
+
+                }
+
+
+            }
+
+           // Console.WriteLine("nmax: " + nmax );
+
+            Algorithm2_ORR(nmax);
+
+
+
+
+        }
+
+        private double CalculateEstimatedForwardingCost()
+        {
+            //数组下标表示对应ID的节点，初始值为0，最终值表示对应节点包含在多少节点的Forwarders内,
+            int[] NonLeafNodes = new int[myNetWork.Count];
+            //需要计算的节点的队列
+            Queue<Sensor> queue = new Queue<Sensor>();
+
+            double cost = 0;
+            foreach (Sensor sensor in myNetWork)
+            {
+                //每个节点的初始Expected_number_of_transmisstion为1，表示自身产生一个数据包
+                if (sensor.ID != 0)
+                    sensor.Expected_number_of_transmisstion = 1;
+
+                //非叶子节点在数组对应位置的值表示有多少个节点的forward中包含该节点
+                foreach (Sensor node in sensor.Forwarders)
+                {
+                    NonLeafNodes[node.ID] += 1;
+                }
+
+
+
+            }
+            //构建初始队列，该队列中的节点均为叶子节点
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (NonLeafNodes[sensor.ID] == 0)
+                {                   
+                    queue.Enqueue(sensor);
+                }
+
+            }
+
+            int Enqueuecount = 0;
+            while (queue.Count > 0)
+            {
+                 Sensor topsensor = queue.Dequeue();
+                //此函数中NonLeafNodes数组值为零表示可以将该节点的ENT加入总Cost中
+                if (NonLeafNodes[topsensor.ID] == 0)
+                {
+                    foreach (Sensor sensor in topsensor.Forwarders)
+                    {
+                        //来自上一层节点的ENT增值
+                        sensor.Expected_number_of_transmisstion += Formula_26(topsensor);
+
+                        NonLeafNodes[sensor.ID]--;
+
+                        if (queue.Contains(sensor) == false)
+                            queue.Enqueue(sensor);
+                    }
+                    cost += topsensor.Expected_number_of_transmisstion;
+                }
+                //否则表明该节点还有上一层节点的ENT未计算完成
+                else
+                {
+                   
+                    queue.Enqueue(topsensor);
+
+                    Enqueuecount++;
+                    //出现死循环，此次nmax计算无效
+                    if (Enqueuecount > 1000)
+                    {
+                        return Double.MaxValue;
+                    }
+
+                }
+                    
+
+            }
+            
+
+            return cost;
+        }
+
+        private double Formula_26(Sensor topsensor)
+        {
+            double Uplink_ENT = 0;
+            double number = topsensor.Forwarders.Count;
+            double R = Formula_25(topsensor);
+
+            Uplink_ENT = R * topsensor.Expected_number_of_transmisstion / number;
+           // Uplink_ENT = topsensor.Expected_number_of_transmisstion / number;
+            return Uplink_ENT;
+        }
+
+        private double Formula_25(Sensor topsensor)
+        {
+            double value = 0;
+            int n = topsensor.Forwarders.Count;
+           
+            
+            double S = PublicParamerters.T / PublicParamerters.Ta;
+
+            
+            for (int i = 2; i <= S; i++)
+            {
+                for (int j = 1; j <= n - 1; j++)
+                {
+                    value += (j + 1) * Formula_23(n, S, j, i) * Formula_24(j, i - 1);
+                }
+            }
+            
+            
+
+            value += n * Formula_24(n, S); 
+            return value;
+
+
+        }
+        
+        private double Formula_24(int l, double m)
+        {
+            double sum = 0;
+            for (int k = 1; k <= m; k++)
+            {
+                sum += Formula_21(l, m, k);
+            }
+            return 1 - sum;
+        }
+        
+        
+        
+        private double Formula_21(int n, double S, int m)
+        {
+            double res = 0;
+            int t = n;
+            if (m < n)
+            {
+                t = m;
+            }
+            for (int i = 1; i <= t; i++)
+            {
+                //Console.WriteLine("Formula_21");
+                res += Math.Pow(-1, i + 1) * CombineNumber(m - 1, i - 1) * Formula_15(n, S, i);
+            }
+            return res;
+        }
+
+        private double Formula_15(int n, double S, int k)
+        {
+            //Console.WriteLine("Formula_15");
+            double term_1 = CombineNumber(n, k);
+            double term_2 = factorial(k);
+            double term_3 = Math.Pow(1.0 / S, k);
+            double term_4 = Math.Pow(1 - k / S, n - k);
+            double res = term_1 * term_2 * term_3 * term_4;
+            return res;
+        }
+
+        private double Formula_23(int n, double S, int l, double m)
+        {
+            //Console.WriteLine("Formula_23  term_1");
+            double term_1 = CombineNumber(n, l);
+            //Console.WriteLine("Formula_23  term_2");
+            double term_2 = CombineNumber(n - l, 1);
+            double term_3 = Math.Pow((double)(m - 1) / S, l);
+            double term_4 = 1.0 / S;
+            double term_5 = Math.Pow((double)(S - m) / S, n - l - 1);
+            double res = term_1 * term_2 * term_3 * term_4 * term_5;
+            return res;
+        }
+        
+        
+        
+        public int CombineNumber(int n, int r)
+        {
+            int res = 0;
+            //Console.WriteLine("n:"+ n);
+            //res = (double)factorial(n) / (double)(factorial(r) * factorial(n - r));
+            res = factorial(n) / (factorial(r) * factorial(n - r));
+            return res;
+        }
+        
+        
+       
+       
+        
+        public int factorial(int n)
+        {
+            int res = 1;
+            for (int i = n; i > 1; i--)
+            {
+                res *= i;
+            }
+            return res;
+        }
+        
+        
+        private void Algorithm2_ORR(int n)
+        {
+            foreach (Sensor sensor in myNetWork)
+            {
+                if (sensor.ID == PublicParamerters.SinkNode.ID)
+                {
+                    //sink节点FS为0
+                    myNetWork[PublicParamerters.SinkNode.ID].FS = 0;
+
+                }
+                else if (sensor.HopsToSink == 1)
+                {
+                    //sink的邻居节点的FS由公式9计算得到,转发表仅包括sink节点
+                    sensor.FS = Formula_9(sensor);
+                    //sink的邻居节点的转发表中仅包含唯一一个sink节点
+                    if(sensor.Forwarders.Contains(PublicParamerters.SinkNode) == false)
+                        sensor.Forwarders.Add(PublicParamerters.SinkNode);
+                }
+                else
+                {
+                    sensor.FS = PublicParamerters.FS0;
+                    sensor.Forwarders.Clear();
+                    U.Enqueue(sensor);
+
+                }
+            }
+            while (U.Count > 0)
+            {
+                Sensor sensor = U.Dequeue();
+                double FS_Old = sensor.FS;
+                Algorithm1_ORR(sensor, n);
+                if (sensor.FS < FS_Old)
+                {
+                    foreach (NeighborsTableEntry nei in sensor.NeighborsTable)
+                    {
+                        if (sensor.FS < nei.NeiNode.FS)
+                        {
+                            U.Enqueue(nei.NeiNode);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        //ORR Algorithm1
+        private void Algorithm1_ORR(Sensor sensor, int nmax)
+        {
+            List<Sensor> V = new List<Sensor>();          
+            sensor.Forwarders.Clear();
+            sensor.FS = PublicParamerters.FS0;
+            foreach ( NeighborsTableEntry nei in sensor.NeighborsTable)
+            {
+                if (nei.NeiNode.FS < sensor.FS)
+                {
+                    V.Add(nei.NeiNode);
+                }
+
+            }
+
+            while (V.Count > 0 && sensor.Forwarders.Count < nmax)
+            {
+                
+                Sensor Node_MinFS = FindNode_MinFS(V);
+                V.Remove(Node_MinFS);
+                if (Node_MinFS.FS < sensor.FS)
+                {
+                    sensor.Forwarders.Add(Node_MinFS);
+
+                }
+                else {
+                    break;
+                }
+
+                //recalculate FSi using Formula_7
+                sensor.FS = Formula_7(sensor);
+
+            }
+
+
+        }
+
+        private double Formula_7(Sensor sensor)
+        {
+            double number = sensor.Forwarders.Count;
+            double sum = 0;
+            foreach (Sensor i in sensor.Forwarders)
+            {
+                sum += i.FS;
+            }
+            double firstterm = 1.0 / ((number + 1) * Math.Pow(Formula_8(sensor), 1));
+            double secondterm = sum / number;
+            return firstterm + secondterm;
+        }
+
+        private Sensor FindNode_MinFS(List<Sensor> v)
+        {
+            Sensor res = null;
+            double min = Double.MaxValue;
+            foreach (Sensor i in v)
+            {
+                if (min > i.FS)
+                {
+                    res = i;
+                    min = i.FS;
+                }
+            }
+            return res;
+        }
+
+        private double Formula_9(Sensor sensor)
+        {
+            double Residual_Energy_Percentage = Formula_8(sensor);
+            double Ta = PublicParamerters.Ta;
+            double T = PublicParamerters.T;
+            //假设公式9中指数值为1
+            double FSi = Ta / (T * Math.Pow(Residual_Energy_Percentage, 1));
+            return FSi;
+        }
+
+        private double Formula_8(Sensor sensor)
+        {
+            double g = 10;
+            double rate = sensor.ResidualEnergy / PublicParamerters.BatteryIntialEnergy;
+            return Math.Ceiling(rate * g);
+        }
 
         private void Coverage_Click(object sender, RoutedEventArgs e)
         {
@@ -393,7 +1089,7 @@ namespace MiniSDN.ui
                     {
                         if (sensro.Ellipse_Communication_range.Visibility == Visibility.Hidden)
                         {
-                            sensro.Ellipse_Communication_range.Visibility = Visibility.Visible;
+                           // sensro.Ellipse_Communication_range.Visibility = Visibility.Visible;
                             Settings.Default.ShowComunicationRange = true;
                         }
                         else
@@ -619,6 +1315,7 @@ namespace MiniSDN.ui
                 RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(5);
                 RandomSelectSourceNodesTimer.Start();
                 RandomSelectSourceNodesTimer.Tick += RoundsPacketsGeneator; 
+                
 
             }
             else
@@ -689,6 +1386,9 @@ namespace MiniSDN.ui
             try
             {
                 PublicParamerters.NumberofDropedPacket = 0;
+                PublicParamerters.DropedbecauseofCannotSend = 0;
+                PublicParamerters.DropedbecauseofNoEnergy = 0;
+                PublicParamerters.DropedbecauseofTTL = 0;
                 PublicParamerters.NumberofDeliveredPacket = 0;
                 PublicParamerters.Rounds = 0;
                 PublicParamerters.DeadNodeList.Clear();
@@ -907,10 +1607,10 @@ namespace MiniSDN.ui
             }
             else
             {
-                if (s >= 1) Settings.Default.AnimationSpeed = 0.5; else Settings.Default.AnimationSpeed = s;
-                RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(s);
+                if (s > 1) Settings.Default.AnimationSpeed = 0.5; else Settings.Default.AnimationSpeed = s;
+                RandomSelectSourceNodesTimer.Interval = TimeSpan.FromSeconds(s);//s为定时器周期
                 RandomSelectSourceNodesTimer.Start();
-                RandomSelectSourceNodesTimer.Tick += RandomSelectNodes_Tick;
+                RandomSelectSourceNodesTimer.Tick += RandomSelectNodes_Tick;//RandomSelectNodes_Tick为定时器执行的具体内容
                 PacketRate = "1 packet per " + s + " s";
             }
         }
@@ -987,6 +1687,7 @@ namespace MiniSDN.ui
                     RandomSelectSourceNodesTimer.Stop();
                     UplinkalreadyGeneratedPackets = 0;
                     UplinkTobeGeneratedPackets = 0;
+                    top_menu.IsEnabled = true;
                 }
             }
                 
@@ -1088,11 +1789,55 @@ namespace MiniSDN.ui
             {
                 PacketRate = "";
                 stopSimlationWhen = 0;
+                //UISetParEnerConsum con 是窗口，其内容由构造函数确定，即赋值号右侧函数，con中的start按钮将进行网络初始化以及实验的运行
                 UISetParEnerConsum con = new UISetParEnerConsum(this);
                 con.Owner = this;
                 con.Show();
                 top_menu.IsEnabled = false;
             }
+        }
+
+        public double StreenTimes = 1;
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double sctim = StreenTimes / 10;
+            double x = _slider.Value;
+            if (x <= sctim)
+            {
+                x = sctim;
+                Settings.Default.SliderValue = x;
+                Settings.Default.Save();
+            }
+            var scaler = Canvas_SensingFeild.LayoutTransform as ScaleTransform;
+            Canvas_SensingFeild.LayoutTransform = new ScaleTransform(x, x, SystemParameters.FullPrimaryScreenWidth / 2, SystemParameters.FullPrimaryScreenHeight / 2);
+            lbl_zome_percentage.Text = (x * 100).ToString() + "%";
+
+
+            Settings.Default.SliderValue = x;
+            Settings.Default.Save();
+
+
+        }
+
+        private void Canvas_SensingFeild_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+
+            if (Keyboard.Modifiers != ModifierKeys.Control)
+                return;
+            if (e.Delta > 0)
+            {
+                _slider.Value += 0.1;
+            }
+            else if (e.Delta < 0)
+            {
+                _slider.Value -= 0.1;
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _slider.Value = Settings.Default.SliderValue;
+            Settings.Default.IsIntialized = false;
         }
     }
 }

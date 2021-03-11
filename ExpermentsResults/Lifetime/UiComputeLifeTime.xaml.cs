@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using MiniSDN.Dataplane;
-using MiniSDN.Dataplane;
 using System;
 using MiniSDN.Properties;
 using System.Windows.Threading;
