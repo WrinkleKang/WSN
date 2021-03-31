@@ -523,7 +523,7 @@ namespace MiniSDN.ui
             foreach (Sensor sen in myNetWork)
             {
                 if(sen.ID != 0)
-                UplinkRouting.ComputeUplinkFlowEnery(sen);
+                UplinkRouting.ComputeUplinkFlowEnery(sen);    
             }
 
             

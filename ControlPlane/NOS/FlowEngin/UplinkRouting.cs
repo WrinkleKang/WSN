@@ -13,6 +13,7 @@ using System.Windows;
 namespace MiniSDN.ControlPlane.NOS.FlowEngin
 {
   
+    //priority越大，排名越靠前
     public class MiniFlowTableSorterUpLinkPriority : IComparer<MiniFlowTableEntry>
     {
 
@@ -21,6 +22,19 @@ namespace MiniSDN.ControlPlane.NOS.FlowEngin
             return x.UpLinkPriority.CompareTo(y.UpLinkPriority);
         }
     }
+
+    //priority越小，排名越靠前
+    public class new_MiniFlowTableSorterUpLinkPriority : IComparer<MiniFlowTableEntry>
+    {
+
+        public int Compare(MiniFlowTableEntry y, MiniFlowTableEntry x)
+        {
+            return y.UpLinkPriority.CompareTo(x.UpLinkPriority);
+        }
+    }
+
+
+
 
     public class UplinkFlowEnery
     {

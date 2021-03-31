@@ -361,7 +361,7 @@ namespace MiniSDN.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AHP_Fuzzy")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ORR")]
         public string RoutingAlgorithm {
             get {
                 return ((string)(this["RoutingAlgorithm"]));
