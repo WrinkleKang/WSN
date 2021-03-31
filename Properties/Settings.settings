@@ -87,7 +87,7 @@
       <Value Profile="(Default)">Waitting all the time</Value>
     </Setting>
     <Setting Name="RoutingAlgorithm" Type="System.String" Scope="User">
-      <Value Profile="(Default)">AHP_Fuzzy</Value>
+      <Value Profile="(Default)">ORR</Value>
     </Setting>
     <Setting Name="CommunicationRadius" Type="System.Double" Scope="User">
       <Value Profile="(Default)">50</Value>
