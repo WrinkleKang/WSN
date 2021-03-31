@@ -56,7 +56,7 @@ namespace MiniSDN.Dataplane
         public static Sensor SinkNode { get; set; }
         public static double BatteryIntialEnergy  { get { return Settings.Default.BatteryIntialEnergy; } }//{ get { return Settings.Default.BatteryIntialEnergy; } } //J 0.5 /////////////*******////////////////////////////////////    
         public static double BatteryIntialEnergyForSink = 500; //500J.
-        public static double RoutingDataLength = 1024; // bit
+        public static double RoutingDataLength = 1024*8; // bit
         public static double ControlDataLength = 512; // bit
         public static double PreamblePacketLength = 128; // bit 
         public static double ACKPacketLength = 128; //bit

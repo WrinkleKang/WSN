@@ -1420,9 +1420,14 @@ namespace MiniSDN.Dataplane
 
             lock (MiniFlowTable)
             {
-                //按照Priority值大小排序邻居节点，前n个节点标记为Forward，剩余m-n个节点标记为Drop，
-                //n是转发节点集大小，m是邻居节点个数
-                MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
+                if ((Settings.Default.RoutingAlgorithm == "ORW") || (Settings.Default.RoutingAlgorithm == "ORR"))
+                    //priority越小排名越靠前
+                    MiniFlowTable.Sort(new new_MiniFlowTableSorterUpLinkPriority());
+                else
+                    //priority越大排名越靠前
+                    //按照Priority值大小排序邻居节点，前n个节点标记为Forward，剩余m-n个节点标记为Drop，
+                    //n是转发节点集大小，m是邻居节点个数
+                    MiniFlowTable.Sort(new MiniFlowTableSorterUpLinkPriority());
 
                 //按照优先级顺序第一个醒着的标记是forward节点就是转发节点，
                 //此函数包含计算接收节点接收preamble包消耗的能量和冗余preamble包的能量消耗，即非转发节点的接收冗余preamble包所消耗的能量
